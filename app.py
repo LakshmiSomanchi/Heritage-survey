@@ -74,7 +74,7 @@ dict_translations = {
         'Name of Surveyor': 'Name of Surveyor', 'Date of Visit': 'Date of Visit',
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV'
     },
-    'Hindi': {  # You'll need to translate these!  Example translations provided.
+    'Hindi': {  
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
         'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPCC': 'एचपीसीसी', 'MCC': 'एमसीसी',
         'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
@@ -142,33 +142,6 @@ WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
 
-# Function to delete survey forms
-def delete_survey_forms():
-    now = datetime.datetime.now()
-    if now.weekday() == 6:  # Sunday
-        for filename in os.listdir(SAVE_DIR):
-            file_path = os.path.join(SAVE_DIR, filename)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    import shutil
-                    shutil.rmtree(file_path)
-                print(f"Deleted: {filename}")  # Log deletion
-            except Exception as e:
-                print(f"Error deleting {filename}: {e}")
-
-# Schedule the deletion (runs every day at 10 PM UTC - adjust as needed)
-schedule.every().sunday.at("18:30").do(delete_survey_forms)  # 6:30 PM IST (adjust for your timezone)
-
-# Run the scheduler in a separate thread
-def run_scheduler():
-    while True:
-        schedule.run_pending()
-        time.sleep(60)  # Check every minute
-
-scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
-scheduler_thread.start()
 
 # Form Start
 with st.form("survey_form"):
@@ -258,42 +231,7 @@ if submit:
     filepath = os.path.join(SAVE_DIR, filename)
     df.to_csv(filepath, index=False, encoding='utf-8')
 
-    try:
-        # Email the CSV
-        from_email = "rsomanchi@tns.org" 
-        from_password = st.secrets["email"]["password"]  # Get password from Streamlit Secrets
-        to_email = "rsomanchi@tns.org"
-
-        msg = MIMEMultipart()
-        msg['From'] = from_email
-        msg['To'] = to_email
-        msg['Subject'] = f"Heritage Dairy Survey Submission - {now.strftime('%Y%m%d_%H%M%S')}"
-
-        body = "Please find the attached survey submission."
-        msg.attach(MIMEText(body, 'plain'))
-
-        attachment = open(filepath, "rb")
-
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
-
-        msg.attach(part)
-
-        server = smtplib.SMTP('smtp.gmail.com', 587)  # Or your email provider's SMTP server
-        server.starttls()
-        server.login(from_email, from_password)
-        text = msg.as_string()
-        server.sendmail(from_email, to_email, text)
-        server.quit()
-
-        st.success("✅ Survey Submitted, Saved, and Emailed!")
-
-    except Exception as e:
-        st.error(f"❌ Error sending email: {e}")
-        st.warning("Survey saved, but email failed. Check your email settings and Streamlit Secrets.")
-
+    
 st.divider()
 st.header("🔐 Admin Real-Time Access")
 
