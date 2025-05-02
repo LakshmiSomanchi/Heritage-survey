@@ -28,7 +28,7 @@ SURVEYOR_NAMES = [
 dict_translations = {
     'English': {
         'Language': 'Language', 'Farmer Profile': 'Farmer Profile', 'HPC/MCC Name': 'HPC/MCC Name',
-        'HPC/MCC Code': 'HPC/MCC Code', 'Types': 'Type', 'HPC': 'HPC', 'MCC': 'MCC',
+        'HPC/MCC Code': 'HPC/MCC Code', 'Types': 'Type', 'HPC': 'HPC', 'MCC': 'MCC','VLCC': 'VLCC', 'Pellet Feed Brand': 'Pellet Feed Brand', 'Mineral Mixture Brand': 'Mineral Mixture Brand', 'Others': 'Others',
         'Farmer Name': 'Farmer Name', 'Farmer Code': 'Farmer Code / Pourer ID', 'Gender': 'Gender',
         'Male': 'Male', 'Female': 'Female', 'Farm Details': 'Farm Details',
         'Number of Cows': 'Number of Cows', 'No. of Cattle in Milk': 'No. of Cattle in Milk',
@@ -50,7 +50,7 @@ dict_translations = {
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'HPC/MCC Name': 'एचपीसी/एमसीसी नाम',
-        'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPC': 'एचपीसी', 'MCC': 'एमसीसी',
+        'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPC': 'एचपीसी', 'MCC': 'एमसीसी','VLCC': 'वीएलसीसी', 'Pellet Feed Brand': 'पैलेट फ़ीड ब्रांड', 'Mineral Mixture Brand': 'खनिज मिश्रण ब्रांड', 'Others': 'अन्य',
         'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
         'Male': 'पुरुष', 'Female': 'महिला', 'Farm Details': 'फार्म विवरण',
         'Number of Cows': 'गायों की संख्या', 'No. of Cattle in Milk': 'दूध देने वाले मवेशी',
@@ -72,7 +72,7 @@ dict_translations = {
     },
      'Telugu': {
         'Language': 'భాష', 'Farmer Profile': 'రైతు వివరాలు',
-        'HPC/MCC Name': 'HPC/MCC పేరు', 'HPC/MCC Code': 'HPC/MCC కోడ్', 'Types': 'రకం',
+        'HPC/MCC Name': 'HPC/MCC పేరు', 'HPC/MCC Code': 'HPC/MCC కోడ్', 'Types': 'రకం','VLCC': 'వీఎల్సీసీ', 'Pellet Feed Brand': 'పెల్లెట్ ఫీడ్ బ్రాండ్', 'Mineral Mixture Brand': 'ఖనిజ మిశ్రమం బ్రాండ్', 'Others': 'ఇతర',
         'Farmer Name': 'రైతు పేరు', 'Farmer Code': 'రైతు కోడ్ / పోరర్ ఐడి', 'Gender': 'లింగం',
         'HPC': 'హెచ్పిసి', 'MCC': 'ఎంసిసి', 'Male': 'పురుషుడు', 'Female': 'స్త్రీ',
         'Farm Details': 'పండి వివరాలు',
