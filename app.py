@@ -10,13 +10,19 @@ SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 # Updated Constants
-VLCC_NAMES = ["VLCC 1", "VLCC 2", "VLCC 3"]  # Replace with actual names from Shifali
+VLCC_OPTIONS = ["VLCC 1", "VLCC 2", "VLCC 3"]
 GREEN_FODDER_TYPES = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_TYPES = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
-PELLET_FEED_BRANDS = ["Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus", "Kamadhenu", "Godrej", "Sreeja", "Vallabha-Panchamruth", "Vallabha-Subham Pusti"]
-MINERAL_MIXTURES = ["Herita Vit", "Herita Min", "Other"]
+PELLET_FEED_BRANDS = [
+    "Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus",
+    "Kamadhenu", "Godrej", "Sreeja", "Vallabha-Panchamruth", "Vallabha-Subham Pusti"
+]
+MINERAL_MIXTURES = ["Herita Vit", "Herita Min", "Others"]
 WATER_SOURCES = ["Panchayat", "Borewell", "Water Streams"]
-SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
+SURVEYOR_NAMES = [
+    "Shiva Shankaraiah", "Reddisekhar", "Balakrishna",
+    "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak",
+    "Ram Prasad", "K Balaji"
 
 # Multilingual Translations
 dict_translations = {
@@ -91,14 +97,8 @@ dict_translations = {
      }
 }
 
-# Streamlit Page Config
-st.set_page_config(page_title="Dairy Survey", page_icon="🐄", layout="centered")
+st.title(labels['Farmer Profile'])
 
-# Language Selection
-lang = st.selectbox("Language / भाषा / భాష", ("English", "Hindi", "Telugu"))
-labels = dict_translations.get(lang, dict_translations['English'])
-
-# Form Start
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
     vlcc = st.selectbox("VLCC", VLCC_OPTIONS)
@@ -120,35 +120,27 @@ with st.form("survey_form"):
 
     st.header(labels['Specific Questions'])
     green_fodder = st.selectbox(labels['Green Fodder'], (labels['Yes'], labels['No']))
-    green_fodder_type = st.multiselect(labels['Type of Green Fodder'], ["Napier", "Maize", "Sorghum"])
+    green_fodder_type = st.multiselect(labels['Type of Green Fodder'], GREEN_FODDER_TYPES)
     green_fodder_qty = st.number_input(labels['Quantity of Green Fodder'], min_value=0.0)
 
     dry_fodder = st.selectbox(labels['Dry Fodder'], (labels['Yes'], labels['No']))
-    dry_fodder_type = st.multiselect(labels['Type of Dry Fodder'], ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"])
+    dry_fodder_type = st.multiselect(labels['Type of Dry Fodder'], DRY_FODDER_TYPES)
     dry_fodder_qty = st.number_input(labels['Quantity of Dry Fodder'], min_value=0.0)
 
-    concentrate_feed = st.selectbox("Pellet Feed", (labels['Yes'], labels['No']))
-    concentrate_brand = st.multiselect("Pellet Feed Brand", [
-        "Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus",
-        "Kamadhenu", "Godrej", "Sreeja",
-        "Vallabha-Panchamruth", "Vallabha-Subham Pusti"
-    ])
+    concentrate_feed = st.selectbox(labels['Concentrate Feed'], (labels['Yes'], labels['No']))
+    concentrate_brand = st.multiselect(labels['Brand of Concentrate Feed'], PELLET_FEED_BRANDS)
     concentrate_qty = st.number_input(labels['Quantity of Concentrate Feed'], min_value=0.0)
 
     mineral_mixture = st.selectbox(labels['Mineral Mixture'], (labels['Yes'], labels['No']))
-    mineral_brand = st.selectbox("Mineral Mixture Brand", ["Herita Vit", "Herita Min", "Others"])
+    mineral_brand = st.selectbox(labels['Brand of Mineral Mixture'], MINERAL_MIXTURES)
     mineral_qty = st.number_input(labels['Quantity of Mineral Mixture'], min_value=0.0)
 
     silage = st.selectbox(labels['Silage'], (labels['Yes'], labels['No']))
     silage_source = st.text_input(labels['Source and Price of Silage'])
     silage_qty = st.number_input(labels['Quantity of Silage'], min_value=0.0)
 
-    water_source = st.multiselect(labels['Source of Water'], ["Panchayat", "Borewell", "Water Streams"])
-
-    surveyor_name = st.selectbox(labels['Name of Surveyor'], [
-        "Shiva Shankaraiah", "Reddisekhar", "Balakrishna",
-        "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak",
-        "Ram Prasad", "K Balaji"])
+    water_source = st.multiselect(labels['Source of Water'], WATER_SOURCES)
+    surveyor_name = st.selectbox(labels['Name of Surveyor'], SURVEYOR_NAMES)
     visit_date = st.date_input(labels['Date of Visit'])
 
     submit = st.form_submit_button(labels['Submit'])
@@ -195,6 +187,7 @@ if submit:
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
     st.success("✅ Survey Submitted and Saved!")
+
 
 
 st.divider()
