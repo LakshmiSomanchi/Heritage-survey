@@ -4,50 +4,10 @@ import streamlit as st
 import pandas as pd
 import datetime
 import os
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
-import schedule
-import time
-import threading
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
-
-# --- Styling ---
-st.markdown(
-    """
-    <style>
-    .reportview-container {
-        background: linear-gradient(to bottom, #E6F2FF, #FFFFFF); /* Light blue gradient */
-    }
-    .main .block-container {
-        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white for content */
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    h1, h2, h3 {
-        color: #007BFF; /* Heritage Blue */
-    }
-    .stButton>button {
-        color: white;
-        background-color: #28A745; /* Green submit button */
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-    }
-    .stSelectbox>label {
-        color: #343A40; /* Dark gray labels */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-# --- End Styling ---
 
 # Multilingual Translations
 dict_translations = {
@@ -74,7 +34,7 @@ dict_translations = {
         'Name of Surveyor': 'Name of Surveyor', 'Date of Visit': 'Date of Visit',
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV'
     },
-    'Hindi': {  
+    'Hindi': {  # You'll need to translate these!  Example translations provided.
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
         'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPCC': 'एचपीसीसी', 'MCC': 'एमसीसी',
         'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
@@ -142,7 +102,6 @@ WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
 
-
 # Form Start
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
@@ -208,13 +167,13 @@ if submit:
         'No. of Buffalo': buffalo,
         'Milk Production (liters/day)': milk_production,
         'Green Fodder': green_fodder,
-        'Type of Green Fodder': ", ".join(green_fodder_types), 
+        'Type of Green Fodder': ", ".join(green_fodder_types),  # Store multiple selections as comma-separated string
         'Quantity of Green Fodder (Kg/day)': green_fodder_qty,
         'Dry Fodder': dry_fodder,
-        'Type of Dry Fodder': ", ".join(dry_fodder_types), 
+        'Type of Dry Fodder': ", ".join(dry_fodder_types),  # Store multiple selections as comma-separated string
         'Quantity of Dry Fodder (Kg/day)': dry_fodder_qty,
         'Pellet Feed': pellet_feed,  # Renamed
-        'Pellet Feed Brand': ", ".join(pellet_feed_brands),  
+        'Pellet Feed Brand': ", ".join(pellet_feed_brands),  # Store multiple selections as comma-separated string
         'Quantity of Pellet Feed (Kg/day)': pellet_feed_qty,
         'Mineral Mixture': mineral_mixture,
         'Mineral Mixture Brand': mineral_brand,
@@ -224,14 +183,13 @@ if submit:
         'Quantity of Silage (Kg/day)': silage_qty,
         'Source of Water': ", ".join(water_sources),  # Store multiple selections as comma-separated string
         'Surveyor Name': surveyor_name,
-        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None  
+        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None  # Handle date object
     }
     df = pd.DataFrame([data])
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
-    filepath = os.path.join(SAVE_DIR, filename)
-    df.to_csv(filepath, index=False, encoding='utf-8')
+    df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
+    st.success("✅ Survey Submitted and Saved!")
 
-    
 st.divider()
 st.header("🔐 Admin Real-Time Access")
 
