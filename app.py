@@ -98,12 +98,10 @@ st.set_page_config(page_title="Dairy Survey", page_icon="🐄", layout="centered
 lang = st.selectbox("Language / भाषा / భాష", ("English", "Hindi", "Telugu"))
 labels = dict_translations.get(lang, dict_translations['English'])
 
-# Title
-st.title(labels['Farmer Profile'])
-
 # Form Start
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
+    vlcc = st.selectbox("VLCC", VLCC_OPTIONS)
     hpc_name = st.text_input(labels['HPC/MCC Name'])
     hpc_code = st.text_input(labels['HPC/MCC Code'])
     types = st.selectbox(labels['Types'], (labels['HPC'], labels['MCC']))
@@ -122,23 +120,35 @@ with st.form("survey_form"):
 
     st.header(labels['Specific Questions'])
     green_fodder = st.selectbox(labels['Green Fodder'], (labels['Yes'], labels['No']))
-    green_fodder_type = st.text_input(labels['Type of Green Fodder'])
+    green_fodder_type = st.multiselect(labels['Type of Green Fodder'], ["Napier", "Maize", "Sorghum"])
     green_fodder_qty = st.number_input(labels['Quantity of Green Fodder'], min_value=0.0)
+
     dry_fodder = st.selectbox(labels['Dry Fodder'], (labels['Yes'], labels['No']))
-    dry_fodder_type = st.text_input(labels['Type of Dry Fodder'])
+    dry_fodder_type = st.multiselect(labels['Type of Dry Fodder'], ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"])
     dry_fodder_qty = st.number_input(labels['Quantity of Dry Fodder'], min_value=0.0)
-    concentrate_feed = st.selectbox(labels['Concentrate Feed'], (labels['Yes'], labels['No']))
-    concentrate_brand = st.text_input(labels['Brand of Concentrate Feed'])
+
+    concentrate_feed = st.selectbox("Pellet Feed", (labels['Yes'], labels['No']))
+    concentrate_brand = st.multiselect("Pellet Feed Brand", [
+        "Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus",
+        "Kamadhenu", "Godrej", "Sreeja",
+        "Vallabha-Panchamruth", "Vallabha-Subham Pusti"
+    ])
     concentrate_qty = st.number_input(labels['Quantity of Concentrate Feed'], min_value=0.0)
+
     mineral_mixture = st.selectbox(labels['Mineral Mixture'], (labels['Yes'], labels['No']))
-    mineral_brand = st.text_input(labels['Brand of Mineral Mixture'])
+    mineral_brand = st.selectbox("Mineral Mixture Brand", ["Herita Vit", "Herita Min", "Others"])
     mineral_qty = st.number_input(labels['Quantity of Mineral Mixture'], min_value=0.0)
+
     silage = st.selectbox(labels['Silage'], (labels['Yes'], labels['No']))
     silage_source = st.text_input(labels['Source and Price of Silage'])
     silage_qty = st.number_input(labels['Quantity of Silage'], min_value=0.0)
-    water_source = st.text_input(labels['Source of Water'])
 
-    surveyor_name = st.text_input(labels['Name of Surveyor'])
+    water_source = st.multiselect(labels['Source of Water'], ["Panchayat", "Borewell", "Water Streams"])
+
+    surveyor_name = st.selectbox(labels['Name of Surveyor'], [
+        "Shiva Shankaraiah", "Reddisekhar", "Balakrishna",
+        "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak",
+        "Ram Prasad", "K Balaji"])
     visit_date = st.date_input(labels['Date of Visit'])
 
     submit = st.form_submit_button(labels['Submit'])
@@ -148,6 +158,7 @@ if submit:
     data = {
         'Timestamp': [now.isoformat()],
         'Language': [lang],
+        'VLCC': [vlcc],
         'HPC/MCC Name': [hpc_name],
         'HPC/MCC Code': [hpc_code],
         'Types': [types],
@@ -162,21 +173,21 @@ if submit:
         'No. of Buffalo': [buffalo],
         'Milk Production (liters/day)': [milk_production],
         'Green Fodder': [green_fodder],
-        'Type of Green Fodder': [green_fodder_type],
+        'Type of Green Fodder': ["; ".join(green_fodder_type)],
         'Quantity of Green Fodder (Kg/day)': [green_fodder_qty],
         'Dry Fodder': [dry_fodder],
-        'Type of Dry Fodder': [dry_fodder_type],
+        'Type of Dry Fodder': ["; ".join(dry_fodder_type)],
         'Quantity of Dry Fodder (Kg/day)': [dry_fodder_qty],
-        'Concentrate Feed': [concentrate_feed],
-        'Brand of Concentrate Feed': [concentrate_brand],
+        'Pellet Feed': [concentrate_feed],
+        'Pellet Feed Brand': ["; ".join(concentrate_brand)],
         'Quantity of Concentrate Feed (Kg/day)': [concentrate_qty],
         'Mineral Mixture': [mineral_mixture],
-        'Brand of Mineral Mixture': [mineral_brand],
+        'Mineral Mixture Brand': [mineral_brand],
         'Quantity of Mineral Mixture (gm/day)': [mineral_qty],
         'Silage': [silage],
         'Source and Price of Silage': [silage_source],
         'Quantity of Silage (Kg/day)': [silage_qty],
-        'Source of Water': [water_source],
+        'Source of Water': ["; ".join(water_source)],
         'Surveyor Name': [surveyor_name],
         'Date of Visit': [visit_date]
     }
