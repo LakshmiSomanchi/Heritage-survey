@@ -25,8 +25,112 @@ SURVEYOR_NAMES = [
     "Ram Prasad", "K Balaji"
 ]
 
-# Multilingual Translations Placeholder
-from translations_full import dict_translations
+# app.py (Final Streamlit Dairy Survey)
+
+import streamlit as st
+import pandas as pd
+import datetime
+import os
+
+# Ensure save folder exists
+SAVE_DIR = 'survey_responses'
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+# Updated Constants
+VLCC_OPTIONS = ["VLCC 1", "VLCC 2", "VLCC 3"]
+GREEN_FODDER_TYPES = ["Napier", "Maize", "Sorghum"]
+DRY_FODDER_TYPES = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
+PELLET_FEED_BRANDS = [
+    "Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus",
+    "Kamadhenu", "Godrej", "Sreeja", "Vallabha-Panchamruth", "Vallabha-Subham Pusti"
+]
+MINERAL_MIXTURES = ["Herita Vit", "Herita Min", "Others"]
+WATER_SOURCES = ["Panchayat", "Borewell", "Water Streams"]
+SURVEYOR_NAMES = [
+    "Shiva Shankaraiah", "Reddisekhar", "Balakrishna",
+    "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak",
+    "Ram Prasad", "K Balaji"
+]
+
+# Translations
+
+dict_translations = {
+    'English': {
+        'Language': 'Language', 'Farmer Profile': 'Farmer Profile', 'HPC/MCC Name': 'HPC/MCC Name',
+        'HPC/MCC Code': 'HPC/MCC Code', 'Types': 'Type', 'HPC': 'HPC', 'MCC': 'MCC', 'VLCC': 'VLCC',
+        'Pellet Feed Brand': 'Pellet Feed Brand', 'Mineral Mixture Brand': 'Mineral Mixture Brand', 'Others': 'Others',
+        'Farmer Name': 'Farmer Name', 'Farmer Code': 'Farmer Code / Pourer ID', 'Gender': 'Gender',
+        'Male': 'Male', 'Female': 'Female', 'Farm Details': 'Farm Details',
+        'Number of Cows': 'Number of Cows', 'No. of Cattle in Milk': 'No. of Cattle in Milk',
+        'No. of Calves/Heifers': 'No. of Calves/Heifers', 'No. of Desi cows': 'No. of Desi cows',
+        'No. of Cross breed cows': 'No. of Cross breed cows', 'No. of Buffalo': 'No. of Buffalo',
+        'Milk Production': 'Milk Production (liters/day)', 'Specific Questions': 'Specific Questions',
+        'Green Fodder': 'Green Fodder', 'Type of Green Fodder': 'Type of Green Fodder',
+        'Quantity of Green Fodder': 'Quantity of Green Fodder (Kg/day)',
+        'Dry Fodder': 'Dry Fodder', 'Type of Dry Fodder': 'Type of Dry Fodder',
+        'Quantity of Dry Fodder': 'Quantity of Dry Fodder (Kg/day)',
+        'Concentrate Feed': 'Concentrate Feed', 'Brand of Concentrate Feed': 'Brand of Concentrate Feed',
+        'Quantity of Concentrate Feed': 'Quantity of Concentrate Feed (Kg/day)',
+        'Mineral Mixture': 'Mineral Mixture', 'Brand of Mineral Mixture': 'Brand of Mineral Mixture',
+        'Quantity of Mineral Mixture': 'Quantity of Mineral Mixture (gm/day)',
+        'Silage': 'Silage', 'Source and Price of Silage': 'Source and Price of Silage',
+        'Quantity of Silage': 'Quantity of Silage (Kg/day)', 'Source of Water': 'Source of Water',
+        'Name of Surveyor': 'Name of Surveyor', 'Date of Visit': 'Date of Visit',
+        'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV'
+    },
+    'Hindi': {
+        'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'HPC/MCC Name': 'एचपीसी/एमसीसी नाम',
+        'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPC': 'एचपीसी', 'MCC': 'एमसीसी', 'VLCC': 'वीएलसीसी',
+        'Pellet Feed Brand': 'पैलेट फ़ीड ब्रांड', 'Mineral Mixture Brand': 'खनिज मिश्रण ब्रांड', 'Others': 'अन्य',
+        'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
+        'Male': 'पुरुष', 'Female': 'महिला', 'Farm Details': 'फार्म विवरण',
+        'Number of Cows': 'गायों की संख्या', 'No. of Cattle in Milk': 'दूध देने वाले मवेशी',
+        'No. of Calves/Heifers': 'बछड़े/बछड़ियां', 'No. of Desi cows': 'देसी गायों की संख्या',
+        'No. of Cross breed cows': 'क्रॉसब्रीड गायों की संख्या', 'No. of Buffalo': 'भैंसों की संख्या',
+        'Milk Production': 'दूध उत्पादन (लीटर/दिन)', 'Specific Questions': 'विशिष्ट प्रश्न',
+        'Green Fodder': 'हरा चारा', 'Type of Green Fodder': 'हरे चारे का प्रकार',
+        'Quantity of Green Fodder': 'हरे चारे की मात्रा (किलो/दिन)',
+        'Dry Fodder': 'सूखा चारा', 'Type of Dry Fodder': 'सूखे चारे का प्रकार',
+        'Quantity of Dry Fodder': 'सूखे चारे की मात्रा (किलो/दिन)',
+        'Concentrate Feed': 'सांद्रित आहार', 'Brand of Concentrate Feed': 'सांद्रित आहार ब्रांड',
+        'Quantity of Concentrate Feed': 'सांद्रित आहार मात्रा (किलो/दिन)',
+        'Mineral Mixture': 'खनिज मिश्रण', 'Brand of Mineral Mixture': 'खनिज मिश्रण ब्रांड',
+        'Quantity of Mineral Mixture': 'खनिज मिश्रण मात्रा (ग्राम/दिन)',
+        'Silage': 'सायलेज', 'Source and Price of Silage': 'सायलेज स्रोत और मूल्य',
+        'Quantity of Silage': 'सायलेज मात्रा (किलो/दिन)', 'Source of Water': 'पानी का स्रोत',
+        'Name of Surveyor': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि',
+        'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें'
+    },
+    'Telugu': {
+        'Language': 'భాష', 'Farmer Profile': 'రైతు వివరాలు', 'HPC/MCC Name': 'HPC/MCC పేరు',
+        'HPC/MCC Code': 'HPC/MCC కోడ్', 'Types': 'రకం', 'HPC': 'హెచ్పిసి', 'MCC': 'ఎంసిసి', 'VLCC': 'వీఎల్సీసీ',
+        'Pellet Feed Brand': 'పెల్లెట్ ఫీడ్ బ్రాండ్', 'Mineral Mixture Brand': 'ఖనిజ మిశ్రమం బ్రాండ్', 'Others': 'ఇతర',
+        'Farmer Name': 'రైతు పేరు', 'Farmer Code': 'రైతు కోడ్ / పోరర్ ఐడి', 'Gender': 'లింగం',
+        'Male': 'పురుషుడు', 'Female': 'స్త్రీ', 'Farm Details': 'పంది వివరాలు',
+        'Number of Cows': 'ఆవుల సంఖ్య', 'No. of Cattle in Milk': 'పాలలో ఉన్న పశువులు',
+        'No. of Calves/Heifers': 'దూడలు/హెఫర్లు సంఖ్య', 'No. of Desi cows': 'దేశీ ఆవుల సంఖ్య',
+        'No. of Cross breed cows': 'క్రాస్‌బ్రీడ్ ఆవుల సంఖ్య', 'No. of Buffalo': 'గేదెల సంఖ్య',
+        'Milk Production': 'పాల ఉత్పత్తి (లీటర్లు/రోజు)', 'Specific Questions': 'ప్రత్యేక ప్రశ్నలు',
+        'Green Fodder': 'పచ్చి మేత', 'Type of Green Fodder': 'పచ్చి మేత రకం',
+        'Quantity of Green Fodder': 'పచ్చి మేత పరిమాణం (కిలో/రోజు)',
+        'Dry Fodder': 'పొడి మేత', 'Type of Dry Fodder': 'పొడి మేత రకం',
+        'Quantity of Dry Fodder': 'పొడి మేత పరిమాణం (కిలో/రోజు)',
+        'Concentrate Feed': 'సాంద్రీకృత దాణా', 'Brand of Concentrate Feed': 'సాంద్రీకృత దాణా బ్రాండ్',
+        'Quantity of Concentrate Feed': 'సాంద్రీకృత దాణా పరిమాణం (కిలో/రోజు)',
+        'Mineral Mixture': 'ఖనిజ మిశ్రమం', 'Brand of Mineral Mixture': 'ఖనిజ మిశ్రమం బ్రాండ్',
+        'Quantity of Mineral Mixture': 'ఖనిజ మిశ్రమం పరిమాణం (గ్రాములు/రోజు)',
+        'Silage': 'సైలేజ్', 'Source and Price of Silage': 'సైలేజ్ మూలం మరియు ధర',
+        'Quantity of Silage': 'సైలేజ్ పరిమాణం (కిలో/రోజు)', 'Source of Water': 'నీటి మూలం',
+        'Name of Surveyor': 'సర్వేయర్ పేరు', 'Date of Visit': 'సందర్శన తేదీ',
+        'Submit': 'సమర్పించండి', 'Yes': 'అవును', 'No': 'కాదు', 'Download CSV': 'CSV డౌన్‌లోడ్ చేయండి'
+    }
+}
+
+# Streamlit App Setup
+st.set_page_config(page_title="Dairy Survey", page_icon="🐄", layout="centered")
+lang = st.selectbox("Language / भाषा / భాష", tuple(dict_translations.keys()))
+labels = dict_translations.get(lang, dict_translations['English'])
+
 
 # Streamlit App Setup
 st.set_page_config(page_title="Dairy Survey", page_icon="🐄", layout="centered")
