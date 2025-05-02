@@ -23,7 +23,7 @@ SURVEYOR_NAMES = [
     "Shiva Shankaraiah", "Reddisekhar", "Balakrishna",
     "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak",
     "Ram Prasad", "K Balaji"
-
+]
 # Multilingual Translations
 dict_translations = {
     'English': {
