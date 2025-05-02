@@ -4,10 +4,50 @@ import streamlit as st
 import pandas as pd
 import datetime
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+import schedule
+import time
+import threading
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
+
+# --- Styling ---
+st.markdown(
+    """
+    <style>
+    .reportview-container {
+        background: linear-gradient(to bottom, #E6F2FF, #FFFFFF); /* Light blue gradient */
+    }
+    .main .block-container {
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white for content */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2, h3 {
+        color: #007BFF; /* Heritage Blue */
+    }
+    .stButton>button {
+        color: white;
+        background-color: #28A745; /* Green submit button */
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+    }
+    .stSelectbox>label {
+        color: #343A40; /* Dark gray labels */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+# --- End Styling ---
 
 # Multilingual Translations
 dict_translations = {
@@ -34,7 +74,7 @@ dict_translations = {
         'Name of Surveyor': 'Name of Surveyor', 'Date of Visit': 'Date of Visit',
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV'
     },
-    'Hindi': {  
+    'Hindi': {  # You'll need to translate these!  Example translations provided.
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
         'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPCC': 'एचपीसीसी', 'MCC': 'एमसीसी',
         'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
@@ -57,7 +97,7 @@ dict_translations = {
         'Name of Surveyor': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि',
         'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें'
     },
-    'Telugu': {  
+    'Telugu': {  # You'll need to translate these!
         'Language': 'భాష', 'Farmer Profile': 'రైతు వివరాలు', 'VLCC Name': 'VLCC పేరు',
         'HPC/MCC Code': 'HPC/MCC కోడ్', 'Types': 'రకం', 'HPCC': 'హెచ్‌పిసిసి', 'MCC': 'ఎంసిసి',
         'Farmer Name': 'రైతు పేరు', 'Farmer Code': 'రైతు కోడ్ / పోరర్ ఐడి', 'Gender': 'లింగం',
@@ -102,9 +142,37 @@ WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
 
+# Function to delete survey forms
+def delete_survey_forms():
+    now = datetime.datetime.now()
+    if now.weekday() == 6:  # Sunday
+        for filename in os.listdir(SAVE_DIR):
+            file_path = os.path.join(SAVE_DIR, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    import shutil
+                    shutil.rmtree(file_path)
+                print(f"Deleted: {filename}")  # Log deletion
+            except Exception as e:
+                print(f"Error deleting {filename}: {e}")
+
+# Schedule the deletion (runs every day at 10 PM UTC - adjust as needed)
+schedule.every().sunday.at("18:30").do(delete_survey_forms)  # 6:30 PM IST (adjust for your timezone)
+
+# Run the scheduler in a separate thread
+def run_scheduler():
+    while True:
+        schedule.run_pending()
+        time.sleep(60)  # Check every minute
+
+scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
+scheduler_thread.start()
+
 # Form Start
 with st.form("survey_form"):
-    st.header(labels['Heritage Farmer Profile'])
+    st.header(labels['Farmer Profile'])
     vlcc_name = st.selectbox(labels['VLCC Name'], VLCC_NAMES)  # VLCC Dropdown
     hpc_code = st.text_input(labels['HPC/MCC Code'])
     types = st.selectbox(labels['Types'], (labels['HPCC'], labels['MCC']))
@@ -167,13 +235,13 @@ if submit:
         'No. of Buffalo': buffalo,
         'Milk Production (liters/day)': milk_production,
         'Green Fodder': green_fodder,
-        'Type of Green Fodder': ", ".join(green_fodder_types),  # Store multiple selections as comma-separated string
+        'Type of Green Fodder': ", ".join(green_fodder_types), 
         'Quantity of Green Fodder (Kg/day)': green_fodder_qty,
         'Dry Fodder': dry_fodder,
-        'Type of Dry Fodder': ", ".join(dry_fodder_types),  # Store multiple selections as comma-separated string
+        'Type of Dry Fodder': ", ".join(dry_fodder_types), 
         'Quantity of Dry Fodder (Kg/day)': dry_fodder_qty,
         'Pellet Feed': pellet_feed,  # Renamed
-        'Pellet Feed Brand': ", ".join(pellet_feed_brands),  # Store multiple selections as comma-separated string
+        'Pellet Feed Brand': ", ".join(pellet_feed_brands),  
         'Quantity of Pellet Feed (Kg/day)': pellet_feed_qty,
         'Mineral Mixture': mineral_mixture,
         'Mineral Mixture Brand': mineral_brand,
@@ -183,12 +251,48 @@ if submit:
         'Quantity of Silage (Kg/day)': silage_qty,
         'Source of Water': ", ".join(water_sources),  # Store multiple selections as comma-separated string
         'Surveyor Name': surveyor_name,
-        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None  # Handle date object
+        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None  
     }
     df = pd.DataFrame([data])
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
-    df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
-    st.success("✅ Survey Submitted and Saved!")
+    filepath = os.path.join(SAVE_DIR, filename)
+    df.to_csv(filepath, index=False, encoding='utf-8')
+
+    try:
+        # Email the CSV
+        from_email = "rsomanchi@tns.org" 
+        from_password = st.secrets["email"]["password"]  # Get password from Streamlit Secrets
+        to_email = "rsomanchi@tns.org"
+
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = to_email
+        msg['Subject'] = f"Heritage Dairy Survey Submission - {now.strftime('%Y%m%d_%H%M%S')}"
+
+        body = "Please find the attached survey submission."
+        msg.attach(MIMEText(body, 'plain'))
+
+        attachment = open(filepath, "rb")
+
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload((attachment).read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+
+        msg.attach(part)
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)  # Or your email provider's SMTP server
+        server.starttls()
+        server.login(from_email, from_password)
+        text = msg.as_string()
+        server.sendmail(from_email, to_email, text)
+        server.quit()
+
+        st.success("✅ Survey Submitted, Saved, and Emailed!")
+
+    except Exception as e:
+        st.error(f"❌ Error sending email: {e}")
+        st.warning("Survey saved, but email failed. Check your email settings and Streamlit Secrets.")
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
