@@ -34,7 +34,7 @@ dict_translations = {
         'Name of Surveyor': 'Name of Surveyor', 'Date of Visit': 'Date of Visit',
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV'
     },
-    'Hindi': {  # You'll need to translate these!  Example translations provided.
+    'Hindi': {  
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
         'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPCC': 'एचपीसीसी', 'MCC': 'एमसीसी',
         'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
@@ -57,7 +57,7 @@ dict_translations = {
         'Name of Surveyor': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि',
         'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें'
     },
-    'Telugu': {  # You'll need to translate these!
+    'Telugu': {  
         'Language': 'భాష', 'Farmer Profile': 'రైతు వివరాలు', 'VLCC Name': 'VLCC పేరు',
         'HPC/MCC Code': 'HPC/MCC కోడ్', 'Types': 'రకం', 'HPCC': 'హెచ్‌పిసిసి', 'MCC': 'ఎంసిసి',
         'Farmer Name': 'రైతు పేరు', 'Farmer Code': 'రైతు కోడ్ / పోరర్ ఐడి', 'Gender': 'లింగం',
@@ -104,7 +104,7 @@ SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar
 
 # Form Start
 with st.form("survey_form"):
-    st.header(labels['Farmer Profile'])
+    st.header(labels['Heritage Farmer Profile'])
     vlcc_name = st.selectbox(labels['VLCC Name'], VLCC_NAMES)  # VLCC Dropdown
     hpc_code = st.text_input(labels['HPC/MCC Code'])
     types = st.selectbox(labels['Types'], (labels['HPCC'], labels['MCC']))
