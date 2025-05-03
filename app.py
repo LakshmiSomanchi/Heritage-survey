@@ -165,22 +165,6 @@ with st.form("survey_form"):
 
     surveyor_name = st.selectbox(labels['Name of Surveyor'], SURVEYOR_NAMES)  # Dropdown
     visit_date = st.date_input(labels['Date of Visit'])
-# --- Upload Farm Photo ---
-st.subheader("📸 Upload Photo of the Farm")
-photo = st.file_uploader("Upload an image of the farm (JPEG/PNG)", type=['jpg', 'jpeg', 'png'])
-
-if photo:
-    st.image(photo, caption="Preview of uploaded image", use_column_width=True)
-# Save image if uploaded
-if photo:
-    images_dir = os.path.join(SAVE_DIR, 'images')
-    os.makedirs(images_dir, exist_ok=True)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    image_filename = f"{timestamp}_{farmer_code.replace(' ', '_')}.jpg"
-    image_path = os.path.join(images_dir, image_filename)
-    with open(image_path, 'wb') as f:
-        f.write(photo.read())
-
     submit = st.form_submit_button(labels['Submit'])
 
 if submit:
