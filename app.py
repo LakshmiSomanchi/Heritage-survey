@@ -204,6 +204,21 @@ if submit:
         'Surveyor Name': surveyor_name,
         'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None  # Handle date object
     }
+    # Add inside Streamlit app (app.py) after other input fields, e.g. after 'Date of Visit'
+
+# Farm Photo Upload Section
+st.subheader("Upload Farm Photo")
+farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
+
+# Save photo with survey data
+if farm_photo is not None:
+    photo_path = os.path.join(SAVE_DIR, f"farm_photo_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{farm_photo.name}")
+    with open(photo_path, "wb") as f:
+        f.write(farm_photo.getbuffer())
+    st.success("Farm photo uploaded successfully!")
+
+# Later, this path can be saved in CSV or used for image preview if needed
+
     df = pd.DataFrame([data])
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
