@@ -172,7 +172,7 @@ if submit:
     data = {
         'Timestamp': now.isoformat(),
         'Language': lang,
-        'VLCC Name': vlcc_name,  # VLCC
+        'VLCC Name': vlcc_name,
         'HPC/MCC Code': hpc_code,
         'Types': types,
         'Farmer Name': farmer_name,
@@ -186,13 +186,13 @@ if submit:
         'No. of Buffalo': buffalo,
         'Milk Production (liters/day)': milk_production,
         'Green Fodder': green_fodder,
-        'Type of Green Fodder': ", ".join(green_fodder_types),  # Store multiple selections as comma-separated string
+        'Type of Green Fodder': ", ".join(green_fodder_types),
         'Quantity of Green Fodder (Kg/day)': green_fodder_qty,
         'Dry Fodder': dry_fodder,
-        'Type of Dry Fodder': ", ".join(dry_fodder_types),  # Store multiple selections as comma-separated string
+        'Type of Dry Fodder': ", ".join(dry_fodder_types),
         'Quantity of Dry Fodder (Kg/day)': dry_fodder_qty,
-        'Pellet Feed': pellet_feed,  # Renamed
-        'Pellet Feed Brand': ", ".join(pellet_feed_brands),  # Store multiple selections as comma-separated string
+        'Pellet Feed': pellet_feed,
+        'Pellet Feed Brand': ", ".join(pellet_feed_brands),
         'Quantity of Pellet Feed (Kg/day)': pellet_feed_qty,
         'Mineral Mixture': mineral_mixture,
         'Mineral Mixture Brand': mineral_brand,
@@ -200,41 +200,50 @@ if submit:
         'Silage': silage,
         'Source and Price of Silage': silage_source,
         'Quantity of Silage (Kg/day)': silage_qty,
-        'Source of Water': ", ".join(water_sources),  # Store multiple selections as comma-separated string
+        'Source of Water': ", ".join(water_sources),
         'Surveyor Name': surveyor_name,
-        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None  # Handle date object
+        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None
     }
-    # Add inside Streamlit app (app.py) after other input fields, e.g. after 'Date of Visit'
 
-# Farm Photo Upload Section
-st.subheader("Upload Farm Photo")
-farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
-
-# Save photo with survey data
-if farm_photo is not None:
-    photo_path = os.path.join(SAVE_DIR, f"farm_photo_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{farm_photo.name}")
-    with open(photo_path, "wb") as f:
-        f.write(farm_photo.getbuffer())
-    st.success("Farm photo uploaded successfully!")
-
-# Later, this path can be saved in CSV or used for image preview if needed
-
+    # Save CSV
     df = pd.DataFrame([data])
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
     st.success("✅ Survey Submitted and Saved!")
-  # --- Review Section ---
-    st.success("✅ Survey Submitted!")
+
+    # Review Section
     with st.expander("🔍 Click to Review Your Submission"):
         for section, keys in {
-            "📄 Farmer Profile": ['VLCC Name', 'HPC/MCC Code', 'Types', 'Farmer Name', 'Farmer Code', 'Gender'],
-            "🐄 Farm Details": ['Number of Cows', 'No. of Cattle in Milk', 'No. of Calves/Heifers', 'No. of Desi cows', 'No. of Cross breed cows', 'No. of Buffalo', 'Milk Production (liters/day)'],
-            "🌿 Feed Details": ['Green Fodder', 'Type of Green Fodder', 'Quantity of Green Fodder (Kg/day)', 'Dry Fodder', 'Type of Dry Fodder', 'Quantity of Dry Fodder (Kg/day)', 'Pellet Feed', 'Pellet Feed Brand', 'Quantity of Pellet Feed (Kg/day)', 'Mineral Mixture', 'Mineral Mixture Brand', 'Quantity of Mineral Mixture (gm/day)', 'Silage', 'Source and Price of Silage', 'Quantity of Silage (Kg/day)'],
-            "🚰 Water & Survey": ['Source of Water', 'Surveyor Name', 'Date of Visit', 'Language']
+            "📄 Farmer Profile": [
+                'VLCC Name', 'HPC/MCC Code', 'Types', 'Farmer Name', 'Farmer Code', 'Gender'
+            ],
+            "🐄 Farm Details": [
+                'Number of Cows', 'No. of Cattle in Milk', 'No. of Calves/Heifers',
+                'No. of Desi cows', 'No. of Cross breed cows', 'No. of Buffalo', 'Milk Production (liters/day)'
+            ],
+            "🌿 Feed Details": [
+                'Green Fodder', 'Type of Green Fodder', 'Quantity of Green Fodder (Kg/day)',
+                'Dry Fodder', 'Type of Dry Fodder', 'Quantity of Dry Fodder (Kg/day)',
+                'Pellet Feed', 'Pellet Feed Brand', 'Quantity of Pellet Feed (Kg/day)',
+                'Mineral Mixture', 'Mineral Mixture Brand', 'Quantity of Mineral Mixture (gm/day)',
+                'Silage', 'Source and Price of Silage', 'Quantity of Silage (Kg/day)'
+            ],
+            "🚰 Water & Survey": [
+                'Source of Water', 'Surveyor Name', 'Date of Visit', 'Language'
+            ]
         }.items():
             st.subheader(section)
             for k in keys:
                 st.markdown(f"**{k}**: {data.get(k)}")
+
+    # Upload photo
+    st.subheader("Upload Farm Photo")
+    farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
+    if farm_photo is not None:
+        photo_path = os.path.join(SAVE_DIR, f"farm_photo_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{farm_photo.name}")
+        with open(photo_path, "wb") as f:
+            f.write(farm_photo.getbuffer())
+        st.success("Farm photo uploaded successfully!")
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
