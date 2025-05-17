@@ -223,10 +223,18 @@ if farm_photo is not None:
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
     st.success("✅ Survey Submitted and Saved!")
-
-
-    st.markdown("### 🧾 Review Your Submission")
-    st.dataframe(pd.DataFrame(data.items(), columns=["Question", "Response"]), use_container_width=True)
+  # --- Review Section ---
+    st.success("✅ Survey Submitted!")
+    with st.expander("🔍 Click to Review Your Submission"):
+        for section, keys in {
+            "📄 Farmer Profile": ['VLCC Name', 'HPC/MCC Code', 'Types', 'Farmer Name', 'Farmer Code', 'Gender'],
+            "🐄 Farm Details": ['Number of Cows', 'No. of Cattle in Milk', 'No. of Calves/Heifers', 'No. of Desi cows', 'No. of Cross breed cows', 'No. of Buffalo', 'Milk Production (liters/day)'],
+            "🌿 Feed Details": ['Green Fodder', 'Type of Green Fodder', 'Quantity of Green Fodder (Kg/day)', 'Dry Fodder', 'Type of Dry Fodder', 'Quantity of Dry Fodder (Kg/day)', 'Pellet Feed', 'Pellet Feed Brand', 'Quantity of Pellet Feed (Kg/day)', 'Mineral Mixture', 'Mineral Mixture Brand', 'Quantity of Mineral Mixture (gm/day)', 'Silage', 'Source and Price of Silage', 'Quantity of Silage (Kg/day)'],
+            "🚰 Water & Survey": ['Source of Water', 'Surveyor Name', 'Date of Visit', 'Language']
+        }.items():
+            st.subheader(section)
+            for k in keys:
+                st.markdown(f"**{k}**: {data.get(k)}")
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
