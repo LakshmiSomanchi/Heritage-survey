@@ -224,13 +224,9 @@ if farm_photo is not None:
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
     st.success("✅ Survey Submitted and Saved!")
 
-    # Review Submitted Data
-    st.markdown("### 🧾 Review of Your Submission")
-    review_df = pd.DataFrame(data.items(), columns=["Question", "Response"])
-    st.dataframe(review_df, use_container_width=True)
 
-    with st.expander("📋 Raw JSON View", expanded=False):
-        st.json(data)
+    st.markdown("### 🧾 Review Your Submission")
+    st.dataframe(pd.DataFrame(data.items(), columns=["Question", "Response"]), use_container_width=True)
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
