@@ -167,43 +167,47 @@ with st.form("survey_form"):
     visit_date = st.date_input(labels['Date of Visit'])
     submit = st.form_submit_button(labels['Submit'])
 
+# Save filled values to session state for review
 if submit:
-    now = datetime.datetime.now()
-    data = {
-        'Timestamp': now.isoformat(),
-        'Language': lang,
-        'VLCC Name': vlcc_name,
-        'HPC/MCC Code': hpc_code,
-        'Types': types,
-        'Farmer Name': farmer_name,
-        'Farmer Code': farmer_code,
-        'Gender': gender,
-        'Number of Cows': cows,
-        'No. of Cattle in Milk': cattle_in_milk,
-        'No. of Calves/Heifers': calves,
-        'No. of Desi cows': desi_cows,
-        'No. of Cross breed cows': crossbreed_cows,
-        'No. of Buffalo': buffalo,
-        'Milk Production (liters/day)': milk_production,
-        'Green Fodder': green_fodder,
-        'Type of Green Fodder': ", ".join(green_fodder_types),
-        'Quantity of Green Fodder (Kg/day)': green_fodder_qty,
-        'Dry Fodder': dry_fodder,
-        'Type of Dry Fodder': ", ".join(dry_fodder_types),
-        'Quantity of Dry Fodder (Kg/day)': dry_fodder_qty,
-        'Pellet Feed': pellet_feed,
-        'Pellet Feed Brand': ", ".join(pellet_feed_brands),
-        'Quantity of Pellet Feed (Kg/day)': pellet_feed_qty,
-        'Mineral Mixture': mineral_mixture,
-        'Mineral Mixture Brand': mineral_brand,
-        'Quantity of Mineral Mixture (gm/day)': mineral_qty,
-        'Silage': silage,
-        'Source and Price of Silage': silage_source,
-        'Quantity of Silage (Kg/day)': silage_qty,
-        'Source of Water': ", ".join(water_sources),
-        'Surveyor Name': surveyor_name,
-        'Date of Visit': visit_date.isoformat() if isinstance(visit_date, datetime.date) else None
+    st.session_state["pending_submission"] = {
+        "timestamp": datetime.datetime.now(),
+        "data": {
+            'Language': lang,
+            'VLCC Name': vlcc_name,
+            'HPC/MCC Code': hpc_code,
+            'Types': types,
+            'Farmer Name': farmer_name,
+            'Farmer Code': farmer_code,
+            'Gender': gender,
+            'Number of Cows': cows,
+            'No. of Cattle in Milk': cattle_in_milk,
+            'No. of Calves/Heifers': calves,
+            'No. of Desi cows': desi_cows,
+            'No. of Cross breed cows': crossbreed_cows,
+            'No. of Buffalo': buffalo,
+            'Milk Production (liters/day)': milk_production,
+            'Green Fodder': green_fodder,
+            'Type of Green Fodder': ", ".join(green_fodder_types),
+            'Quantity of Green Fodder (Kg/day)': green_fodder_qty,
+            'Dry Fodder': dry_fodder,
+            'Type of Dry Fodder': ", ".join(dry_fodder_types),
+            'Quantity of Dry Fodder (Kg/day)': dry_fodder_qty,
+            'Pellet Feed': pellet_feed,
+            'Pellet Feed Brand': ", ".join(pellet_feed_brands),
+            'Quantity of Pellet Feed (Kg/day)': pellet_feed_qty,
+            'Mineral Mixture': mineral_mixture,
+            'Mineral Mixture Brand': mineral_brand,
+            'Quantity of Mineral Mixture (gm/day)': mineral_qty,
+            'Silage': silage,
+            'Source and Price of Silage': silage_source,
+            'Quantity of Silage (Kg/day)': silage_qty,
+            'Source of Water': ", ".join(water_sources),
+            'Surveyor Name': surveyor_name,
+            'Date of Visit': visit_date.isoformat()
+        }
     }
+    st.experimental_rerun()
+
 
     # Save CSV
     df = pd.DataFrame([data])
@@ -244,6 +248,21 @@ if submit:
         with open(photo_path, "wb") as f:
             f.write(farm_photo.getbuffer())
         st.success("Farm photo uploaded successfully!")
+
+if "pending_submission" in st.session_state:
+    pending = st.session_state["pending_submission"]
+    st.success("✅ Form filled. Please review and confirm submission.")
+    
+    with st.expander("🔍 Review Your Submission Before Saving"):
+        for k, v in pending["data"].items():
+            st.markdown(f"**{k}**: {v}")
+    
+    if st.button("✅ Confirm and Save"):
+        df = pd.DataFrame([pending["data"]])
+        filename = f"survey_{pending['timestamp'].strftime('%Y%m%d_%H%M%S')}.csv"
+        df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
+        st.success("📝 Saved successfully!")
+        del st.session_state["pending_submission"]
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
