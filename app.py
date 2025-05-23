@@ -166,13 +166,10 @@ with st.form("survey_form"):
     surveyor_name = st.selectbox(labels['Name of Surveyor'], SURVEYOR_NAMES)  # Dropdown
     visit_date = st.date_input(labels['Date of Visit'])
     submit = st.form_submit_button(labels['Submit'])
-    st.subheader("Upload Farm Photo")
-    farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
+        st.subheader("Upload Farm Photo")
+    farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
-    st.subheader("Upload Farm Photo")
-    farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
-
-# Form submission starts here
+    # Submit button must be last inside the form
     submit = st.form_submit_button(labels['Submit'])
 
 # Process submission
@@ -226,7 +223,7 @@ if submit:
     df = pd.DataFrame([data])
     filename = f"survey_{now.strftime('%Y%m%d_%H%M%S')}.csv"
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
-    st.success("📈 Survey Submitted and Saved!")
+    st.success("\U0001F4C8 Survey Submitted and Saved!")
 
     # Review Section
     with st.expander("🔍 Click to Review Your Submission"):
@@ -245,14 +242,13 @@ if submit:
                 'Mineral Mixture', 'Mineral Mixture Brand', 'Quantity of Mineral Mixture (gm/day)',
                 'Silage', 'Source and Price of Silage', 'Quantity of Silage (Kg/day)'
             ],
-            "😀 Water & Survey": [
+            "🚰 Water & Survey": [
                 'Source of Water', 'Surveyor Name', 'Date of Visit', 'Language'
             ]
         }.items():
             st.subheader(section)
             for k in keys:
                 st.markdown(f"**{k}**: {data.get(k)}")
-
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
