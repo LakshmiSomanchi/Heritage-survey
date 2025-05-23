@@ -167,6 +167,7 @@ with st.form("survey_form"):
     visit_date = st.date_input(labels['Date of Visit'])
     submit = st.form_submit_button(labels['Submit'])
     # Photo Upload - placed before submit and uses a unique key
+      # Photo Upload - placed before submit and uses a unique key
     st.subheader("Upload Farm Photo")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
