@@ -166,7 +166,7 @@ with st.form("survey_form"):
     surveyor_name = st.selectbox(labels['Name of Surveyor'], SURVEYOR_NAMES)  # Dropdown
     visit_date = st.date_input(labels['Date of Visit'])
     submit = st.form_submit_button(labels['Submit'])
-        st.subheader("Upload Farm Photo")
+    st.subheader("Upload Farm Photo")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
     # Submit button must be last inside the form
