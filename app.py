@@ -125,8 +125,7 @@ SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
     vlcc_name = st.selectbox(labels['VLCC Name'], VLCC_NAMES)
-    hp
-c_code = st.text_input(labels['HPC/MCC Code'])
+    hpc_code = st.text_input(labels['HPC/MCC Code'])
     types = st.selectbox(labels['Types'], (labels['HPC'], labels['MCC']))
     farmer_name = st.text_input(labels['Farmer Name'])
     farmer_code = st.text_input(labels['Farmer Code'])
@@ -245,7 +244,6 @@ if submit:
             st.subheader(section)
             for k in keys:
                 st.markdown(f"**{k}**: {data.get(k)}")
-
 st.divider()
 st.header("🔐 Admin Real-Time Access")
 
