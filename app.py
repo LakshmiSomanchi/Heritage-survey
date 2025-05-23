@@ -121,12 +121,12 @@ MINERAL_MIXTURE_BRANDS = ["Herita Vit", "Herita Min", "Other (Specify)"]
 WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
-
 # Form Start
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
-    vlcc_name = st.selectbox(labels['VLCC Name'], VLCC_NAMES)  # VLCC Dropdown
-    hpc_code = st.text_input(labels['HPC/MCC Code'])
+    vlcc_name = st.selectbox(labels['VLCC Name'], VLCC_NAMES)
+    hp
+c_code = st.text_input(labels['HPC/MCC Code'])
     types = st.selectbox(labels['Types'], (labels['HPC'], labels['MCC']))
     farmer_name = st.text_input(labels['Farmer Name'])
     farmer_code = st.text_input(labels['Farmer Code'])
@@ -143,31 +143,29 @@ with st.form("survey_form"):
 
     st.header(labels['Specific Questions'])
     green_fodder = st.selectbox(labels['Green Fodder'], (labels['Yes'], labels['No']))
-    green_fodder_types = st.multiselect(labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS)  # Multiple Select
+    green_fodder_types = st.multiselect(labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS)
     green_fodder_qty = st.number_input(labels['Quantity of Green Fodder'], min_value=0.0)
     dry_fodder = st.selectbox(labels['Dry Fodder'], (labels['Yes'], labels['No']))
-    dry_fodder_types = st.multiselect(labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS)  # Multiple Select
+    dry_fodder_types = st.multiselect(labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS)
     dry_fodder_qty = st.number_input(labels['Quantity of Dry Fodder'], min_value=0.0)
 
-    pellet_feed = st.selectbox(labels['Pellet Feed'], (labels['Yes'], labels['No']))  # Renamed
-    pellet_feed_brands = st.multiselect(labels['Pellet Feed Brand'], PELLET_FEED_BRANDS)  # Multiple Select
+    pellet_feed = st.selectbox(labels['Pellet Feed'], (labels['Yes'], labels['No']))
+    pellet_feed_brands = st.multiselect(labels['Pellet Feed Brand'], PELLET_FEED_BRANDS)
     pellet_feed_qty = st.number_input(labels['Quantity of Pellet Feed'], min_value=0.0)
 
     mineral_mixture = st.selectbox(labels['Mineral Mixture'], (labels['Yes'], labels['No']))
-    mineral_brand = st.selectbox(labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS)  # Dropdown
+    mineral_brand = st.selectbox(labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS)
     mineral_qty = st.number_input(labels['Quantity of Mineral Mixture'], min_value=0.0)
 
     silage = st.selectbox(labels['Silage'], (labels['Yes'], labels['No']))
     silage_source = st.text_input(labels['Source and Price of Silage'])
     silage_qty = st.number_input(labels['Quantity of Silage'], min_value=0.0)
 
-    water_sources = st.multiselect(labels['Source of Water'], WATER_SOURCE_OPTIONS)  # Multiple Select
-
-    surveyor_name = st.selectbox(labels['Name of Surveyor'], SURVEYOR_NAMES)  # Dropdown
+    water_sources = st.multiselect(labels['Source of Water'], WATER_SOURCE_OPTIONS)
+    surveyor_name = st.selectbox(labels['Name of Surveyor'], SURVEYOR_NAMES)
     visit_date = st.date_input(labels['Date of Visit'])
-    submit = st.form_submit_button(labels['Submit'])
+
     # Photo Upload - placed before submit and uses a unique key
-      # Photo Upload - placed before submit and uses a unique key
     st.subheader("Upload Farm Photo")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
@@ -247,7 +245,6 @@ if submit:
             st.subheader(section)
             for k in keys:
                 st.markdown(f"**{k}**: {data.get(k)}")
-
 
 st.divider()
 st.header("🔐 Admin Real-Time Access")
