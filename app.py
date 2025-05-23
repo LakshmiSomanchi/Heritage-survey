@@ -169,6 +169,9 @@ with st.form("survey_form"):
     st.subheader("Upload Farm Photo")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
 
+    st.subheader("Upload Farm Photo")
+    farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"])
+
 # Form submission starts here
     submit = st.form_submit_button(labels['Submit'])
 
