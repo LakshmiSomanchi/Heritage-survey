@@ -8,12 +8,8 @@ SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 # Streamlit Page Config
-st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
+st.set_page_config(page_title="Ksheersagar 2.0 Dairy Survey", page_icon="🐄", layout="centered")
 
-# --- Language Translations ---
-# Define your translations here.
-# I've added placeholders for Hindi and Telugu for the new questions.
-# You'll need to fill in the actual translations for these.
 dict_translations = {
     "English": {
         "Farmer Profile": "Farmer Profile",
