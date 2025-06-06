@@ -321,8 +321,9 @@ previous_answers = {}
 for idx, q in enumerate(BASELINE_QUESTIONS):
     # Check for a custom section header
     if "section" in q:
-        st.subheader(labels[q["section"]])
-        continue # Skip to the next question
+    section_title = labels.get(q["section"], q["section"])
+    st.subheader(section_title)
+    continue
 
     # Check for conditional display
     display_question = True
