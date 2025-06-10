@@ -17,6 +17,12 @@ os.makedirs(DRAFT_DIR, exist_ok=True)
 # Streamlit Page Config - THIS MUST BE THE FIRST STREAMLIT COMMAND
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
+# --- Initialize core session state variables at the very top ---
+if 'initialized' not in st.session_state:
+    st.session_state.initialized = False # Will be set to True after initial load/defaults
+if 'last_saved_time_persistent' not in st.session_state:
+    st.session_state.last_saved_time_persistent = None
+
 
 # Multilingual Translations
 dict_translations = {
@@ -95,7 +101,7 @@ dict_translations = {
 }
 
 # --- Heritage Specific Data (as before) ---
-VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLI","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
+VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLE","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
 "3045-ROMPICHERLA","3046-BANDAKINDAPALLE","3047-MARASANIVARIPALLI",
 "3024-DEVALAVARIPALLE","3002-KHAMBAMMITTAPALLE","3004-MARRIMAKULAPALLE","3005-NAGARIMADUGUVARIPALLE","3006-KOORAPARTHIVARIPALLE","3008-IRRIVANDLAPALLE","3009-PATHEGADA (U.I)","3011-PULICHERLA","3013-GUDAREVUPALLE","3014-ENUMALAVARIPALLE","3015-MUNTHAVANDLAPALLE","3016-REGALLU",
 "3018-REDDIVARIPALLE","3019-MAJJIGAVANDLAPALLE","3020-VENKATADASARAPALLE","3021-BURRAVANDLAPALLE","3022-KODEKAMBAMVARIPALLI","3023-SEENAPPAGARIPALLE","3071-KOTAKADAPALLE","3072-KOTAKADAPALLE","3074-PODALAKUNTALAPALLE","3075-SOMALA","3076-SOMALA","3077-SOMALA","3078-CHINNAGOTTIGALLU","3079-MATLOLLPALLAI",
@@ -135,7 +141,7 @@ FARMER_DATA = {
     "0071": "V.REDDY RANI", "0072": "B.GANGULU", "0074": "K.YASHODHA",
     "0075": "D.RAMADEVI", "0076": "H.RAMADEVI", "0077": "R.RAMADEVI",
     "0078": "B.RANI", "0079": "K.VENKATAIAH", "0080": "P.SREERAM REDDY",
-    "0081": "M.RAMADEVI", "0082": "M.PENCHALAMAIAH", "0083": "M.RATHNAMMA",
+    "0081": "M.RAMADEVI", "0082": "M.PENCHALAMAIAH", "0083": "M.M.RATHNAMMA", # Corrected from M.RATHNAMMA
     "0084": "N.GANGULU", "0085": "N.RAMALINGAM", "0086": "N.RAMADEVI",
     "0087": "V.CHANDRAIAH", "0088": "N.SRINIVASULU", "0089": "M.RAMADEVI",
     "0090": "B.MURALI", "0091": "S.CHANDRAIAH", "0092": "S.SABEEN TAJ",
@@ -209,7 +215,7 @@ WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
 
-# Define initial_values_defaults at the global scope
+# Define initial_values_defaults at the global scope, before any functions use it
 initial_values_defaults = {
     'lang_select': "English",
     'vlcc_name': VLCC_NAMES[0],
@@ -285,7 +291,7 @@ def load_draft():
                 else:
                     st.session_state[key] = value
             
-            # Reset the internal _types and _gender if language changes (only on load)
+            # Reset types/gender based on current language if mismatch (only on load)
             current_labels = dict_translations.get(st.session_state.get('lang_select', 'English'), dict_translations['English'])
             if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
                 st.session_state['types'] = current_labels['HPC'] # Default to HPC for current language
@@ -302,6 +308,7 @@ def load_draft():
             if 'silage' in st.session_state and st.session_state['silage'] not in (current_labels['Yes'], current_labels['No']):
                 st.session_state['silage'] = current_labels['Yes']
 
+
             st.toast("Draft loaded successfully!")
             return True
         except Exception as e:
@@ -311,13 +318,12 @@ def load_draft():
 
 # Initialize session state with default values, or load from draft
 # This runs once per fresh session (new browser tab or server restart)
-if 'initialized' not in st.session_state:
-    st.session_state.initialized = True
+if st.session_state.initialized is False: # Check against False explicitly
+    st.session_state.initialized = True # Set to True once initial load/defaults are handled
     if not load_draft(): # Try to load existing draft
         # If no draft or error loading, set initial defaults
         for key, default_value in initial_values_defaults.items():
             st.session_state[key] = default_value
-        st.session_state.last_saved_time_persistent = None # For persistent display
 
 
 # Language Selection is outside the form to allow language change without issues
@@ -575,6 +581,8 @@ with st.form("survey_form"):
 
 # After the form, ensure that any changes made to widgets are reflected in the persistent draft.
 # This logic will run on every rerun, and `save_draft()` will only write if there's a difference.
+# This check for 'initialized' ensures the first time the app runs and initializes session state,
+# it doesn't immediately try to save an empty state as a draft.
 if st.session_state.initialized: # Ensure initial setup is done before saving
     # Compare current state with the last saved state to decide if a save is needed
     current_form_values = {key: st.session_state[key] for key in initial_values_defaults.keys()}
@@ -658,7 +666,7 @@ if submit_button:
     st.success("📈 Survey Submitted and Saved!")
 
     # Clear session state data and the draft file after successful submission to clear the form
-    for key, default_value in initial_values_defaults.items(): # Correctly use initial_values_defaults here
+    for key, default_value in initial_values_defaults.items():
         if key in st.session_state:
             st.session_state[key] = default_value
     st.session_state.last_saved_time_persistent = None # Reset auto-save timestamp
