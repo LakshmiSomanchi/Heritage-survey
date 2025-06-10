@@ -209,6 +209,43 @@ WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
 
+# Define initial_values_defaults at the global scope
+initial_values_defaults = {
+    'lang_select': "English",
+    'vlcc_name': VLCC_NAMES[0],
+    'hpc_code': '',
+    'types': "HPC", # Assuming default is HPC for initial language
+    'farmer_name': FARMER_NAMES[0],
+    'farmer_code': FARMER_CODES[0],
+    'gender': "Male", # Assuming default is Male for initial language
+    'cows': 0,
+    'cattle_in_milk': 0,
+    'calves': 0,
+    'desi_cows': 0,
+    'crossbreed_cows': 0,
+    'buffalo': 0,
+    'milk_production': 0.0,
+    'green_fodder': "Yes", # Assuming default is Yes for initial language
+    'green_fodder_types': [],
+    'green_fodder_qty': 0.0,
+    'dry_fodder': "Yes", # Assuming default is Yes for initial language
+    'dry_fodder_types': [],
+    'dry_fodder_qty': 0.0,
+    'pellet_feed': "Yes", # Assuming default is Yes for initial language
+    'pellet_feed_brands': [],
+    'pellet_feed_qty': 0.0,
+    'mineral_mixture': "Yes", # Assuming default is Yes for initial language
+    'mineral_brand': MINERAL_MIXTURE_BRANDS[0],
+    'mineral_qty': 0.0,
+    'silage': "Yes", # Assuming default is Yes for initial language
+    'silage_source': '',
+    'silage_qty': 0.0,
+    'water_sources': [],
+    'surveyor_name': SURVEYOR_NAMES[0],
+    'visit_date': datetime.date.today() # Store date object directly for date_input
+}
+
+
 # Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
@@ -278,40 +315,6 @@ if 'initialized' not in st.session_state:
     st.session_state.initialized = True
     if not load_draft(): # Try to load existing draft
         # If no draft or error loading, set initial defaults
-        initial_values_defaults = {
-            'lang_select': "English",
-            'vlcc_name': VLCC_NAMES[0],
-            'hpc_code': '',
-            'types': "HPC", # Assuming default is HPC for initial language
-            'farmer_name': FARMER_NAMES[0],
-            'farmer_code': FARMER_CODES[0],
-            'gender': "Male", # Assuming default is Male for initial language
-            'cows': 0,
-            'cattle_in_milk': 0,
-            'calves': 0,
-            'desi_cows': 0,
-            'crossbreed_cows': 0,
-            'buffalo': 0,
-            'milk_production': 0.0,
-            'green_fodder': "Yes", # Assuming default is Yes for initial language
-            'green_fodder_types': [],
-            'green_fodder_qty': 0.0,
-            'dry_fodder': "Yes", # Assuming default is Yes for initial language
-            'dry_fodder_types': [],
-            'dry_fodder_qty': 0.0,
-            'pellet_feed': "Yes", # Assuming default is Yes for initial language
-            'pellet_feed_brands': [],
-            'pellet_feed_qty': 0.0,
-            'mineral_mixture': "Yes", # Assuming default is Yes for initial language
-            'mineral_brand': MINERAL_MIXTURE_BRANDS[0],
-            'mineral_qty': 0.0,
-            'silage': "Yes", # Assuming default is Yes for initial language
-            'silage_source': '',
-            'silage_qty': 0.0,
-            'water_sources': [],
-            'surveyor_name': SURVEYOR_NAMES[0],
-            'visit_date': datetime.date.today()
-        }
         for key, default_value in initial_values_defaults.items():
             st.session_state[key] = default_value
         st.session_state.last_saved_time_persistent = None # For persistent display
@@ -655,7 +658,7 @@ if submit_button:
     st.success("📈 Survey Submitted and Saved!")
 
     # Clear session state data and the draft file after successful submission to clear the form
-    for key, default_value in initial_values_defaults.items(): # Use initial_values_defaults for reset
+    for key, default_value in initial_values_defaults.items(): # Correctly use initial_values_defaults here
         if key in st.session_state:
             st.session_state[key] = default_value
     st.session_state.last_saved_time_persistent = None # Reset auto-save timestamp
