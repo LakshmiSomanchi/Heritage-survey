@@ -4,10 +4,15 @@ import streamlit as st
 import pandas as pd
 import datetime
 import os
+import json # To save/load session state as JSON
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
+
+# Define a directory for auto-saved drafts
+DRAFT_DIR = os.path.join(SAVE_DIR, 'drafts')
+os.makedirs(DRAFT_DIR, exist_ok=True)
 
 # Multilingual Translations
 dict_translations = {
@@ -35,7 +40,7 @@ dict_translations = {
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV',
         'Auto-saved!': 'Auto-saved! You can resume filling the form even if you refresh or lose internet temporarily.'
     },
-    'Hindi': {  
+    'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
         'HPC/MCC Code': 'एचपीसी/एमसीसी कोड', 'Types': 'प्रकार', 'HPC': 'एचपीसी', 'MCC': 'एमसीसी',
         'Farmer Name': 'किसान का नाम', 'Farmer Code': 'किसान कोड/दूधदाता आईडी', 'Gender': 'लिंग',
@@ -59,7 +64,7 @@ dict_translations = {
         'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें',
         'Auto-saved!': 'स्वतः सहेजा गया! आप फ़ॉर्म भरना जारी रख सकते हैं, भले ही आप ताज़ा करें या अस्थायी रूप से इंटरनेट खो दें।'
     },
-    'Telugu': {  
+    'Telugu': {
         'Language': 'భాష', 'Farmer Profile': 'రైతు వివరాలు', 'VLCC Name': 'VLCC పేరు',
         'HPC/MCC Code': 'HPC/MCC కోడ్', 'Types': 'రకం', 'HPC': 'హెచ్‌పిసి', 'MCC': 'ఎంసిసి',
         'Farmer Name': 'రైతు పేరు', 'Farmer Code': 'రైతు కోడ్ / పోరర్ ఐడి', 'Gender': 'లింగం',
@@ -88,7 +93,7 @@ dict_translations = {
 # Streamlit Page Config
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
-# --- Heritage Specific Data ---
+# --- Heritage Specific Data (as before) ---
 VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLI","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
 "3045-ROMPICHERLA","3046-BANDAKINDAPALLE","3047-MARASANIVARIPALLI",
 "3024-DEVALAVARIPALLE","3002-KHAMBAMMITTAPALLE","3004-MARRIMAKULAPALLE","3005-NAGARIMADUGUVARIPALLE","3006-KOORAPARTHIVARIPALLE","3008-IRRIVANDLAPALLE","3009-PATHEGADA (U.I)","3011-PULICHERLA","3013-GUDAREVUPALLE","3014-ENUMALAVARIPALLE","3015-MUNTHAVANDLAPALLE","3016-REGALLU",
@@ -166,28 +171,28 @@ FARMER_DATA = {
     "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE", "0335": "MATLOLLPALLAI",
     "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
     "0237": "BATTUVARIPALLE", "0417": "ROMPICHERLA", "0414": "BODIPATIVARIPALLE",
-    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE", "0360": "CHICHILIVARIPALLE",
-    "0357": "AKKISANIVARIPALLE", "0394": "SETTIPALLEVANDLAPALLE", "0072": "VAGALLA",
-    "0056": "LEMATIVARIPALLE", "0108": "KONDAREDDIGARIPALLE","0016": "ROMPICHERLA",
-    "0030": "MELLAVARIPALLE", "0197": "BASIREDDIGARIPALLE", "0173": "MORAVAPALLE",
-    "0221": "KURABAPALLE", "0130": "PATHAKURVAPALLE", "0165": "AGRAHARAM",
-    "0151": "BONAMVARIPALLE", "0649": "PILER", "0645": "NADIMPALLE",
-    "0643": "SAVVALAVARIPALLE", "0636": "KURAPATHIVARIPALLE", "0689": "VANKAVODDIPALLE",
-    "0688": "BADDALAVARIPALLI H.W.","0685": "NAGARIMADUGUVARIPALLE", "0668": "KANDUR",
-    "0663": "DEVALAVARIPALLE", "0585": "SRIVARAMPURAM", "0575": "RAMREDDIGARIPALLE",
-    "0572": "LOKAVARIPALLE", "0613": "NAGAVANDLAPALLI", "0611": "BODIPATIVARIPALLE",
-    "0610": "ROMPICHERLA", "0604": "NAGAVANDLAPALLI", "0782": "CHICHILIVARIPALLE",
-    "0770": "DEVALAVARIPALLE", "0767": "PEDDAGOTTIGALLU", "0764": "K.V.PALLE",
-    "0762": "JAGADAMVARIPALLE", "0753": "BOLLINANIVARIPALLI", "0813": "ROMPICHERLA",
-    "0811": "ALAKAMVARIPALLE", "0809": "KOTAKADAPALLE", "0794": "PEDDAGOTTIGALLU",
-    "0793": "DIGUVAJUPALLI", "0789": "SODUM", "0788": "BURUJUPALLE",
-    "0786": "PEDDAGOTTIGALLU CROSS", "0719": "NADIMPALLE", "0718": "PEDDAGOTTIGALLU",
-    "0714": "BODIPATIVARIPALLE", "0709": "REDDIVARIPALLE", "0700": "RAMIREDDIGARIPALLE",
-    "0721": "SODUM", "0747": "KURAVAPALLE", "0745": "ETUKURIVARIPALLE",
-    "0743": "ROMPICHERLA", "0736": "VOOTUPALLE", "0732":"ROMPICHERLA",
-    "0727": "DUSSAVANDLA PALLI", "0726": "SAVVALAVARIPALLE", "0508": "MUREVANDLAPALLE",
-    "0490": "MATAMPALLE", "0551": "TALUPULA", "0512": "BONAMVARIPALLE",
-    "0473": "KURAVAPALLE", "0477": "VARANASIVARIPALLE"
+    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE","0360-CHICHILIVARIPALLE",
+    "0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA",
+    "0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
+    "0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
+    "0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
+    "0151":"BONAMVARIPALLE", "0649":"PILER", "0645":"NADIMPALLE",
+    "0643":"SAVVALAVARIPALLE", "0636":"KURAPATHIVARIPALLE", "0689":"VANKAVODDIPALLE",
+    "0688":"BADDALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
+    "0663":"DEVALAVARIPALLE", "0585":"SRIVARAMPURAM", "0575":"RAMREDDIGARIPALLE",
+    "0572":"LOKAVARIPALLE", "0613":"NAGAVANDLAPALLI", "0611":"BODIPATIVARIPALLE",
+    "0610":"ROMPICHERLA", "0604":"NAGAVANDLAPALLI", "0782":"CHICHILIVARIPALLE",
+    "0770":"DEVALAVARIPALLE", "0767":"PEDDAGOTTIGALLU", "0764":"K.V.PALLE",
+    "0762":"JAGADAMVARIPALLE", "0753":"BOLLINANIVARIPALLI", "0813":"ROMPICHERLA",
+    "0811":"ALAKAMVARIPALLE", "0809":"KOTAKADAPALLE", "0794":"PEDDAGOTTIGALLU",
+    "0793":"DIGUVAJUPALLI", "0789":"SODUM", "0788":"BURUJUPALLE",
+    "0786":"PEDDAGOTTIGALLU CROSS", "0719":"NADIMPALLE", "0718":"PEDDAGOTTIGALLU",
+    "0714":"BODIPATIVARIPALLE", "0709":"REDDIVARIPALLE", "0700":"RAMIREDDIGARIPALLE",
+    "0721":"SODUM", "0747":"KURAVAPALLE", "0745":"ETUKURIVARIPALLE",
+    "0743":"ROMPICHERLA", "0736":"VOOTUPALLE", "0732":"ROMPICHERLA",
+    "0727":"DUSSAVANDLA PALLI", "0726":"SAVVALAVARIPALLE", "0508":"MUREVANDLAPALLE",
+    "0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
+    "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
 }
 
 # Create lists for dropdowns
@@ -203,62 +208,109 @@ WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 # -----------------------------
 
-# Initialize session state for all form fields and auto-save indicators
-# This is crucial for retaining state across reruns and allowing auto-save.
-# Initialize with default values.
-initial_values = {
-    'lang_select': "English",
-    'vlcc_name': VLCC_NAMES[0],
-    'hpc_code': '',
-    'types': "HPC", # Assuming default is HPC for initial language
-    'farmer_name': FARMER_NAMES[0],
-    'farmer_code': FARMER_CODES[0],
-    'gender': "Male", # Assuming default is Male for initial language
-    'cows': 0,
-    'cattle_in_milk': 0,
-    'calves': 0,
-    'desi_cows': 0,
-    'crossbreed_cows': 0,
-    'buffalo': 0,
-    'milk_production': 0.0,
-    'green_fodder': "Yes", # Assuming default is Yes for initial language
-    'green_fodder_types': [],
-    'green_fodder_qty': 0.0,
-    'dry_fodder': "Yes", # Assuming default is Yes for initial language
-    'dry_fodder_types': [],
-    'dry_fodder_qty': 0.0,
-    'pellet_feed': "Yes", # Assuming default is Yes for initial language
-    'pellet_feed_brands': [],
-    'pellet_feed_qty': 0.0,
-    'mineral_mixture': "Yes", # Assuming default is Yes for initial language
-    'mineral_brand': MINERAL_MIXTURE_BRANDS[0],
-    'mineral_qty': 0.0,
-    'silage': "Yes", # Assuming default is Yes for initial language
-    'silage_source': '',
-    'silage_qty': 0.0,
-    'water_sources': [],
-    'surveyor_name': SURVEYOR_NAMES[0],
-    'visit_date': datetime.date.today() # Store date object directly for date_input
-}
+# Function to save current form data to a draft file
+def save_draft():
+    # Use a unique identifier for the draft, e.g., a combination of user IP (if accessible) or just a fixed one for a single user context.
+    # For a simple online GitHub environment, a fixed file name is okay if it's a single user testing.
+    # For multi-user, a unique session ID would be needed (e.g., from `st.experimental_get_query_params()` or a random UUID).
+    draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+    
+    # Collect all current session state items related to the form
+    draft_data = {key: st.session_state[key] for key in st.session_state.keys() if key not in ['FormSubmitter:survey_form-Submit', 'farm_photo_uploader']}
 
-# Apply initial values to st.session_state if not already set
-for key, default_value in initial_values.items():
-    if key not in st.session_state:
-        st.session_state[key] = default_value
+    # Handle date objects for JSON serialization
+    if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
+        draft_data['visit_date'] = draft_data['visit_date'].isoformat()
+    
+    try:
+        with open(draft_filename, 'w') as f:
+            json.dump(draft_data, f, indent=4)
+        st.session_state.last_saved_time_persistent = datetime.datetime.now().strftime("%H:%M:%S")
+        st.toast("Draft auto-saved successfully!")
+    except Exception as e:
+        st.error(f"Error saving draft: {e}")
 
-# Special handling for 'types' and 'gender' based on initial language default
-# This ensures that if the language changes, these defaults are re-evaluated
-if 'types' not in st.session_state or st.session_state['types'] not in (dict_translations[st.session_state.lang_select]['HPC'], dict_translations[st.session_state.lang_select]['MCC']):
-    st.session_state['types'] = dict_translations[st.session_state.lang_select]['HPC']
-if 'gender' not in st.session_state or st.session_state['gender'] not in (dict_translations[st.session_state.lang_select]['Male'], dict_translations[st.session_state.lang_select]['Female']):
-    st.session_state['gender'] = dict_translations[st.session_state.lang_select]['Male']
-if 'green_fodder' not in st.session_state or st.session_state['green_fodder'] not in (dict_translations[st.session_state.lang_select]['Yes'], dict_translations[st.session_state.lang_select]['No']):
-    st.session_state['green_fodder'] = dict_translations[st.session_state.lang_select]['Yes']
-# ... and so on for other Yes/No selectboxes if needed
+# Function to load draft data into session state
+def load_draft():
+    draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+    if os.path.exists(draft_filename):
+        try:
+            with open(draft_filename, 'r') as f:
+                loaded_data = json.load(f)
+            
+            # Update st.session_state with loaded data
+            for key, value in loaded_data.items():
+                if key == 'visit_date' and isinstance(value, str):
+                    try:
+                        st.session_state[key] = datetime.date.fromisoformat(value)
+                    except ValueError:
+                        st.session_state[key] = datetime.date.today() # Fallback
+                else:
+                    st.session_state[key] = value
+            
+            # Reset the internal _types and _gender if language changes
+            if 'lang_select' in st.session_state:
+                current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
+                if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
+                    st.session_state['types'] = current_labels['HPC'] # Default to HPC for current language
+                if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
+                    st.session_state['gender'] = current_labels['Male'] # Default to Male for current language
+                
+            st.toast("Draft loaded successfully!")
+            return True
+        except Exception as e:
+            st.error(f"Error loading draft: {e}")
+            return False
+    return False
+
+# Initialize session state with default values, or load from draft
+# This runs once per fresh session (new browser tab or server restart)
+if 'initialized' not in st.session_state:
+    st.session_state.initialized = True
+    if not load_draft(): # Try to load existing draft
+        # If no draft or error loading, set initial defaults
+        initial_values = {
+            'lang_select': "English",
+            'vlcc_name': VLCC_NAMES[0],
+            'hpc_code': '',
+            'types': "HPC", # Assuming default is HPC for initial language
+            'farmer_name': FARMER_NAMES[0],
+            'farmer_code': FARMER_CODES[0],
+            'gender': "Male", # Assuming default is Male for initial language
+            'cows': 0,
+            'cattle_in_milk': 0,
+            'calves': 0,
+            'desi_cows': 0,
+            'crossbreed_cows': 0,
+            'buffalo': 0,
+            'milk_production': 0.0,
+            'green_fodder': "Yes", # Assuming default is Yes for initial language
+            'green_fodder_types': [],
+            'green_fodder_qty': 0.0,
+            'dry_fodder': "Yes", # Assuming default is Yes for initial language
+            'dry_fodder_types': [],
+            'dry_fodder_qty': 0.0,
+            'pellet_feed': "Yes", # Assuming default is Yes for initial language
+            'pellet_feed_brands': [],
+            'pellet_feed_qty': 0.0,
+            'mineral_mixture': "Yes", # Assuming default is Yes for initial language
+            'mineral_brand': MINERAL_MIXTURE_BRANDS[0],
+            'mineral_qty': 0.0,
+            'silage': "Yes", # Assuming default is Yes for initial language
+            'silage_source': '',
+            'silage_qty': 0.0,
+            'water_sources': [],
+            'surveyor_name': SURVEYOR_NAMES[0],
+            'visit_date': datetime.date.today()
+        }
+        for key, default_value in initial_values.items():
+            st.session_state[key] = default_value
+        st.session_state.last_saved_time_persistent = None # For persistent display
 
 
-if 'last_saved_time' not in st.session_state:
-    st.session_state.last_saved_time = None
+# Streamlit Page Config (needs to be before any st. calls that set page config)
+st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
+
 
 # Language Selection is outside the form to allow language change without issues
 initial_lang_options = ("English", "Hindi", "Telugu")
@@ -267,7 +319,7 @@ lang = st.selectbox(
     "Language / भाषा / భాష",
     initial_lang_options,
     index=initial_lang_index,
-    key="lang_select" # Only key needed, on_change will be handled by Streamlit's reruns
+    key="lang_select", # Only key needed, on_change will be handled by Streamlit's reruns
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
@@ -275,26 +327,30 @@ labels = dict_translations.get(lang, dict_translations['English'])
 st.title(labels['Farmer Profile'])
 
 # Display auto-save status. This will update on any user interaction causing a rerun.
-if st.session_state.last_saved_time:
-    st.info(f"{labels['Auto-saved!']} Last saved: {st.session_state.last_saved_time}")
+if st.session_state.last_saved_time_persistent:
+    st.info(f"{labels['Auto-saved!']} Last saved: {st.session_state.last_saved_time_persistent}")
 
 # Form Start
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
     
+    # All widgets use st.session_state for their default/initial value
+    # When a widget value changes, Streamlit automatically updates st.session_state[key] on rerun.
+    # No explicit on_change callbacks are needed for individual widgets within the form.
+
     # VLCC Name
     vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.vlcc_name) if st.session_state.vlcc_name in VLCC_NAMES else 0
     vlcc_name = st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
         index=vlcc_name_default_idx,
-        key="vlcc_name" # No on_change here
+        key="vlcc_name"
     )
     
     # HPC/MCC Code
     hpc_code = st.text_input(
         labels['HPC/MCC Code'],
         value=st.session_state.hpc_code,
-        key="hpc_code" # No on_change here
+        key="hpc_code"
     )
     
     # Types
@@ -303,23 +359,23 @@ with st.form("survey_form"):
     types = st.selectbox(
         labels['Types'], types_options,
         index=types_default_idx,
-        key="types" # No on_change here
+        key="types"
     )
     
-    # Dropdown for Farmer Name (auto-save is implicit via session_state)
+    # Dropdown for Farmer Name
     farmer_name_default_idx = FARMER_NAMES.index(st.session_state.farmer_name) if st.session_state.farmer_name in FARMER_NAMES else 0
     farmer_name = st.selectbox(
         labels['Farmer Name'], options=FARMER_NAMES,
         index=farmer_name_default_idx,
-        key="farmer_name" # No on_change here
+        key="farmer_name"
     )
     
-    # Dropdown for Farmer Code (auto-save is implicit via session_state)
+    # Dropdown for Farmer Code
     farmer_code_default_idx = FARMER_CODES.index(st.session_state.farmer_code) if st.session_state.farmer_code in FARMER_CODES else 0
     farmer_code = st.selectbox(
         labels['Farmer Code'], options=FARMER_CODES,
         index=farmer_code_default_idx,
-        key="farmer_code" # No on_change here
+        key="farmer_code"
     )
     
     # Gender
@@ -328,7 +384,7 @@ with st.form("survey_form"):
     gender = st.selectbox(
         labels['Gender'], gender_options,
         index=gender_default_idx,
-        key="gender" # No on_change here
+        key="gender"
     )
 
     st.header(labels['Farm Details'])
@@ -336,43 +392,43 @@ with st.form("survey_form"):
     cows = st.number_input(
         labels['Number of Cows'], min_value=0,
         value=st.session_state.cows,
-        key="cows" # No on_change here
+        key="cows"
     )
     # No. of Cattle in Milk
     cattle_in_milk = st.number_input(
         labels['No. of Cattle in Milk'], min_value=0,
         value=st.session_state.cattle_in_milk,
-        key="cattle_in_milk" # No on_change here
+        key="cattle_in_milk"
     )
     # No. of Calves/Heifers
     calves = st.number_input(
         labels['No. of Calves/Heifers'], min_value=0,
         value=st.session_state.calves,
-        key="calves" # No on_change here
+        key="calves"
     )
     # No. of Desi cows
     desi_cows = st.number_input(
         labels['No. of Desi cows'], min_value=0,
         value=st.session_state.desi_cows,
-        key="desi_cows" # No on_change here
+        key="desi_cows"
     )
     # No. of Cross breed cows
     crossbreed_cows = st.number_input(
         labels['No. of Cross breed cows'], min_value=0,
         value=st.session_state.crossbreed_cows,
-        key="crossbreed_cows" # No on_change here
+        key="crossbreed_cows"
     )
     # No. of Buffalo
     buffalo = st.number_input(
         labels['No. of Buffalo'], min_value=0,
         value=st.session_state.buffalo,
-        key="buffalo" # No on_change here
+        key="buffalo"
     )
     # Milk Production
     milk_production = st.number_input(
         labels['Milk Production'], min_value=0.0,
         value=float(st.session_state.milk_production),
-        key="milk_production" # No on_change here
+        key="milk_production"
     )
 
     st.header(labels['Specific Questions'])
@@ -382,19 +438,19 @@ with st.form("survey_form"):
     green_fodder = st.selectbox(
         labels['Green Fodder'], green_fodder_options,
         index=green_fodder_default_idx,
-        key="green_fodder" # No on_change here
+        key="green_fodder"
     )
     # Type of Green Fodder
     green_fodder_types = st.multiselect(
         labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
         default=st.session_state.green_fodder_types,
-        key="green_fodder_types" # No on_change here
+        key="green_fodder_types"
     )
     # Quantity of Green Fodder
     green_fodder_qty = st.number_input(
         labels['Quantity of Green Fodder'], min_value=0.0,
         value=float(st.session_state.green_fodder_qty),
-        key="green_fodder_qty" # No on_change here
+        key="green_fodder_qty"
     )
     # Dry Fodder
     dry_fodder_options = (labels['Yes'], labels['No'])
@@ -402,19 +458,19 @@ with st.form("survey_form"):
     dry_fodder = st.selectbox(
         labels['Dry Fodder'], dry_fodder_options,
         index=dry_fodder_default_idx,
-        key="dry_fodder" # No on_change here
+        key="dry_fodder"
     )
     # Type of Dry Fodder
     dry_fodder_types = st.multiselect(
         labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
         default=st.session_state.dry_fodder_types,
-        key="dry_fodder_types" # No on_change here
+        key="dry_fodder_types"
     )
     # Quantity of Dry Fodder
     dry_fodder_qty = st.number_input(
         labels['Quantity of Dry Fodder'], min_value=0.0,
         value=float(st.session_state.dry_fodder_qty),
-        key="dry_fodder_qty" # No on_change here
+        key="dry_fodder_qty"
     )
 
     # Pellet Feed
@@ -423,19 +479,19 @@ with st.form("survey_form"):
     pellet_feed = st.selectbox(
         labels['Pellet Feed'], pellet_feed_options,
         index=pellet_feed_default_idx,
-        key="pellet_feed" # No on_change here
+        key="pellet_feed"
     )
     # Pellet Feed Brand
     pellet_feed_brands = st.multiselect(
         labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
         default=st.session_state.pellet_feed_brands,
-        key="pellet_feed_brands" # No on_change here
+        key="pellet_feed_brands"
     )
     # Quantity of Pellet Feed
     pellet_feed_qty = st.number_input(
         labels['Quantity of Pellet Feed'], min_value=0.0,
         value=float(st.session_state.pellet_feed_qty),
-        key="pellet_feed_qty" # No on_change here
+        key="pellet_feed_qty"
     )
 
     # Mineral Mixture
@@ -444,20 +500,20 @@ with st.form("survey_form"):
     mineral_mixture = st.selectbox(
         labels['Mineral Mixture'], mineral_mixture_options,
         index=mineral_mixture_default_idx,
-        key="mineral_mixture" # No on_change here
+        key="mineral_mixture"
     )
     # Mineral Mixture Brand
     mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.mineral_brand) if st.session_state.mineral_brand in MINERAL_MIXTURE_BRANDS else 0
     mineral_brand = st.selectbox(
         labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
         index=mineral_brand_default_idx,
-        key="mineral_brand" # No on_change here
+        key="mineral_brand"
     )
     # Quantity of Mineral Mixture
     mineral_qty = st.number_input(
         labels['Quantity of Mineral Mixture'], min_value=0.0,
         value=float(st.session_state.mineral_qty),
-        key="mineral_qty" # No on_change here
+        key="mineral_qty"
     )
 
     # Silage
@@ -466,40 +522,39 @@ with st.form("survey_form"):
     silage = st.selectbox(
         labels['Silage'], silage_options,
         index=silage_default_idx,
-        key="silage" # No on_change here
+        key="silage"
     )
     # Source and Price of Silage
     silage_source = st.text_input(
         labels['Source and Price of Silage'],
         value=st.session_state.silage_source,
-        key="silage_source" # No on_change here
+        key="silage_source"
     )
     # Quantity of Silage
     silage_qty = st.number_input(
         labels['Quantity of Silage'], min_value=0.0,
         value=float(st.session_state.silage_qty),
-        key="silage_qty" # No on_change here
+        key="silage_qty"
     )
 
     # Source of Water
     water_sources = st.multiselect(
         labels['Source of Water'], WATER_SOURCE_OPTIONS,
         default=st.session_state.water_sources,
-        key="water_sources" # No on_change here
+        key="water_sources"
     )
     # Name of Surveyor
     surveyor_name_default_idx = SURVEYOR_NAMES.index(st.session_state.surveyor_name) if st.session_state.surveyor_name in SURVEYOR_NAMES else 0
     surveyor_name = st.selectbox(
         labels['Name of Surveyor'], SURVEYOR_NAMES,
         index=surveyor_name_default_idx,
-        key="surveyor_name" # No on_change here
+        key="surveyor_name"
     )
     # Date of Visit
-    # Date input value is a date object, so we set default to date object.
     visit_date = st.date_input(
         labels['Date of Visit'],
-        value=st.session_state.visit_date, # This should be a date object
-        key="visit_date" # No on_change here
+        value=st.session_state.visit_date,
+        key="visit_date"
     )
 
     # Photo Upload - placed before submit and uses a unique key
@@ -507,11 +562,44 @@ with st.form("survey_form"):
     st.info("Note: Uploaded photos are not auto-saved across sessions/reloads. Please re-upload if you refresh the page before final submission.")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
-    # The submit button is the *only* widget inside st.form that should have a callback
-    submit = st.form_submit_button(labels['Submit'])
+    # The submit button is the *only* widget inside st.form that should have a callback IF it needs one.
+    # Its primary function is to trigger the form submission.
+    submit_button = st.form_submit_button(labels['Submit'])
 
-# Process submission (this block runs after the form is submitted)
-if submit:
+# After the form, check if any widget value changed (this will cause a rerun)
+# and then trigger a draft save. This captures changes without needing on_change callbacks inside form.
+# This runs after any interaction with a widget that causes a rerun.
+if st.session_state.initialized: # Ensure initial setup is done before saving
+    # Check if any relevant session state key has changed
+    current_form_values = {key: st.session_state[key] for key in initial_values.keys()}
+    # Convert date object to string for comparison if not already a string in session state
+    if isinstance(current_form_values.get('visit_date'), datetime.date):
+        current_form_values['visit_date'] = current_form_values['visit_date'].isoformat()
+
+    # Load the last saved draft data for comparison
+    # This might be slightly inefficient, but it's crucial for robustness in this auto-save model.
+    draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+    last_saved_draft_data = {}
+    if os.path.exists(draft_filename):
+        try:
+            with open(draft_filename, 'r') as f:
+                last_saved_draft_data = json.load(f)
+            # Convert visit_date back to date object for proper comparison if necessary
+            if 'visit_date' in last_saved_draft_data and isinstance(last_saved_draft_data['visit_date'], str):
+                try:
+                    last_saved_draft_data['visit_date'] = datetime.date.fromisoformat(last_saved_draft_data['visit_date'])
+                except ValueError:
+                    pass # Keep as string if invalid, comparison will still work
+        except Exception:
+            pass # Ignore errors, assume empty if file is corrupt
+
+    # Only save if there's a difference, to avoid excessive writes
+    if current_form_values != last_saved_draft_data:
+        save_draft()
+
+
+# Process submission (this block runs after the form is submitted via submit_button)
+if submit_button:
     now = datetime.datetime.now()
     
     # Collect all data directly from st.session_state which holds the latest values
@@ -566,11 +654,17 @@ if submit:
     df.to_csv(os.path.join(SAVE_DIR, filename), index=False, encoding='utf-8')
     st.success("📈 Survey Submitted and Saved!")
 
-    # Reset session state data after successful submission to clear the form
+    # Clear session state data and the draft file after successful submission to clear the form
     for key, default_value in initial_values.items():
         if key in st.session_state:
             st.session_state[key] = default_value
-    st.session_state.last_saved_time = None # Reset auto-save timestamp
+    st.session_state.last_saved_time_persistent = None # Reset auto-save timestamp
+
+    # Delete the persistent draft file
+    draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+    if os.path.exists(draft_filename):
+        os.remove(draft_filename)
+        st.info("Draft cleared.")
 
 
     with st.expander("🔍 Click to Review Your Submission"):
