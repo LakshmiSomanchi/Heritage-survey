@@ -14,6 +14,10 @@ os.makedirs(SAVE_DIR, exist_ok=True)
 DRAFT_DIR = os.path.join(SAVE_DIR, 'drafts')
 os.makedirs(DRAFT_DIR, exist_ok=True)
 
+# Streamlit Page Config - THIS MUST BE THE FIRST STREAMLIT COMMAND
+st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
+
+
 # Multilingual Translations
 dict_translations = {
     'English': {
@@ -89,9 +93,6 @@ dict_translations = {
         'Auto-saved!': 'ఆటో-సేవ్ చేయబడింది! మీరు రిఫ్రెష్ చేసినా లేదా తాత్కాలికంగా ఇంటర్నెట్ పోయినా ఫారమ్‌ను పూరించడం కొనసాగించవచ్చు.'
     }
 }
-
-# Streamlit Page Config
-st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
 # --- Heritage Specific Data (as before) ---
 VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLI","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
@@ -210,13 +211,12 @@ SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar
 
 # Function to save current form data to a draft file
 def save_draft():
-    # Use a unique identifier for the draft, e.g., a combination of user IP (if accessible) or just a fixed one for a single user context.
-    # For a simple online GitHub environment, a fixed file name is okay if it's a single user testing.
-    # For multi-user, a unique session ID would be needed (e.g., from `st.experimental_get_query_params()` or a random UUID).
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     
     # Collect all current session state items related to the form
-    draft_data = {key: st.session_state[key] for key in st.session_state.keys() if key not in ['FormSubmitter:survey_form-Submit', 'farm_photo_uploader']}
+    # Exclude non-serializable objects and form-specific keys
+    draft_data = {key: st.session_state[key] for key in st.session_state.keys() 
+                  if key not in ['FormSubmitter:survey_form-Submit', 'farm_photo_uploader', 'initialized', 'last_saved_time_persistent']}
 
     # Handle date objects for JSON serialization
     if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
@@ -248,14 +248,23 @@ def load_draft():
                 else:
                     st.session_state[key] = value
             
-            # Reset the internal _types and _gender if language changes
-            if 'lang_select' in st.session_state:
-                current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
-                if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
-                    st.session_state['types'] = current_labels['HPC'] # Default to HPC for current language
-                if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
-                    st.session_state['gender'] = current_labels['Male'] # Default to Male for current language
-                
+            # Reset the internal _types and _gender if language changes (only on load)
+            current_labels = dict_translations.get(st.session_state.get('lang_select', 'English'), dict_translations['English'])
+            if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
+                st.session_state['types'] = current_labels['HPC'] # Default to HPC for current language
+            if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
+                st.session_state['gender'] = current_labels['Male'] # Default to Male for current language
+            if 'green_fodder' in st.session_state and st.session_state['green_fodder'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['green_fodder'] = current_labels['Yes']
+            if 'dry_fodder' in st.session_state and st.session_state['dry_fodder'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['dry_fodder'] = current_labels['Yes']
+            if 'pellet_feed' in st.session_state and st.session_state['pellet_feed'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['pellet_feed'] = current_labels['Yes']
+            if 'mineral_mixture' in st.session_state and st.session_state['mineral_mixture'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['mineral_mixture'] = current_labels['Yes']
+            if 'silage' in st.session_state and st.session_state['silage'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['silage'] = current_labels['Yes']
+
             st.toast("Draft loaded successfully!")
             return True
         except Exception as e:
@@ -269,7 +278,7 @@ if 'initialized' not in st.session_state:
     st.session_state.initialized = True
     if not load_draft(): # Try to load existing draft
         # If no draft or error loading, set initial defaults
-        initial_values = {
+        initial_values_defaults = {
             'lang_select': "English",
             'vlcc_name': VLCC_NAMES[0],
             'hpc_code': '',
@@ -303,13 +312,9 @@ if 'initialized' not in st.session_state:
             'surveyor_name': SURVEYOR_NAMES[0],
             'visit_date': datetime.date.today()
         }
-        for key, default_value in initial_values.items():
+        for key, default_value in initial_values_defaults.items():
             st.session_state[key] = default_value
         st.session_state.last_saved_time_persistent = None # For persistent display
-
-
-# Streamlit Page Config (needs to be before any st. calls that set page config)
-st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
 
 # Language Selection is outside the form to allow language change without issues
@@ -319,7 +324,7 @@ lang = st.selectbox(
     "Language / भाषा / భాష",
     initial_lang_options,
     index=initial_lang_index,
-    key="lang_select", # Only key needed, on_change will be handled by Streamlit's reruns
+    key="lang_select",
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
@@ -562,41 +567,36 @@ with st.form("survey_form"):
     st.info("Note: Uploaded photos are not auto-saved across sessions/reloads. Please re-upload if you refresh the page before final submission.")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
-    # The submit button is the *only* widget inside st.form that should have a callback IF it needs one.
-    # Its primary function is to trigger the form submission.
+    # The submit button
     submit_button = st.form_submit_button(labels['Submit'])
 
-# After the form, check if any widget value changed (this will cause a rerun)
-# and then trigger a draft save. This captures changes without needing on_change callbacks inside form.
-# This runs after any interaction with a widget that causes a rerun.
+# After the form, ensure that any changes made to widgets are reflected in the persistent draft.
+# This logic will run on every rerun, and `save_draft()` will only write if there's a difference.
 if st.session_state.initialized: # Ensure initial setup is done before saving
-    # Check if any relevant session state key has changed
-    current_form_values = {key: st.session_state[key] for key in initial_values.keys()}
-    # Convert date object to string for comparison if not already a string in session state
+    # Compare current state with the last saved state to decide if a save is needed
+    current_form_values = {key: st.session_state[key] for key in initial_values_defaults.keys()}
+    # Convert date object to string for comparison
     if isinstance(current_form_values.get('visit_date'), datetime.date):
         current_form_values['visit_date'] = current_form_values['visit_date'].isoformat()
 
-    # Load the last saved draft data for comparison
-    # This might be slightly inefficient, but it's crucial for robustness in this auto-save model.
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     last_saved_draft_data = {}
     if os.path.exists(draft_filename):
         try:
             with open(draft_filename, 'r') as f:
                 last_saved_draft_data = json.load(f)
-            # Convert visit_date back to date object for proper comparison if necessary
+            # Convert visit_date back to date object for comparison if necessary
             if 'visit_date' in last_saved_draft_data and isinstance(last_saved_draft_data['visit_date'], str):
                 try:
                     last_saved_draft_data['visit_date'] = datetime.date.fromisoformat(last_saved_draft_data['visit_date'])
                 except ValueError:
-                    pass # Keep as string if invalid, comparison will still work
+                    pass
         except Exception:
-            pass # Ignore errors, assume empty if file is corrupt
+            pass
 
     # Only save if there's a difference, to avoid excessive writes
     if current_form_values != last_saved_draft_data:
         save_draft()
-
 
 # Process submission (this block runs after the form is submitted via submit_button)
 if submit_button:
@@ -655,7 +655,7 @@ if submit_button:
     st.success("📈 Survey Submitted and Saved!")
 
     # Clear session state data and the draft file after successful submission to clear the form
-    for key, default_value in initial_values.items():
+    for key, default_value in initial_values_defaults.items(): # Use initial_values_defaults for reset
         if key in st.session_state:
             st.session_state[key] = default_value
     st.session_state.last_saved_time_persistent = None # Reset auto-save timestamp
