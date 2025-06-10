@@ -91,14 +91,32 @@ st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout=
 # Initialize session state for auto-save
 if 'form_data' not in st.session_state:
     st.session_state.form_data = {}
+if 'last_saved_time' not in st.session_state:
+    st.session_state.last_saved_time = None
 
 # Helper function to update session state
-def update_session_state(key, value):
-    st.session_state.form_data[key] = value
+# This function is now generalized to take the key and the value from the widget
+def update_session_state_callback(key):
+    # Retrieve the value directly from st.session_state using the key
+    st.session_state.form_data[key] = st.session_state[key]
     st.session_state.last_saved_time = datetime.datetime.now().strftime("%H:%M:%S")
 
+# Initializing default values for selectboxes to prevent index errors
+# This ensures that even on first run, there's a valid default to select.
+# Initialize direct session state keys for widgets
+if 'lang_select' not in st.session_state:
+    st.session_state.lang_select = "English"
+
 # Language Selection
-lang = st.selectbox("Language / भाषा / భాష", ("English", "Hindi", "Telugu"), key="lang_select", on_change=update_session_state, args=("lang", st.session_state.lang_select))
+# Access the initial selection from session_state for default value
+initial_lang_index = ("English", "Hindi", "Telugu").index(st.session_state.lang_select) if st.session_state.lang_select in ("English", "Hindi", "Telugu") else 0
+lang = st.selectbox(
+    "Language / भाषा / భాష",
+    ("English", "Hindi", "Telugu"),
+    index=initial_lang_index,
+    key="lang_select",
+    on_change=update_session_state_callback, args=("lang_select",) # Pass the key as argument
+)
 labels = dict_translations.get(lang, dict_translations['English'])
 
 # Title
@@ -175,35 +193,35 @@ FARMER_DATA = {
     "2437": "M.ADILAKSHMI", "2421": "M.MUNIREDDY", "2314": "K.CHANDRAIAH",
     "2338": "A.CHANDRAMMA", "2500": "T.VENKATAIAH", "2530": "A.RAMADEVI",
     "2528": "M.SUBRAMANYAM", "2526": "A.GANGAMMA", "2463": "B.SUBBAMMA",
-    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA", "2013": "M.VENKATAIAH",
-    "2083": "R.BHARATHI", "2045": "R.PENCHALAIAH", "2288": "R.BHARATHI",
-    "2272": "R.RAMADEVI", "2186": "K.RAMANAIAH", "2183": "P.SWARNAMMA",
-    "2178": "S.RAMADEVI", "2173": "M.NARAYANAMMA", "2160": "V.K.CHANDRAMMA",
-    "2228": "G.VENKATAIAH", "0296": "B.RAMADEVI", "0335": "M.MUNIREDDY",
-    "0326": "L.MUNIREDDY", "0256": "U.VENKATAIAH", "0245": "B.BHARATHI",
-    "0237": "B.RAMADEVI", "0417": "R.PEDDIREDDY", "0414": "B.BALAKRISHNA",
-    "0441": "B.RAMADEVI", "0440": "V.CHANDRAMMA", "0360": "C.RAMADEVI",
-    "0357": "A.NARAYANA", "0394": "S.RAMADEVI", "0072": "V.SWARNAMMA",
-    "0056": "L.REDDY SEKHAR", "0108": "K.RAMADEVI", "0016": "R.SWARNAMMA",
-    "0030": "M.VENKATAIAH", "0197": "B.RAMADEVI", "0173": "M.CHANDRAMMA",
-    "0221": "K.RAMADEVI", "0130": "P.NARAYANA", "0165": "A.RAMADEVI",
-    "0151": "B.NARAYANAMMA", "0649": "P.RAMADEVI", "0645": "N.RAMADEVI",
-    "0643": "S.RAMADEVI", "0636": "K.RAMADEVI", "0689": "V.RAMADEVI",
-    "0688": "B.SWARNAMMA", "0685": "N.NARAYANAMMA", "0668": "K.RAMADEVI",
-    "0663": "D.PEDDIREDDY", "0585": "S.RAMADEVI", "0575": "R.RAMADEVI",
-    "0572": "L.RAMADEVI", "0613": "N.RAMADEVI", "0611": "B.SWARNAMMA",
-    "0610": "R.PEDDIREDDY", "0604": "N.RAMADEVI", "0782": "C.RAMADEVI",
-    "0770": "D.GANGULU", "0767": "P.MUNIREDDY", "0764": "K.PEDDIREDDY",
-    "0762": "J.RAMADEVI", "0753": "B.RAMADEVI", "0813": "R.RAMADEVI",
-    "0811": "A.GANGAMMA", "0809": "K.RAMADEVI", "0794": "P.MUNIREDDY",
-    "0793": "D.VENKATAIAH", "0789": "S.RAMADEVI", "0788": "B.RAMADEVI",
-    "0786": "P.MUNIREDDY", "0719": "N.RAMADEVI", "0718": "P.MUNIREDDY",
-    "0714": "B.GANGULU", "0709": "R.RAMADEVI", "0700": "R.RAMADEVI",
-    "0721": "S.RAMADEVI", "0747": "K.RAMADEVI", "0745": "E.RAMADEVI",
-    "0743": "R.RAMADEVI", "0736": "V.RAMADEVI", "0732": "R.RAMADEVI",
-    "0727": "D.RAMADEVI", "0726": "S.RAMADEVI", "0508": "M.RAMADEVI",
-    "0490": "M.RAMADEVI", "0551": "T.RAMADEVI", "0512": "B.RAMADEVI",
-    "0473": "K.RAMADEVI", "0477": "V.RAMADEVI"
+    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA", "2013": "THOTIMALAPALLE",
+    "2083": "RAJUVARIPALLI H/W", "2045": "RAJUVARIPALLI", "2288": "RAJUVARIPALLI",
+    "2272": "THATIGUNTAPALEM", "2186": "KANTAMVARIPALLE", "2183": "REGALLU",
+    "2178": "SANKENIGUTTAPALLE", "2173": "MUNELLAPALLE", "2160": "V.K.THURPUPALLE",
+    "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE", "0335": "MATLOLLPALLAI",
+    "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
+    "0237": "BATTUVARIPALLE", "0417": "ROMPICHERLA", "0414": "BODIPATIVARIPALLE",
+    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE", "0360": "CHICHILIVARIPALLE",
+    "0357": "AKKISANIVARIPALLE", "0394": "SETTIPALLEVANDLAPALLE", "0072": "VAGALLA",
+    "0056": "LEMATIVARIPALLE", "0108": "KONDAREDDIGARIPALLE", "0016": "ROMPICHERLA",
+    "0030": "MELLAVARIPALLE", "0197": "BASIREDDIGARIPALLE", "0173": "MORAVAPALLE",
+    "0221": "KURABAPALLE", "0130": "PATHAKURVAPALLE", "0165": "AGRAHARAM",
+    "0151": "BONAMVARIPALLE", "0649": "PILER", "0645": "NADIMPALLE",
+    "0643": "SAVVALAVARIPALLE", "0636": "KURAPATHIVARIPALLE", "0689": "VANKAVODDIPALLE",
+    "0688": "BADDALAVARIPALLI H.W.", "0685": "NAGARIMADUGUVARIPALLE", "0668": "KANDUR",
+    "0663": "DEVALAVARIPALLE", "0585": "SRIVARAMPURAM", "0575": "RAMREDDIGARIPALLE",
+    "0572": "LOKAVARIPALLE", "0613": "NAGAVANDLAPALLI", "0611": "BODIPATIVARIPALLE",
+    "0610": "ROMPICHERLA", "0604": "NAGAVANDLAPALLI", "0782": "CHICHILIVARIPALLE",
+    "0770": "DEVALAVARIPALLE", "0767": "PEDDAGOTTIGALLU", "0764": "K.V.PALLE",
+    "0762": "JAGADAMVARIPALLE", "0753": "BOLLINANIVARIPALLI", "0813": "ROMPICHERLA",
+    "0811": "ALAKAMVARIPALLE", "0809": "KOTAKADAPALLE", "0794": "PEDDAGOTTIGALLU",
+    "0793": "DIGUVAJUPALLI", "0789": "SODUM", "0788": "BURUJUPALLE",
+    "0786": "PEDDAGOTTIGALLU CROSS", "0719": "NADIMPALLE", "0718": "PEDDAGOTTIGALLU",
+    "0714": "BODIPATIVARIPALLE", "0709": "REDDIVARIPALLE", "0700": "RAMIREDDIGARIPALLE",
+    "0721": "SODUM", "0747": "KURAVAPALLE", "0745": "ETUKURIVARIPALLE",
+    "0743": "ROMPICHERLA", "0736": "VOOTUPALLE", "0732": "ROMPICHERLA",
+    "0727": "DUSSAVANDLA PALLI", "0726": "SAVVALAVARIPALLE", "0508": "MUREVANDLAPALLE",
+    "0490": "MATAMPALLE", "0551": "TALUPULA", "0512": "BONAMVARIPALLE",
+    "0473": "KURAVAPALLE", "0477": "VARANASIVARIPALLE"
 }
 
 # Create lists for dropdowns
@@ -220,7 +238,7 @@ SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar
 # -----------------------------
 
 # Display auto-save status
-if 'last_saved_time' in st.session_state:
+if st.session_state.last_saved_time:
     st.info(f"{labels['Auto-saved!']} Last saved: {st.session_state.last_saved_time}")
 
 # Form Start
@@ -228,11 +246,12 @@ with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
     
     # Using session state for VLCC Name
+    vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.form_data.get('vlcc_name', VLCC_NAMES[0])) if st.session_state.form_data.get('vlcc_name') in VLCC_NAMES else 0
     vlcc_name = st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
-        index=VLCC_NAMES.index(st.session_state.form_data.get('vlcc_name', VLCC_NAMES[0])) if st.session_state.form_data.get('vlcc_name') in VLCC_NAMES else 0,
+        index=vlcc_name_default_idx,
         key="vlcc_name",
-        on_change=update_session_state, args=("vlcc_name", st.session_state.vlcc_name)
+        on_change=update_session_state_callback, args=("vlcc_name",)
     )
     
     # Using session state for HPC/MCC Code
@@ -240,45 +259,45 @@ with st.form("survey_form"):
         labels['HPC/MCC Code'],
         value=st.session_state.form_data.get('hpc_code', ''),
         key="hpc_code",
-        on_change=update_session_state, args=("hpc_code", st.session_state.hpc_code)
+        on_change=update_session_state_callback, args=("hpc_code",)
     )
     
     # Using session state for Types
     types_options = (labels['HPC'], labels['MCC'])
-    types_index = types_options.index(st.session_state.form_data.get('types', labels['HPC'])) if st.session_state.form_data.get('types') in types_options else 0
+    types_default_idx = types_options.index(st.session_state.form_data.get('types', labels['HPC'])) if st.session_state.form_data.get('types') in types_options else 0
     types = st.selectbox(
         labels['Types'], types_options,
-        index=types_index,
+        index=types_default_idx,
         key="types",
-        on_change=update_session_state, args=("types", st.session_state.types)
+        on_change=update_session_state_callback, args=("types",)
     )
     
     # Dropdown for Farmer Name with auto-save
-    farmer_name_index = FARMER_NAMES.index(st.session_state.form_data.get('farmer_name', FARMER_NAMES[0])) if st.session_state.form_data.get('farmer_name') in FARMER_NAMES else 0
+    farmer_name_default_idx = FARMER_NAMES.index(st.session_state.form_data.get('farmer_name', FARMER_NAMES[0])) if st.session_state.form_data.get('farmer_name') in FARMER_NAMES else 0
     farmer_name = st.selectbox(
         labels['Farmer Name'], options=FARMER_NAMES,
-        index=farmer_name_index,
+        index=farmer_name_default_idx,
         key="farmer_name",
-        on_change=update_session_state, args=("farmer_name", st.session_state.farmer_name)
+        on_change=update_session_state_callback, args=("farmer_name",)
     )
     
     # Dropdown for Farmer Code with auto-save
-    farmer_code_index = FARMER_CODES.index(st.session_state.form_data.get('farmer_code', FARMER_CODES[0])) if st.session_state.form_data.get('farmer_code') in FARMER_CODES else 0
+    farmer_code_default_idx = FARMER_CODES.index(st.session_state.form_data.get('farmer_code', FARMER_CODES[0])) if st.session_state.form_data.get('farmer_code') in FARMER_CODES else 0
     farmer_code = st.selectbox(
         labels['Farmer Code'], options=FARMER_CODES,
-        index=farmer_code_index,
+        index=farmer_code_default_idx,
         key="farmer_code",
-        on_change=update_session_state, args=("farmer_code", st.session_state.farmer_code)
+        on_change=update_session_state_callback, args=("farmer_code",)
     )
     
     # Using session state for Gender
     gender_options = (labels['Male'], labels['Female'])
-    gender_index = gender_options.index(st.session_state.form_data.get('gender', labels['Male'])) if st.session_state.form_data.get('gender') in gender_options else 0
+    gender_default_idx = gender_options.index(st.session_state.form_data.get('gender', labels['Male'])) if st.session_state.form_data.get('gender') in gender_options else 0
     gender = st.selectbox(
         labels['Gender'], gender_options,
-        index=gender_index,
+        index=gender_default_idx,
         key="gender",
-        on_change=update_session_state, args=("gender", st.session_state.gender)
+        on_change=update_session_state_callback, args=("gender",)
     )
 
     st.header(labels['Farm Details'])
@@ -287,170 +306,170 @@ with st.form("survey_form"):
         labels['Number of Cows'], min_value=0,
         value=st.session_state.form_data.get('cows', 0),
         key="cows",
-        on_change=update_session_state, args=("cows", st.session_state.cows)
+        on_change=update_session_state_callback, args=("cows",)
     )
     # Using session state for No. of Cattle in Milk
     cattle_in_milk = st.number_input(
         labels['No. of Cattle in Milk'], min_value=0,
         value=st.session_state.form_data.get('cattle_in_milk', 0),
         key="cattle_in_milk",
-        on_change=update_session_state, args=("cattle_in_milk", st.session_state.cattle_in_milk)
+        on_change=update_session_state_callback, args=("cattle_in_milk",)
     )
     # Using session state for No. of Calves/Heifers
     calves = st.number_input(
         labels['No. of Calves/Heifers'], min_value=0,
         value=st.session_state.form_data.get('calves', 0),
         key="calves",
-        on_change=update_session_state, args=("calves", st.session_state.calves)
+        on_change=update_session_state_callback, args=("calves",)
     )
     # Using session state for No. of Desi cows
     desi_cows = st.number_input(
         labels['No. of Desi cows'], min_value=0,
         value=st.session_state.form_data.get('desi_cows', 0),
         key="desi_cows",
-        on_change=update_session_state, args=("desi_cows", st.session_state.desi_cows)
+        on_change=update_session_state_callback, args=("desi_cows",)
     )
     # Using session state for No. of Cross breed cows
     crossbreed_cows = st.number_input(
         labels['No. of Cross breed cows'], min_value=0,
         value=st.session_state.form_data.get('crossbreed_cows', 0),
         key="crossbreed_cows",
-        on_change=update_session_state, args=("crossbreed_cows", st.session_state.crossbreed_cows)
+        on_change=update_session_state_callback, args=("crossbreed_cows",)
     )
     # Using session state for No. of Buffalo
     buffalo = st.number_input(
         labels['No. of Buffalo'], min_value=0,
         value=st.session_state.form_data.get('buffalo', 0),
         key="buffalo",
-        on_change=update_session_state, args=("buffalo", st.session_state.buffalo)
+        on_change=update_session_state_callback, args=("buffalo",)
     )
     # Using session state for Milk Production
     milk_production = st.number_input(
         labels['Milk Production'], min_value=0.0,
-        value=st.session_state.form_data.get('milk_production', 0.0),
+        value=float(st.session_state.form_data.get('milk_production', 0.0)), # Ensure float
         key="milk_production",
-        on_change=update_session_state, args=("milk_production", st.session_state.milk_production)
+        on_change=update_session_state_callback, args=("milk_production",)
     )
 
     st.header(labels['Specific Questions'])
     # Using session state for Green Fodder
     green_fodder_options = (labels['Yes'], labels['No'])
-    green_fodder_index = green_fodder_options.index(st.session_state.form_data.get('green_fodder', labels['Yes'])) if st.session_state.form_data.get('green_fodder') in green_fodder_options else 0
+    green_fodder_default_idx = green_fodder_options.index(st.session_state.form_data.get('green_fodder', labels['Yes'])) if st.session_state.form_data.get('green_fodder') in green_fodder_options else 0
     green_fodder = st.selectbox(
         labels['Green Fodder'], green_fodder_options,
-        index=green_fodder_index,
+        index=green_fodder_default_idx,
         key="green_fodder",
-        on_change=update_session_state, args=("green_fodder", st.session_state.green_fodder)
+        on_change=update_session_state_callback, args=("green_fodder",)
     )
     # Using session state for Type of Green Fodder
     green_fodder_types = st.multiselect(
         labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
         default=st.session_state.form_data.get('green_fodder_types', []),
         key="green_fodder_types",
-        on_change=update_session_state, args=("green_fodder_types", st.session_state.green_fodder_types)
+        on_change=update_session_state_callback, args=("green_fodder_types",)
     )
     # Using session state for Quantity of Green Fodder
     green_fodder_qty = st.number_input(
         labels['Quantity of Green Fodder'], min_value=0.0,
-        value=st.session_state.form_data.get('green_fodder_qty', 0.0),
+        value=float(st.session_state.form_data.get('green_fodder_qty', 0.0)), # Ensure float
         key="green_fodder_qty",
-        on_change=update_session_state, args=("green_fodder_qty", st.session_state.green_fodder_qty)
+        on_change=update_session_state_callback, args=("green_fodder_qty",)
     )
     # Using session state for Dry Fodder
     dry_fodder_options = (labels['Yes'], labels['No'])
-    dry_fodder_index = dry_fodder_options.index(st.session_state.form_data.get('dry_fodder', labels['Yes'])) if st.session_state.form_data.get('dry_fodder') in dry_fodder_options else 0
+    dry_fodder_default_idx = dry_fodder_options.index(st.session_state.form_data.get('dry_fodder', labels['Yes'])) if st.session_state.form_data.get('dry_fodder') in dry_fodder_options else 0
     dry_fodder = st.selectbox(
         labels['Dry Fodder'], dry_fodder_options,
-        index=dry_fodder_index,
+        index=dry_fodder_default_idx,
         key="dry_fodder",
-        on_change=update_session_state, args=("dry_fodder", st.session_state.dry_fodder)
+        on_change=update_session_state_callback, args=("dry_fodder",)
     )
     # Using session state for Type of Dry Fodder
     dry_fodder_types = st.multiselect(
         labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
         default=st.session_state.form_data.get('dry_fodder_types', []),
         key="dry_fodder_types",
-        on_change=update_session_state, args=("dry_fodder_types", st.session_state.dry_fodder_types)
+        on_change=update_session_state_callback, args=("dry_fodder_types",)
     )
     # Using session state for Quantity of Dry Fodder
     dry_fodder_qty = st.number_input(
         labels['Quantity of Dry Fodder'], min_value=0.0,
-        value=st.session_state.form_data.get('dry_fodder_qty', 0.0),
+        value=float(st.session_state.form_data.get('dry_fodder_qty', 0.0)), # Ensure float
         key="dry_fodder_qty",
-        on_change=update_session_state, args=("dry_fodder_qty", st.session_state.dry_fodder_qty)
+        on_change=update_session_state_callback, args=("dry_fodder_qty",)
     )
 
     # Using session state for Pellet Feed
     pellet_feed_options = (labels['Yes'], labels['No'])
-    pellet_feed_index = pellet_feed_options.index(st.session_state.form_data.get('pellet_feed', labels['Yes'])) if st.session_state.form_data.get('pellet_feed') in pellet_feed_options else 0
+    pellet_feed_default_idx = pellet_feed_options.index(st.session_state.form_data.get('pellet_feed', labels['Yes'])) if st.session_state.form_data.get('pellet_feed') in pellet_feed_options else 0
     pellet_feed = st.selectbox(
         labels['Pellet Feed'], pellet_feed_options,
-        index=pellet_feed_index,
+        index=pellet_feed_default_idx,
         key="pellet_feed",
-        on_change=update_session_state, args=("pellet_feed", st.session_state.pellet_feed)
+        on_change=update_session_state_callback, args=("pellet_feed",)
     )
     # Using session state for Pellet Feed Brand
     pellet_feed_brands = st.multiselect(
         labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
         default=st.session_state.form_data.get('pellet_feed_brands', []),
         key="pellet_feed_brands",
-        on_change=update_session_state, args=("pellet_feed_brands", st.session_state.pellet_feed_brands)
+        on_change=update_session_state_callback, args=("pellet_feed_brands",)
     )
     # Using session state for Quantity of Pellet Feed
     pellet_feed_qty = st.number_input(
         labels['Quantity of Pellet Feed'], min_value=0.0,
-        value=st.session_state.form_data.get('pellet_feed_qty', 0.0),
+        value=float(st.session_state.form_data.get('pellet_feed_qty', 0.0)), # Ensure float
         key="pellet_feed_qty",
-        on_change=update_session_state, args=("pellet_feed_qty", st.session_state.pellet_feed_qty)
+        on_change=update_session_state_callback, args=("pellet_feed_qty",)
     )
 
     # Using session state for Mineral Mixture
     mineral_mixture_options = (labels['Yes'], labels['No'])
-    mineral_mixture_index = mineral_mixture_options.index(st.session_state.form_data.get('mineral_mixture', labels['Yes'])) if st.session_state.form_data.get('mineral_mixture') in mineral_mixture_options else 0
+    mineral_mixture_default_idx = mineral_mixture_options.index(st.session_state.form_data.get('mineral_mixture', labels['Yes'])) if st.session_state.form_data.get('mineral_mixture') in mineral_mixture_options else 0
     mineral_mixture = st.selectbox(
         labels['Mineral Mixture'], mineral_mixture_options,
-        index=mineral_mixture_index,
+        index=mineral_mixture_default_idx,
         key="mineral_mixture",
-        on_change=update_session_state, args=("mineral_mixture", st.session_state.mineral_mixture)
+        on_change=update_session_state_callback, args=("mineral_mixture",)
     )
     # Using session state for Mineral Mixture Brand
-    mineral_brand_index = MINERAL_MIXTURE_BRANDS.index(st.session_state.form_data.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0])) if st.session_state.form_data.get('mineral_brand') in MINERAL_MIXTURE_BRANDS else 0
+    mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.form_data.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0])) if st.session_state.form_data.get('mineral_brand') in MINERAL_MIXTURE_BRANDS else 0
     mineral_brand = st.selectbox(
         labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
-        index=mineral_brand_index,
+        index=mineral_brand_default_idx,
         key="mineral_brand",
-        on_change=update_session_state, args=("mineral_brand", st.session_state.mineral_brand)
+        on_change=update_session_state_callback, args=("mineral_brand",)
     )
     # Using session state for Quantity of Mineral Mixture
     mineral_qty = st.number_input(
         labels['Quantity of Mineral Mixture'], min_value=0.0,
-        value=st.session_state.form_data.get('mineral_qty', 0.0),
+        value=float(st.session_state.form_data.get('mineral_qty', 0.0)), # Ensure float
         key="mineral_qty",
-        on_change=update_session_state, args=("mineral_qty", st.session_state.mineral_qty)
+        on_change=update_session_state_callback, args=("mineral_qty",)
     )
 
     # Using session state for Silage
     silage_options = (labels['Yes'], labels['No'])
-    silage_index = silage_options.index(st.session_state.form_data.get('silage', labels['Yes'])) if st.session_state.form_data.get('silage') in silage_options else 0
+    silage_default_idx = silage_options.index(st.session_state.form_data.get('silage', labels['Yes'])) if st.session_state.form_data.get('silage') in silage_options else 0
     silage = st.selectbox(
         labels['Silage'], silage_options,
-        index=silage_index,
+        index=silage_default_idx,
         key="silage",
-        on_change=update_session_state, args=("silage", st.session_state.silage)
+        on_change=update_session_state_callback, args=("silage",)
     )
     # Using session state for Source and Price of Silage
     silage_source = st.text_input(
         labels['Source and Price of Silage'],
         value=st.session_state.form_data.get('silage_source', ''),
         key="silage_source",
-        on_change=update_session_state, args=("silage_source", st.session_state.silage_source)
+        on_change=update_session_state_callback, args=("silage_source",)
     )
     # Using session state for Quantity of Silage
     silage_qty = st.number_input(
         labels['Quantity of Silage'], min_value=0.0,
-        value=st.session_state.form_data.get('silage_qty', 0.0),
+        value=float(st.session_state.form_data.get('silage_qty', 0.0)), # Ensure float
         key="silage_qty",
-        on_change=update_session_state, args=("silage_qty", st.session_state.silage_qty)
+        on_change=update_session_state_callback, args=("silage_qty",)
     )
 
     # Using session state for Source of Water
@@ -458,33 +477,35 @@ with st.form("survey_form"):
         labels['Source of Water'], WATER_SOURCE_OPTIONS,
         default=st.session_state.form_data.get('water_sources', []),
         key="water_sources",
-        on_change=update_session_state, args=("water_sources", st.session_state.water_sources)
+        on_change=update_session_state_callback, args=("water_sources",)
     )
     # Using session state for Name of Surveyor
-    surveyor_name_index = SURVEYOR_NAMES.index(st.session_state.form_data.get('surveyor_name', SURVEYOR_NAMES[0])) if st.session_state.form_data.get('surveyor_name') in SURVEYOR_NAMES else 0
+    surveyor_name_default_idx = SURVEYOR_NAMES.index(st.session_state.form_data.get('surveyor_name', SURVEYOR_NAMES[0])) if st.session_state.form_data.get('surveyor_name') in SURVEYOR_NAMES else 0
     surveyor_name = st.selectbox(
         labels['Name of Surveyor'], SURVEYOR_NAMES,
-        index=surveyor_name_index,
+        index=surveyor_name_default_idx,
         key="surveyor_name",
-        on_change=update_session_state, args=("surveyor_name", st.session_state.surveyor_name)
+        on_change=update_session_state_callback, args=("surveyor_name",)
     )
     # Using session state for Date of Visit
-    # For date_input, it's a bit trickier to store datetime objects directly in session state
-    # and then retrieve with default, so we'll store as string and convert.
-    current_date = datetime.date.today()
-    stored_date_str = st.session_state.form_data.get('visit_date', current_date.isoformat())
-    stored_date = datetime.date.fromisoformat(stored_date_str) if isinstance(stored_date_str, str) else current_date
+    # For date_input, we handle default value retrieval carefully.
+    current_date_str = datetime.date.today().isoformat()
+    stored_date_str = st.session_state.form_data.get('visit_date', current_date_str)
+    try:
+        stored_date_obj = datetime.date.fromisoformat(stored_date_str)
+    except ValueError:
+        stored_date_obj = datetime.date.today() # Fallback to today if stored string is invalid
 
     visit_date = st.date_input(
         labels['Date of Visit'],
-        value=stored_date,
+        value=stored_date_obj,
         key="visit_date",
-        on_change=update_session_state, args=("visit_date", st.session_state.visit_date.isoformat()) # Store as ISO format string
+        on_change=update_session_state_callback, args=("visit_date",) # Store as ISO format string implicitly by key
     )
 
     # Photo Upload - placed before submit and uses a unique key
     st.subheader("Upload Farm Photo")
-    st.info("Note: Uploaded photos are not auto-saved. Please re-upload if you refresh the page before final submission.")
+    st.info("Note: Uploaded photos are not auto-saved across sessions/reloads. Please re-upload if you refresh the page before final submission.")
     farm_photo = st.file_uploader("Choose a farm photo (JPG/PNG)", type=["jpg", "jpeg", "png"], key="farm_photo_uploader")
 
     submit = st.form_submit_button(labels['Submit'])
@@ -494,38 +515,38 @@ if submit:
     now = datetime.datetime.now()
     data = {
         'Timestamp': now.isoformat(),
-        'Language': lang,
-        'VLCC Name': vlcc_name,
-        'HPC/MCC Code': hpc_code,
-        'Types': types,
-        'Farmer Name': farmer_name,
-        'Farmer Code': farmer_code,
-        'Gender': gender,
-        'Number of Cows': cows,
-        'No. of Cattle in Milk': cattle_in_milk,
-        'No. of Calves/Heifers': calves,
-        'No. of Desi cows': desi_cows,
-        'No. of Cross breed cows': crossbreed_cows,
-        'No. of Buffalo': buffalo,
-        'Milk Production (liters/day)': milk_production,
-        'Green Fodder': green_fodder,
-        'Type of Green Fodder': ", ".join(green_fodder_types),
-        'Quantity of Green Fodder (Kg/day)': green_fodder_qty,
-        'Dry Fodder': dry_fodder,
-        'Type of Dry Fodder': ", ".join(dry_fodder_types),
-        'Quantity of Dry Fodder (Kg/day)': dry_fodder_qty,
-        'Pellet Feed': pellet_feed,
-        'Pellet Feed Brand': ", ".join(pellet_feed_brands),
-        'Quantity of Pellet Feed (Kg/day)': pellet_feed_qty,
-        'Mineral Mixture': mineral_mixture,
-        'Mineral Mixture Brand': mineral_brand,
-        'Quantity of Mineral Mixture (gm/day)': mineral_qty,
-        'Silage': silage,
-        'Source and Price of Silage': silage_source,
-        'Quantity of Silage (Kg/day)': silage_qty,
-        'Source of Water': ", ".join(water_sources),
-        'Surveyor Name': surveyor_name,
-        'Date of Visit': visit_date.isoformat()
+        'Language': st.session_state.lang_select, # Get final selected language
+        'VLCC Name': st.session_state.vlcc_name,
+        'HPC/MCC Code': st.session_state.hpc_code,
+        'Types': st.session_state.types,
+        'Farmer Name': st.session_state.farmer_name,
+        'Farmer Code': st.session_state.farmer_code,
+        'Gender': st.session_state.gender,
+        'Number of Cows': st.session_state.cows,
+        'No. of Cattle in Milk': st.session_state.cattle_in_milk,
+        'No. of Calves/Heifers': st.session_state.calves,
+        'No. of Desi cows': st.session_state.desi_cows,
+        'No. of Cross breed cows': st.session_state.crossbreed_cows,
+        'No. of Buffalo': st.session_state.buffalo,
+        'Milk Production (liters/day)': st.session_state.milk_production,
+        'Green Fodder': st.session_state.green_fodder,
+        'Type of Green Fodder': ", ".join(st.session_state.green_fodder_types),
+        'Quantity of Green Fodder (Kg/day)': st.session_state.green_fodder_qty,
+        'Dry Fodder': st.session_state.dry_fodder,
+        'Type of Dry Fodder': ", ".join(st.session_state.dry_fodder_types),
+        'Quantity of Dry Fodder (Kg/day)': st.session_state.dry_fodder_qty,
+        'Pellet Feed': st.session_state.pellet_feed,
+        'Pellet Feed Brand': ", ".join(st.session_state.pellet_feed_brands),
+        'Quantity of Pellet Feed (Kg/day)': st.session_state.pellet_feed_qty,
+        'Mineral Mixture': st.session_state.mineral_mixture,
+        'Mineral Mixture Brand': st.session_state.mineral_brand,
+        'Quantity of Mineral Mixture (gm/day)': st.session_state.mineral_qty,
+        'Silage': st.session_state.silage,
+        'Source and Price of Silage': st.session_state.silage_source,
+        'Quantity of Silage (Kg/day)': st.session_state.silage_qty,
+        'Source of Water': ", ".join(st.session_state.water_sources),
+        'Surveyor Name': st.session_state.surveyor_name,
+        'Date of Visit': st.session_state.visit_date.isoformat() # Date input returns a date object
     }
 
     if farm_photo is not None:
@@ -535,9 +556,6 @@ if submit:
         st.success("Farm photo uploaded successfully!")
         data['Farm Photo Filename'] = photo_path
     else:
-        # If no new photo is uploaded, check if there was a photo from previous session data
-        # This is for display purposes, the actual photo would need re-upload if it wasn't submitted.
-        # For robustness, we will only add the filename if a new one is uploaded during this submission
         data['Farm Photo Filename'] = "No photo uploaded"
 
 
@@ -548,8 +566,50 @@ if submit:
 
     # Clear session state data after successful submission
     st.session_state.form_data = {}
-    if 'last_saved_time' in st.session_state:
-        del st.session_state.last_saved_time
+    st.session_state.last_saved_time = None # Reset auto-save timestamp
+
+    # Reset individual widget states to their initial values for a new form
+    # This loop assumes keys match your form_data keys for easy reset
+    for key in st.session_state.keys():
+        if key in ['form_data', 'last_saved_time', 'lang_select']: # Don't reset these core state variables
+            continue
+        # Attempt to clear or reset the widget state.
+        # For selectboxes, this means setting their key in session_state to a default option.
+        # For text inputs, set to empty string. For number inputs, set to 0.
+        if key == 'vlcc_name': st.session_state.vlcc_name = VLCC_NAMES[0]
+        elif key == 'hpc_code': st.session_state.hpc_code = ''
+        elif key == 'types': st.session_state.types = labels['HPC']
+        elif key == 'farmer_name': st.session_state.farmer_name = FARMER_NAMES[0]
+        elif key == 'farmer_code': st.session_state.farmer_code = FARMER_CODES[0]
+        elif key == 'gender': st.session_state.gender = labels['Male']
+        elif key == 'cows': st.session_state.cows = 0
+        elif key == 'cattle_in_milk': st.session_state.cattle_in_milk = 0
+        elif key == 'calves': st.session_state.calves = 0
+        elif key == 'desi_cows': st.session_state.desi_cows = 0
+        elif key == 'crossbreed_cows': st.session_state.crossbreed_cows = 0
+        elif key == 'buffalo': st.session_state.buffalo = 0
+        elif key == 'milk_production': st.session_state.milk_production = 0.0
+        elif key == 'green_fodder': st.session_state.green_fodder = labels['Yes']
+        elif key == 'green_fodder_types': st.session_state.green_fodder_types = []
+        elif key == 'green_fodder_qty': st.session_state.green_fodder_qty = 0.0
+        elif key == 'dry_fodder': st.session_state.dry_fodder = labels['Yes']
+        elif key == 'dry_fodder_types': st.session_state.dry_fodder_types = []
+        elif key == 'dry_fodder_qty': st.session_state.dry_fodder_qty = 0.0
+        elif key == 'pellet_feed': st.session_state.pellet_feed = labels['Yes']
+        elif key == 'pellet_feed_brands': st.session_state.pellet_feed_brands = []
+        elif key == 'pellet_feed_qty': st.session_state.pellet_feed_qty = 0.0
+        elif key == 'mineral_mixture': st.session_state.mineral_mixture = labels['Yes']
+        elif key == 'mineral_brand': st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0]
+        elif key == 'mineral_qty': st.session_state.mineral_qty = 0.0
+        elif key == 'silage': st.session_state.silage = labels['Yes']
+        elif key == 'silage_source': st.session_state.silage_source = ''
+        elif key == 'silage_qty': st.session_state.silage_qty = 0.0
+        elif key == 'water_sources': st.session_state.water_sources = []
+        elif key == 'surveyor_name': st.session_state.surveyor_name = SURVEYOR_NAMES[0]
+        elif key == 'visit_date': st.session_state.visit_date = datetime.date.today() # Reset to today's date
+        # Note: farm_photo_uploader cannot be directly reset via session_state like this,
+        # its state is transient. User will need to re-upload.
+
 
     with st.expander("🔍 Click to Review Your Submission"):
         for section, keys in {
