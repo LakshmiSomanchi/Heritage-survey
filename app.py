@@ -656,7 +656,7 @@ if submit_button:
         'Green Fodder': st.session_state.green_fodder,
         'Type of Green Fodder': ", ".join(st.session_state.green_fodder_types),
         'Quantity of Green Fodder (Kg/day)': st.session_state.green_fodder_qty,
-        'Dry Fodder': ", ".join(st.session_state.dry_fodder_types), # Fixed: this was missing comma in original code
+        'Dry Fodder': st.session_state.dry_fodder,
         'Type of Dry Fodder': ", ".join(st.session_state.dry_fodder_types),
         'Quantity of Dry Fodder (Kg/day)': st.session_state.dry_fodder_qty,
         'Pellet Feed': st.session_state.pellet_feed,
