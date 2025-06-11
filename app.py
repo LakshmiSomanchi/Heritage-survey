@@ -40,7 +40,7 @@ dict_translations = {
         'Quantity of Mineral Mixture': 'Quantity of Mineral Mixture (gm/day)',
         'Silage': 'Silage', 'Source and Price of Silage': 'Source and Price of Silage',
         'Quantity of Silage': 'Quantity of Silage (Kg/day)', 'Source of Water': 'Source of Water (Multiple Select)',
-        'Name of Surveyor': 'Name of Surveyor', 'Date of Visit': 'Date of Visit',
+        'Name': 'Name', 'Date of Visit': 'Date of Visit', # Changed 'Name of Surveyor' to 'Name' in English
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV',
         'Auto-saved!': 'Auto-saved! You can resume filling the form even if you refresh or lose internet temporarily.'
     },
@@ -64,7 +64,7 @@ dict_translations = {
         'Quantity of Mineral Mixture': 'खनिज मिश्रण मात्रा (ग्राम/दिन)',
         'Silage': 'सायलेज', 'Source and Price of Silage': 'सायलेज स्रोत और मूल्य',
         'Quantity of Silage': 'सायलेज मात्रा (किलो/दिन)', 'Source of Water': 'पानी का स्रोत (एकाधिक चयन)',
-        'Name of Surveyor': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि',
+        'Name': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि', # Changed 'Name of Surveyor' to 'Name' in Hindi
         'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें',
         'Auto-saved!': 'स्वतः सहेजा गया! आप फ़ॉर्म भरना जारी रख सकते हैं, भले ही आप ताज़ा करें या अस्थायी रूप से इंटरनेट खो दें!'
     },
@@ -105,8 +105,10 @@ dict_translations = {
         "Silage": "सायलेज",
         "Source and Price of Silage": "सायलेजचा स्त्रोत आणि किंमत",
         "Quantity of Silage": "सायलेजचे प्रमाण (किलो/दिवस)",
+        "Type of Farm": "शेताचा प्रकार", # Ensure this is present if needed. It was in previous BASELINE_QUESTIONS, but not explicitly in dict_translations provided.
+        "Other Type of Farm (if selected above)": "इतर शेताचा प्रकार (वर निवडल्यास)",
         "Source of Water": "पाण्याचा स्त्रोत (अनेक निवडा)",
-        "Name of Surveyor": "सर्वेक्षकाचे नाव",
+        "Name": "सर्वेक्षकाचे नाव", # Changed 'Name of Surveyor' to 'Name' in Marathi
         "Date of Visit": "भेटीची तारीख",
         "Submit": "सादर करा",
         "Yes": "होय",
@@ -116,7 +118,9 @@ dict_translations = {
     }
 }
 
+
 # --- Heritage Specific Data (as before) ---
+# Checked VLCC_NAMES for trailing commas - should be fine as a long list
 VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLI","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
 "3045-ROMPICHERLA","3046-BANDAKINDAPALLE","3047-MARASANIVARIPALLI",
 "3024-DEVALAVARIPALLE","3002-KHAMBAMMITTAPALLE","3004-MARRIMAKULAPALLE","3005-NAGARIMADUGUVARIPALLE","3006-KOORAPARTHIVARIPALLE","3008-IRRIVANDLAPALLE","3009-PATHEGADA (U.I)","3011-PULICHERLA","3013-GUDAREVUPALLE","3014-ENUMALAVARIPALLE","3015-MUNTHAVANDLAPALLE","3016-REGALLU",
@@ -129,10 +133,10 @@ VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BO
 "0859-KRIHSNAREDDIGARIPALLE","0851-GYARAMPALLE","0848-ELLAREDDIGARIPALLE","0846-KURAVAPALLE","0842-PEDDAMALLELA","0839-BANDAMVARIPALLE","1058-CHERUKUVARIPALLE","1057-CHERUKUVARIPALLE","1052-NANJAMPETA","1017-KHAMBAMVARIPALLE","1003-PUTTAVANDLAPALLE THANDA","1272-USTIKAYALAPENTA",
 "1240-MITTAPALLE","0916-AGRAHARAM","0915-CHALLAVARIPALLE","0982-KUCHAMVARIPALLE","2388-SAGGAMVARI ENDLU","2380-PILER",
 "2374-PILER","2437-MARRIMAKULAPALLE","2421-MATLOLLPALLAI","2314-KUMMARAPALLE","2338-SETTIPALLEVANDLAPALLE","2500-KAMMAPALLE","2530-AVULAPEDDIREDDIGARIPALL","2528-MARAMREDDIGARIPALLE","2526-AVULAPEDDIREDDIGARIPALL","2463-BOMMAIAHGARIPALLE","2444-ROMPICHERLA","2440-BASIREDDIGARIPALLE",
-"2013-THOTIMALAPALLE","2083-RAJUVARIPALLI H/W","2045-RAJUVARIPALLI","2288-RAJUVARIPALLI","2272-THATIGUNTAPALEM","2186-KANTAMVARIPALLE","2183-REGALLU","2178-SANKENIGUTTAPALLE","2173-MUNELLAPALLE","2160-V.K.THURPUPALLE","2228-GAJULAVARIPALLI","0296-BESTAPALLE",
-"0335-MATLOLLPALLAI","0326-LOKAVARIPALLE","0256-VOOTUPALLE","0245-BETAPALLE","0237-BATTUVARIPALLE","0417-ROMPICHERLA",
-"0414-BODIPATIVARIPALLE","0441-BODIPATIVARIPALLE","0440-VARANASIVARIPALLE","0360-CHICHILIVARIPALLE",
-"0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA",
+"2013-THOTIMALAPALLE","2083-RAJUVARIPALLI H/W","2045-RAJUVARIPALLI","2288-RAJUVARIPALLI","2272-THATIGUNTAPALEM","2186-KANTAMVARIPALLE","2183-REGALLU","2178-SANKENIGUTTAPALLE","2173-MUNELLAPALLE","2160-V.K.THURPUPALLE","2228-GAJULAVARIPALLE","0296-BESTAPALLE",
+"0335-MATLOLLPALLAI","0326-LOKAVARIPALLE","0256-VOOTUPALLE","0245-BETAPALLE","0237-BATTUVARIPALLE","0417-ROMPICHERLA","0414-BODIPATIVARIPALLE","0441-BODIPATIVARIPALLE","0440-VARANASIVARIPALLE", # <-- Comma added here
+"0360":"CHICHILIVARIPALLE",
+"0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA", # <-- Comma added here
 "0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
 "0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
 "0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
@@ -204,21 +208,23 @@ FARMER_DATA = {
     "2437": "M.ADILAKSHMI", "2421": "M.MUNIREDDY", "2314": "K.CHANDRAIAH",
     "2338": "A.CHANDRAMMA", "2500": "T.VENKATAIAH", "2530": "A.RAMADEVI",
     "2528": "M.SUBRAMANYAM", "2526": "A.GANGAMMA", "2463": "B.BUMMAIAHGARIPALLE",
-    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA", "2013": "THOTIMALAPALLE",
+    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA",
+    "2013": "THOTIMALAPALLE",
     "2083": "RAJUVARIPALLI H/W", "2045": "RAJUVARIPALLI", "2288": "RAJUVARIPALLI",
     "2272": "THATIGUNTAPALEM", "2186": "KANTAMVARIPALLE", "2183": "REGALLU",
     "2178": "SANKENIGUTTAPALLE", "2173": "MUNELLAPALLE", "2160": "V.K.THURPUPALLE",
-    "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE", "0335": "MATLOLLPALLAI",
-    "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
+    "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE",
+    "0335": "MATLOLLPALLAI", "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
     "0237": "BATTUVARIPALLE", "0417": "ROMPICHERLA", "0414": "BODIPATIVARIPALLE",
-    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE","0360":"CHICHILIVARIPALLE",
-    "0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA",
+    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE", # <-- Comma added here
+    "0360":"CHICHILIVARIPALLE",
+    "0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA", # <-- Comma added here
     "0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
     "0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
     "0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
     "0151":"BONAMVARIPALLE", "0649":"PILER", "0645":"NADIMPALLE",
     "0643":"SAVVALAVARIPALLE", "0636":"KURAPATHIVARIPALLE", "0689":"VANKAVODDIPALLE",
-    "0688":"BADDALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
+    "0688":"BADDALALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
     "0663":"DEVALAVARIPALLE", "0585":"SRIVARAMPURAM", "0575":"RAMREDDIGARIPALLE",
     "0572":"LOKAVARIPALLE", "0613":"NAGAVANDLAPALLI", "0611":"BODIPATIVARIPALLE",
     "0610":"ROMPICHERLA", "0604":"NAGAVANDLAPALLI", "0782":"CHICHILIVARIPALLE",
@@ -235,85 +241,6 @@ FARMER_DATA = {
     "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
 }
 
-# Extracted Farmer Names and Member Codes from the image
-FARMER_DATA = {
-    "0008": "DURAJ PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
-    "0006":"G.Ratnamma", "0012":"VDevaki",
-    "0007": "INDRAVATHI RAMADEVI", "0013": "M.GANGULU", "0014": "K VARADHA NAIDU",
-    "0017": "B SAMPURNA", "0015": "J.GANGULU", "0002": "KRISHNAMA NAIDU",
-    "0021": "M.S.CHOWDARY", "0029": "DASARI VENKATAIAH", "0030": "K.M.KANTHAMMA",
-    "0036": "D.BALAKRISHNA", "0037": "C.SURYA PRAKASH", "0039": "D.CHANDRAMMA",
-    "0041": "G.NARASIMHA NAIDU", "0043": "REDDI RAMADEVI", "0044": "D.CHANDRAMMA",
-    "0045": "S.PEDDAIAH", "0046": "D.PEDDAIAH", "0047": "K.K.KADIRAMMA",
-    "0001": "M.NARAYANAMMA", "0002": "S.K.SUBBAIAH", "0004": "C.M.NARAYANA",
-    "0005": "D.MALLAIAH", "0006": "G.CHANDRAIAH", "0008": "J.RAMADEVI",
-    "0009": "G.SWARNAMMA", "0011": "J.ESWARAMMA", "0013": "K.GURAVAIAH",
-    "0014": "P.DEVAKI DEVI", "0015": "K.NARASIMHULU", "0016": "P REDDY PRASAD",
-    "0018": "D.DEVAKI RAMADEVI", "0019": "P.SATYAMMA", "0020": "B.SAMPURNA",
-    "0021": "P.PEDDAIAH", "0022": "REDDISEKHAR", "0023": "V.SUBRAMANYAM",
-    "0071": "V.REDDY RANI", "0072": "B.GANGULU", "0074": "K.YASHODHA",
-    "0075": "D.RAMADEVI", "0076": "H.RAMADEVI", "0077": "R.RAMADEVI",
-    "0078": "B.RANI", "0079": "K.VENKATAIAH", "0080": "P.SREERAM REDDY",
-    "0081": "M.RAMADEVI", "0082": "M.PENCHALAMAIAH", "0083": "M.M.RATHNAMMA",
-    "0084": "N.GANGULU", "0085": "N.RAMALINGAM", "0086": "N.RAMADEVI",
-    "0087": "V.CHANDRAIAH", "0088": "N.SRINIVASULU", "0089": "M.RAMADEVI",
-    "0090": "B.MURALI", "0091": "S.CHANDRAIAH", "0092": "S.SABEEN TAJ",
-    "0048": "P.LAKSHMAMMA", "0049": "V.RANI", "0050": "K.PEDDAMMA",
-    "0051": "C.VENKATA SUBBA REDDY", "0052": "S.NAGARJUNA", "0055": "E.CHANDRAIAH",
-    "0057": "S.KASAMMA", "0059": "K.NARASIMHA", "0070": "K.NARAYANA",
-    "0069": "K.NARASIMHULU", "0068": "K.RAJAMMA", "0067": "P.CHANDRAIAH",
-    "0066": "M.RAJAMMA", "0060": "P.BHARATHAMMA", "0061": "V.VENKATA RAMANA",
-    "0062": "P.BHARATHAMMA", "0064": "V.PADMAVATHI", "0063": "V.PADMAVATHI",
-    "1664": "G.RAMADEVI", "1651": "P.GIRI BABU", "1740": "G.SUBRAMANYAM",
-    "1718": "M.BABU", "1542": "S.BABU", "1937": "SREENIVASULU",
-    "1993": "J.CHANDRAMMA", "1959": "A.CHANDRAMMA", "1812": "S.BHARATHI",
-    "1781": "A.RAMADEVI", "1773": "P.SYAMALAMMA", "1770": "M.DEVAMMA",
-    "1868": "T.LAKSHMINARI", "1824": "P.BHARATHAMMA", "0884": "M.DEVAMMA",
-    "0881": "M.DEVASENEV", "0880": "M.LAKSHMINARIMMA", "0878": "M.LAKSHMINARIMMA",
-    "0876": "N.NAGARATHNAM", "0874": "N.VENKATARAMANA", "0871": "C.RAMADEVI",
-    "0868": "M.LAKSHMINARIMMA", "0863": "G.PEDDAIAH", "0906": "K.GANGAMMA",
-    "0900": "R.SATYAMMA", "0895": "V.PADMAVATHI", "0893": "G.BALAKRISHNA",
-    "0888": "C.RAMADEVI", "0887": "K.GANGAMMA", "0830": "K.ESWARAMMA",
-    "0826": "G.NARASIMHULU", "0824": "M.VENKATAIAH", "0859": "G.NARASIMHULU",
-    "0851": "K.KRISHNA REDDY", "0848": "G.CHANDRAIAH", "0846": "V.GANGAMMA",
-    "0842": "K.SWARNAMMA", "0839": "B.SATYAMMA", "1058": "P.RAMADEVI",
-    "1057": "K.RAMANAIAH", "1052": "P.RAMADEVI", "1017": "N.NARAYANAMMA",
-    "1003": "N.PEDDI REDDY", "1272": "G.PEDDI REDDY", "1240": "K.PEDDI REDDY",
-    "0916": "M.KRISHNAMA NAIDU", "0915": "S.BALAKRISHNA REDDY", "0982": "C.MUNIREDDY",
-    "2388": "G.PEDDI REDDY", "2380": "K.MUNIREDDY", "2374": "N.RAJAGOPAL",
-    "2437": "M.ADILAKSHMI", "2421": "M.MUNIREDDY", "2314": "K.CHANDRAIAH",
-    "2338": "A.CHANDRAMMA", "2500": "T.VENKATAIAH", "2530": "A.RAMADEVI",
-    "2528": "M.SUBRAMANYAM", "2526": "A.GANGAMMA", "2463": "B.BUMMAIAHGARIPALLE",
-    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA", "2013": "THOTIMALAPALLE",
-    "2083": "RAJUVARIPALLI H/W", "2045": "RAJUVARIPALLI", "2288": "RAJUVARIPALLI",
-    "2272": "THATIGUNTAPALEM", "2186": "KANTAMVARIPALLE", "2183": "REGALLU",
-    "2178": "SANKENIGUTTAPALLE", "2173": "MUNELLAPALLE", "2160": "V.K.THURPUPALLE",
-    "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE", "0335": "MATLOLLPALLAI",
-    "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
-    "0237": "BATTUVARIPALLE", "0417": "ROMPICHERLA", "0414": "BODIPATIVARIPALLE",
-    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE","0360":"CHICHILIVARIPALLE",
-    "0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA",
-    "0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
-    "0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
-    "0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
-    "0151":"BONAMVARIPALLE", "0649":"PILER", "0645":"NADIMPALLE",
-    "0643":"SAVVALAVARIPALLE", "0636":"KURAPATHIVARIPALLE", "0689":"VANKAVODDIPALLE",
-    "0688":"BADDALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
-    "0663":"DEVALAVARIPALLE", "0585":"SRIVARAMPURAM", "0575":"RAMREDDIGARIPALLE",
-    "0572":"LOKAVARIPALLE", "0613":"NAGAVANDLAPALLI", "0611":"BODIPATIVARIPALLE",
-    "0610":"ROMPICHERLA", "0604":"NAGAVANDLAPALLI", "0782":"CHICHILIVARIPALLE",
-    "0770":"DEVALAVARIPALLE", "0767":"PEDDAGOTTIGALLU", "0764":"K.V.PALLE",
-    "0762":"JAGADAMVARIPALLE", "0753":"BOLLINANIVARIPALLI", "0813":"ROMPICHERLA",
-    "0811":"ALAKAMVARIPALLE", "0809":"KOTAKADAPALLE", "0794":"PEDDAGOTTIGALLU",
-    "0793":"DIGUVAJUPALLI", "0789":"SODUM", "0788":"BURUJUPALLE",
-    "0786":"PEDDAGOTTIGALLU CROSS", "0719":"NADIMPALLE", "0718":"PEDDAGOTTIGALLU",
-    "0714":"BODIPATIVARIPALLE", "0709":"REDDIVARIPALLE", "0700":"RAMIREDDIGARIPALLE",
-    "0721":"SODUM", "0747":"KURAVAPALLE", "0745":"ETUKURIVARIPALLE",
-    "0743":"ROMPICHERLA", "0736":"VOOTUPALLE", "0732":"ROMPICHERLA",
-    "0727":"DUSSAVANDLA PALLI", "0726":"SAVVALAVARIPALLE", "0508":"MUREVANDLAPALLE",
-    "0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
-    "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
-}
 
 # Create lists for dropdowns
 FARMER_CODES = sorted(list(FARMER_DATA.keys()))
@@ -371,11 +298,6 @@ def save_draft():
     # Collect all current session state items related to the form
     # Exclude non-serializable objects and form-specific keys
     draft_data = {key: st.session_state[key] for key in initial_values_defaults.keys() if key in st.session_state}
-    # Manually add specific keys that might be in session_state but not in initial_values_defaults
-    # if 'last_saved_time_persistent' in st.session_state:
-    #     draft_data['last_saved_time_persistent'] = st.session_state.last_saved_time_persistent
-    # You generally don't want to save the 'last_saved_time_persistent' in the draft itself,
-    # as it's a metadata about the draft, not part of the form data.
 
     # Handle date objects for JSON serialization
     if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
@@ -451,8 +373,8 @@ if st.session_state.get('app_initialized_flag', False) is False:
             if key not in st.session_state: # Only set if not already loaded by draft
                 st.session_state[key] = default_value
 
-# Language Selection is outside the form to allow language change without issues
-initial_lang_options = ("English", "Hindi", "Marathi") # Changed to English, Hindi, Marathi
+# Language Selection
+initial_lang_options = ("English", "Hindi", "Marathi") # Restricted language options
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select) if st.session_state.lang_select in initial_lang_options else 0
 lang = st.selectbox(
     "Language / भाषा / भाषा",
@@ -480,20 +402,19 @@ with st.form("survey_form"):
     # Streamlit automatically updates st.session_state[key] on rerun when a widget value changes.
 
     # VLCC Name
-    # Handle cases where VLCC_NAMES might be empty or the loaded value is not in options
     vlcc_name_default_idx = 0
     if st.session_state.vlcc_name in VLCC_NAMES:
         vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.vlcc_name)
-    elif VLCC_NAMES: # If VLCC_NAMES is not empty, default to first
-        st.session_state.vlcc_name = VLCC_NAMES[0] # Ensure session state has a valid default
-    else: # If VLCC_NAMES is empty, set to None
+    elif VLCC_NAMES:
+        st.session_state.vlcc_name = VLCC_NAMES[0]
+    else:
         st.session_state.vlcc_name = None
 
     vlcc_name = st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
         index=vlcc_name_default_idx,
         key="vlcc_name",
-        disabled=(not VLCC_NAMES) # Disable if no options
+        disabled=(not VLCC_NAMES)
     )
 
     # HPC/MCC Code
@@ -672,9 +593,9 @@ with st.form("survey_form"):
     mineral_brand_default_idx = 0
     if st.session_state.mineral_brand in MINERAL_MIXTURE_BRANDS:
         mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.mineral_brand)
-    elif MINERAL_MIXTURE_BRANDS: # If MINERAL_MIXTURE_BRANDS is not empty, default to first
+    elif MINERAL_MIXTURE_BRANDS:
         st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0]
-    else: # If empty, set to None
+    else:
         st.session_state.mineral_brand = None
 
     mineral_brand = st.selectbox(
@@ -721,13 +642,13 @@ with st.form("survey_form"):
     surveyor_name_default_idx = 0
     if st.session_state.surveyor_name in SURVEYOR_NAMES:
         surveyor_name_default_idx = SURVEYOR_NAMES.index(st.session_state.surveyor_name)
-    elif SURVEYOR_NAMES: # If SURVEYOR_NAMES is not empty, default to first
+    elif SURVEYOR_NAMES:
         st.session_state.surveyor_name = SURVEYOR_NAMES[0]
-    else: # If empty, set to None
+    else:
         st.session_state.surveyor_name = None
 
     surveyor_name = st.selectbox(
-        labels['Name of Surveyor'], SURVEYOR_NAMES,
+        labels['Name'], SURVEYOR_NAMES, # Using generic 'Name' label
         index=surveyor_name_default_idx,
         key="surveyor_name",
         disabled=(not SURVEYOR_NAMES)
@@ -749,9 +670,7 @@ with st.form("survey_form"):
 
 # Auto-save logic: this runs on every rerun (after any widget interaction)
 if st.session_state.app_initialized_flag:
-    # We need to ensure last_saved_time_persistent is ALWAYS initialized.
-    # It's now initialized above, so we don't need a try-except here for it.
-    current_form_values = {key: st.session_state[key] for key in initial_values_defaults.keys() if key in st.session_state}
+    current_form_values = {key: st.session_state.get(key, initial_values_defaults.get(key)) for key in initial_values_defaults.keys()}
     if isinstance(current_form_values.get('visit_date'), datetime.date):
         current_form_values['visit_date'] = current_form_values['visit_date'].isoformat()
 
@@ -768,10 +687,6 @@ if st.session_state.app_initialized_flag:
             # If draft file is corrupted or unreadable, treat it as empty
             last_saved_draft_data = {}
 
-    # Compare current form state (normalized) with the last saved draft data (normalized)
-    # This direct comparison works because `load_draft` populates st.session_state
-    # and `current_form_values` reflects st.session_state,
-    # and `last_saved_draft_data` is loaded from the file and also normalized for date.
     if current_form_values != last_saved_draft_data:
         save_draft()
 
