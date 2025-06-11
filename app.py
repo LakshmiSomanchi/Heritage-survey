@@ -747,19 +747,37 @@ with st.form("survey_form"):
             uploaded_files = uploaded_files[:3] # Take only the first 3
 
         # Clear existing paths and save new ones
-        st.session_state.uploaded_photo_paths = []
+        # This part should probably be moved to a callback function if you want to avoid re-upload on every rerun
+        # For now, it's inside the form, meaning it will re-process on submit.
+        # However, the key "image_uploader" will retain the uploaded files until the form is cleared/reset.
+        # This is where the photo path handling needs to be careful to not overwrite too eagerly.
+        # Let's refine this to append/manage.
+        
+        # New: If there are new files, append them to the session state list, respecting the limit.
         for uploaded_file in uploaded_files:
             try:
+                # Check if this file has already been processed in the current form instance
+                # This is a simple check, more robust might involve hashing content.
+                if any(uploaded_file.name in path for path in st.session_state.uploaded_photo_paths):
+                    continue # Skip if already in the list
+
                 # Create a unique filename for the uploaded image
-                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f") # Add microseconds for higher uniqueness
                 file_extension = uploaded_file.name.split('.')[-1]
                 unique_filename = f"{timestamp}_{uploaded_file.name.replace(' ', '_')}"
                 photo_path = os.path.join(IMAGE_DIR, unique_filename)
 
                 with open(photo_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
-                st.session_state.uploaded_photo_paths.append(photo_path)
-                st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+                
+                # Add to session state only if we are within the limit
+                if len(st.session_state.uploaded_photo_paths) < 3:
+                    st.session_state.uploaded_photo_paths.append(photo_path)
+                    st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+                else:
+                    st.warning(f"Skipping {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
+                    # Optionally remove the newly saved file if it exceeds the limit immediately
+                    os.remove(photo_path) # Clean up the excess file
             except Exception as e:
                 st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
     else:
@@ -847,24 +865,14 @@ with st.form("survey_form"):
                 df.to_csv(file_path, mode='a', header=False, index=False)
             st.success("Survey data submitted successfully!")
 
-            # Clear current form values by re-initializing session state for form-related keys
-            for key, default_value in initial_values_defaults.items():
-                # Only reset fields that are part of the form, not app-wide settings like 'lang_select'
-                # Ensure vlcc_name is set to the *first* default value after submission for fresh form
-                if key == 'vlcc_name':
-                    st.session_state[key] = VLCC_NAMES[0] if VLCC_NAMES else None
-                elif key == 'farmer_name_selected':
-                    st.session_state[key] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others'
-                elif key == 'farmer_code':
-                    st.session_state[key] = FARMER_CODES[0] if FARMER_CODES else None
-                elif key == 'mineral_brand':
-                    st.session_state[key] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
-                elif key == 'surveyor_name':
-                    st.session_state[key] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
-                elif key == 'uploaded_photo_paths':
-                    st.session_state[key] = [] # Clear uploaded photo paths
-                elif key not in ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']:
-                    st.session_state[key] = default_value
+            # --- CORRECTED RESET LOGIC ---
+            # Instead of setting st.session_state values directly for widgets already instantiated,
+            # clear the relevant keys from session_state. When rerun, they will get their
+            # default values from initial_values_defaults.
+            for key in initial_values_defaults.keys():
+                if key != 'lang_select' and key != 'app_initialized_flag' and key != 'last_saved_time_persistent':
+                    if key in st.session_state: # Only delete if it exists
+                        del st.session_state[key]
 
             # Remove the draft file after successful submission
             draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
