@@ -1,5 +1,3 @@
-# app.py (Heritage Specific Streamlit Dairy Survey)
-
 import streamlit as st
 import pandas as pd
 import datetime
@@ -176,20 +174,20 @@ VLCC_NAMES = [
     "0477-VARANASIVARIPALLE"
 ]
 
-# Create a dictionary for farmer data
+# Create a dictionary for farmer data (ensure unique keys if possible in real data)
 FARMER_DATA = {
     "0005": "KATTARI VASANTA KUMARI",
     "0006": "GUDISI NARAYANAMMA",
     "0007": "P SUREKHA",
-    "0008": "VAGUMALLU SUDHAKARREDDY",
+    "0008_a": "VAGUMALLU SUDHAKARREDDY", # Renamed to ensure uniqueness if codes are non-unique
     "0015": "VANGUNALLI REDDY SEKHAR REDDY",
-    "0017": "Y REDDEMMA",
-    "0003": "INDIRAVATHI MARRIPATTI",
-    "0008": "CHIKATIPALLI VASANTHA",
+    "0017_a": "Y REDDEMMA",
+    "0003_a": "INDIRAVATHI MARRIPATTI",
+    "0008_b": "CHIKATIPALLI VASANTHA", # Renamed
     "0011": "BIRE LAKSHMI DEVI",
     "0013": "B SAMPURNA",
     "0016": "R PADMA",
-    "0017": "KRISHTNAMMA KOTAKONDA",
+    "0017_b": "KRISHTNAMMA KOTAKONDA", # Renamed
     "0018": "A LAKSHMAIAH",
     "0021": "CANDRAKALA GURRAMKONDA",
     "0025": "P JYOTHI",
@@ -197,78 +195,78 @@ FARMER_DATA = {
     "0033": "M CHANDRA",
     "0036": "C SURYA PRAKASH",
     "0001": "P SHANKARAMMA",
-    "0012": "V PRAMEELA",
-    "0003": "RAJINI KUMAR REDDY M",
-    "0002": "D GOPAL NAIDU",
-    "0003": "D PRASAD REDDY",
-    "0006": "G RATHNAMMA",
+    "0012_a": "V PRAMEELA",
+    "0003_b": "RAJINI KUMAR REDDY M", # Renamed
+    "0002_a": "D GOPAL NAIDU",
+    "0003_c": "D PRASAD REDDY", # Renamed
+    "0006_a": "G RATHNAMMA",
     "0009": "M NARAYANAMMA",
-    "0012": "V DEVAKI",
-    "0026": "P HARSHA VARDHAN REDDY",
-    "0019": "B REDDEMMA",
-    "0002": "J RAMADEVI",
-    "0003": "N SIDDAMA",
-    "0005": "J ESWARAMMA",
-    "0006": "M SIDDAMMA",
-    "0008": "Y DEVAKI DEVI",
-    "0003": "C RAMANAIAH",
-    "0014": "P REDDY PRASAD",
-    "0002": "B VARA LAKSHMI",
-    "0003": "D NAGARJUNA",
-    "0001": "C USHARANI",
-    "0006": "S SHAHEEDA BEGUM",
-    "0007": "S SHAMSHAD",
-    "0008": "S USHA RANI",
-    "0010": "V REDDY RANI",
-    "0012": "A KALAVATHI",
-    "0014": "S YASHODA",
-    "0015": "N RESHMA",
-    "0016": "D RAMADEVI",
-    "0017": "S SHARMILA",
-    "0018": "B RANI",
+    "0012_b": "V DEVAKI",
+    "0026_a": "P HARSHA VARDHAN REDDY",
+    "0019_a": "B REDDEMMA",
+    "0002_b": "J RAMADEVI",
+    "0003_d": "N SIDDAMA",
+    "0005_b": "J ESWARAMMA",
+    "0006_b": "M SIDDAMMA",
+    "0008_c": "Y DEVAKI DEVI",
+    "0003_e": "C RAMANAIAH",
+    "0014_a": "P REDDY PRASAD",
+    "0002_c": "B VARA LAKSHMI",
+    "0003_f": "D NAGARJUNA",
+    "0001_b": "C USHARANI",
+    "0006_c": "S SHAHEEDA BEGUM",
+    "0007_b": "S SHAMSHAD",
+    "0008_d": "S USHA RANI",
+    "0010_a": "V REDDY RANI",
+    "0012_c": "A KALAVATHI",
+    "0014_b": "S YASHODA",
+    "0015_b": "N RESHMA",
+    "0016_b": "D RAMADEVI",
+    "0017_c": "S SHARMILA",
+    "0018_b": "B RANI",
     "0027": "DESIREDDY PALLAVI",
     "0028": "C SREERAMI REDDY",
-    "0005": "M JYOSHNA",
-    "0013": "M VENKTRAMAIAH",
-    "0002": "M BHARGAVI",
-    "0006": "N GANGAIAH",
-    "0009": "N PURUSHOTHAM",
-    "0011": "N RAMADEVI",
-    "0017": "Y LAKSHMI",
-    "0026": "N SRINIVASULU",
-    "0027": "N LAVANYA",
-    "0002": "B MURALI",
-    "0014": "S MUBARAK ALI",
-    "0015": "S SABEEN TAJ",
-    "0019": "D NARASAMMA",
+    "0005_c": "M JYOSHNA",
+    "0013_b": "M VENKTRAMAIAH",
+    "0002_d": "M BHARGAVI",
+    "0006_d": "N GANGAIAH",
+    "0009_b": "N PURUSHOTHAM",
+    "0011_b": "N RAMADEVI",
+    "0017_d": "Y LAKSHMI",
+    "0026_b": "N SRINIVASULU",
+    "0027_b": "N LAVANYA",
+    "0002_e": "B MURALI",
+    "0014_c": "S MUBARAK ALI",
+    "0015_c": "S SABEEN TAJ",
+    "0019_b": "D NARASAMMA",
     "0020": "V RANI",
-    "0001": "A RAJAMMA",
-    "0006": "D SURENDRA REDDY",
-    "0008": "M VISHNUVARDHAN REDDY",
-    "0010": "K SAHADEVA",
-    "0002": "D ASHOK KUMAR",
-    "0014": "K VENKATRAMAIAH",
-    "0006": "K RAJAMMA",
-    "0008": "P ANASUYA",
-    "0010": "P RAJAMMA",
-    "0012": "P SAHADEVAREDDY",
-    "0015": "P BHARATHAMMA",
-    "0017": "S GOWRAMMA",
-    "0008": "V PADMAJA",
-    "0010": "V CHITTEMMA",
-    "0017": "B GIRI BABU",
-    "0019": "P MOHAN BABU",
-    "0002": "SREENIVASULU",
-    "0012": "C NARSAMMA",
+    "0001_c": "A RAJAMMA",
+    "0006_e": "D SURENDRA REDDY",
+    "0008_e": "M VISHNUVARDHAN REDDY",
+    "0010_b": "K SAHADEVA",
+    "0002_f": "D ASHOK KUMAR",
+    "0014_d": "K VENKATRAMAIAH",
+    "0006_f": "K RAJAMMA",
+    "0008_f": "P ANASUYA",
+    "0010_c": "P RAJAMMA",
+    "0012_d": "P SAHADEVAREDDY",
+    "0015_d": "P BHARATHAMMA",
+    "0017_e": "S GOWRAMMA",
+    "0008_g": "V PADMAJA",
+    "0010_d": "V CHITTEMMA",
+    "0017_f": "B GIRI BABU",
+    "0019_c": "P MOHAN BABU",
+    "0002_g": "SREENIVASULU",
+    "0012_e": "C NARSAMMA",
     "0004": "A CHANDRAMMA",
-    "0014": "G RAMNJULU",
-    "0018": "P SYAMALAMMA",
-    "0019": "K BHARGAVI",
-    "0012": "M LAKSHMIDEVI",
-    "0013": "K MALLESWARI",
-    "0016": "M YERRAKKA",
-    "0017": "V GANGADEVI",
-    "0021": "M CHANDRAMMA"
+    "0014_e": "G RAMNJULU",
+    "0018_c": "P SYAMALAMMA",
+    "0019_d": "K BHARGAVI",
+    "0012_f": "M LAKSHMIDEVI",
+    "0013_c": "K MALLESWARI",
+    "0016_c": "M YERRAKKA",
+    "0017_g": "V GANGADEVI",
+    "0021_b": "M CHANDRAMMA"
 }
 
 # Create lists for dropdowns
@@ -322,8 +320,9 @@ initial_values_defaults = {
 # Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
-    draft_data = {key: st.session_state[key] for key in initial_values_defaults.keys() if key in st.session_state}
+    draft_data = {key: st.session_state.get(key, initial_values_defaults.get(key)) for key in initial_values_defaults.keys()}
     
+    # Convert datetime.date objects to string for JSON serialization
     if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
         draft_data['visit_date'] = draft_data['visit_date'].isoformat()
 
@@ -353,9 +352,9 @@ def load_draft():
                 else:
                     st.session_state[key] = value
 
+            # Re-validate dropdown selections based on current language
             current_labels = dict_translations.get(st.session_state.get('lang_select', 'English'), dict_translations['English'])
             
-            # Ensure dropdowns use current labels
             if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
                 st.session_state['types'] = current_labels['HPC']
             if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
@@ -378,21 +377,25 @@ def load_draft():
             return False
     return False
 
-# Initialize session state
-if st.session_state.get('app_initialized_flag', False) is False:
+# Initialize session state for the first time or load draft
+if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
     st.session_state.last_saved_time_persistent = None
     
-    loaded_a_draft = load_draft()
+    # Initialize all defaults first
+    for key, default_value in initial_values_defaults.items():
+        st.session_state[key] = default_value
     
-    if not loaded_a_draft:
-        for key, default_value in initial_values_defaults.items():
-            if key not in st.session_state:
-                st.session_state[key] = default_value
+    # Then try to load draft, which will overwrite defaults if successful
+    load_draft()
 
 # Language Selection
 initial_lang_options = ("English", "Hindi", "Marathi")
-initial_lang_index = initial_lang_options.index(st.session_state.lang_select) if st.session_state.lang_select in initial_lang_options else 0
+# Ensure the selected language is always one of the valid options
+if st.session_state.lang_select not in initial_lang_options:
+    st.session_state.lang_select = "English" # Default to English if invalid
+initial_lang_index = initial_lang_options.index(st.session_state.lang_select)
+
 lang = st.selectbox(
     "Language / भाषा / भाषा",
     initial_lang_options,
@@ -414,16 +417,13 @@ else:
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
 
-    # All widgets explicitly reference st.session_state for their initial value.
-    # Streamlit automatically updates st.session_state[key] on rerun when a widget value changes.
-
     # VLCC Name
     vlcc_name_default_idx = 0
-    if VLCC_NAMES and st.session_state.vlcc_name in VLCC_NAMES: # Ensure VLCC_NAMES is not empty before checking index
+    if st.session_state.vlcc_name in VLCC_NAMES:
         vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.vlcc_name)
-    elif VLCC_NAMES: # If VLCC_NAMES is not empty, default to first
-        st.session_state.vlcc_name = VLCC_NAMES[0] # Ensure session state has a valid default
-    else: # If VLCC_NAMES is empty, set to None
+    elif VLCC_NAMES: # If current session state value is invalid but options exist, default to first
+        st.session_state.vlcc_name = VLCC_NAMES[0]
+    else: # If no VLCC names, set to None
         st.session_state.vlcc_name = None
 
     vlcc_name = st.selectbox(
@@ -442,33 +442,26 @@ with st.form("survey_form"):
 
     # Types
     types_options = (labels['HPC'], labels['MCC'])
-    types_default_idx = types_options.index(st.session_state.types) if st.session_state.types in types_options else 0
+    types_default_idx = 0
+    if st.session_state.types in types_options:
+        types_default_idx = types_options.index(st.session_state.types)
     types = st.selectbox(
         labels['Types'], types_options,
         index=types_default_idx,
         key="types"
     )
 
-   # Add 'Others' to FARMER_NAMES options
+    # Add 'Others' to FARMER_NAMES options
     farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
 
     # Dropdown for Farmer Name
     farmer_name_default_idx = 0
-
-    # Retrieve the current value from session state, with a safe fallback
-    current_farmer_name_selection = st.session_state.get('farmer_name_selected')
-
-    if farmer_names_with_others: # Ensure there are options to choose from
-        if current_farmer_name_selection in farmer_names_with_others:
-            farmer_name_default_idx = farmer_names_with_others.index(current_farmer_name_selection)
-        elif 'Others' in farmer_names_with_others: # Fallback to 'Others' if default not found
-            farmer_name_default_idx = farmer_names_with_others.index(labels['Others'])
-        else: # Fallback to the first available option if 'Others' isn't available or relevant
-            farmer_name_default_idx = 0
-            st.session_state.farmer_name_selected = farmer_names_with_others[0] # Ensure session state is updated
-    else:
-        st.session_state.farmer_name_selected = None # No options available
-        farmer_name_default_idx = 0 # Default index for empty list is 0, but it won't be used if disabled
+    if st.session_state.farmer_name_selected in farmer_names_with_others:
+        farmer_name_default_idx = farmer_names_with_others.index(st.session_state.farmer_name_selected)
+    elif farmer_names_with_others: # If current session state value is invalid but options exist, default to first
+        st.session_state.farmer_name_selected = farmer_names_with_others[0]
+    else: # If no farmer names, set to None
+        st.session_state.farmer_name_selected = None
 
     farmer_name_selected = st.selectbox(
         labels['Farmer Name'], options=farmer_names_with_others,
@@ -490,11 +483,11 @@ with st.form("survey_form"):
 
     # Dropdown for Farmer Code
     farmer_code_default_idx = 0
-    if FARMER_CODES and st.session_state.farmer_code in FARMER_CODES:
+    if st.session_state.farmer_code in FARMER_CODES:
         farmer_code_default_idx = FARMER_CODES.index(st.session_state.farmer_code)
-    elif FARMER_CODES:
+    elif FARMER_CODES: # If current session state value is invalid but options exist, default to first
         st.session_state.farmer_code = FARMER_CODES[0]
-    else:
+    else: # If no farmer codes, set to None
         st.session_state.farmer_code = None
 
     farmer_code = st.selectbox(
@@ -506,7 +499,9 @@ with st.form("survey_form"):
 
     # Gender
     gender_options = (labels['Male'], labels['Female'])
-    gender_default_idx = gender_options.index(st.session_state.gender) if st.session_state.gender in gender_options else 0
+    gender_default_idx = 0
+    if st.session_state.gender in gender_options:
+        gender_default_idx = gender_options.index(st.session_state.gender)
     gender = st.selectbox(
         labels['Gender'], gender_options,
         index=gender_default_idx,
@@ -554,7 +549,9 @@ with st.form("survey_form"):
 
     st.header(labels['Specific Questions'])
     green_fodder_options = (labels['Yes'], labels['No'])
-    green_fodder_default_idx = green_fodder_options.index(st.session_state.green_fodder) if st.session_state.green_fodder in green_fodder_options else 0
+    green_fodder_default_idx = 0
+    if st.session_state.green_fodder in green_fodder_options:
+        green_fodder_default_idx = green_fodder_options.index(st.session_state.green_fodder)
     green_fodder = st.radio(
         labels['Green Fodder'], green_fodder_options,
         index=green_fodder_default_idx,
@@ -572,11 +569,16 @@ with st.form("survey_form"):
             key="green_fodder_qty"
         )
     else:
+        # Clear associated session state values when "No" is selected
         st.session_state.green_fodder_types = []
         st.session_state.green_fodder_qty = 0.0
+        green_fodder_types = [] # For data collection
+        green_fodder_qty = 0.0 # For data collection
 
     dry_fodder_options = (labels['Yes'], labels['No'])
-    dry_fodder_default_idx = dry_fodder_options.index(st.session_state.dry_fodder) if st.session_state.dry_fodder in dry_fodder_options else 0
+    dry_fodder_default_idx = 0
+    if st.session_state.dry_fodder in dry_fodder_options:
+        dry_fodder_default_idx = dry_fodder_options.index(st.session_state.dry_fodder)
     dry_fodder = st.radio(
         labels['Dry Fodder'], dry_fodder_options,
         index=dry_fodder_default_idx,
@@ -596,9 +598,13 @@ with st.form("survey_form"):
     else:
         st.session_state.dry_fodder_types = []
         st.session_state.dry_fodder_qty = 0.0
+        dry_fodder_types = []
+        dry_fodder_qty = 0.0
 
     pellet_feed_options = (labels['Yes'], labels['No'])
-    pellet_feed_default_idx = pellet_feed_options.index(st.session_state.pellet_feed) if st.session_state.pellet_feed in pellet_feed_options else 0
+    pellet_feed_default_idx = 0
+    if st.session_state.pellet_feed in pellet_feed_options:
+        pellet_feed_default_idx = pellet_feed_options.index(st.session_state.pellet_feed)
     pellet_feed = st.radio(
         labels['Pellet Feed'], pellet_feed_options,
         index=pellet_feed_default_idx,
@@ -618,9 +624,13 @@ with st.form("survey_form"):
     else:
         st.session_state.pellet_feed_brands = []
         st.session_state.pellet_feed_qty = 0.0
+        pellet_feed_brands = []
+        pellet_feed_qty = 0.0
 
     mineral_mixture_options = (labels['Yes'], labels['No'])
-    mineral_mixture_default_idx = mineral_mixture_options.index(st.session_state.mineral_mixture) if st.session_state.mineral_mixture in mineral_mixture_options else 0
+    mineral_mixture_default_idx = 0
+    if st.session_state.mineral_mixture in mineral_mixture_options:
+        mineral_mixture_default_idx = mineral_mixture_options.index(st.session_state.mineral_mixture)
     mineral_mixture = st.radio(
         labels['Mineral Mixture'], mineral_mixture_options,
         index=mineral_mixture_default_idx,
@@ -643,9 +653,13 @@ with st.form("survey_form"):
     else:
         st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
         st.session_state.mineral_qty = 0.0
+        mineral_brand = ""
+        mineral_qty = 0.0
 
     silage_options = (labels['Yes'], labels['No'])
-    silage_default_idx = silage_options.index(st.session_state.silage) if st.session_state.silage in silage_options else 0
+    silage_default_idx = 0
+    if st.session_state.silage in silage_options:
+        silage_default_idx = silage_options.index(st.session_state.silage)
     silage = st.radio(
         labels['Silage'], silage_options,
         index=silage_default_idx,
@@ -665,6 +679,8 @@ with st.form("survey_form"):
     else:
         st.session_state.silage_source = ""
         st.session_state.silage_qty = 0.0
+        silage_source = ""
+        silage_qty = 0.0
 
     water_sources = st.multiselect(
         labels['Source of Water'], WATER_SOURCE_OPTIONS,
@@ -681,6 +697,11 @@ with st.form("survey_form"):
         index=surveyor_name_default_idx,
         key="surveyor_name"
     )
+    
+    # Ensure visit_date is a datetime.date object before passing to st.date_input
+    if not isinstance(st.session_state.visit_date, datetime.date):
+        st.session_state.visit_date = datetime.date.today()
+
     visit_date = st.date_input(
         labels['Date of Visit'],
         value=st.session_state.visit_date,
@@ -737,16 +758,9 @@ with st.form("survey_form"):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
 
-            # --- Submit Button ---
-    submitted = st.form_submit_button(labels['Submit'])
-
-    if submitted:
-        # ... logic to process and save data ...
-        st.rerun() # To clear the form
-
         # Save to CSV
         try:
-            # Check if file exists to decide whether to write header
+            # Append to file if it exists, otherwise create it
             if not os.path.exists(file_path):
                 df.to_csv(file_path, index=False)
             else:
