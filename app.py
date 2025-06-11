@@ -42,7 +42,9 @@ dict_translations = {
         'Quantity of Silage': 'Quantity of Silage (Kg/day)', 'Source of Water': 'Source of Water (Multiple Select)',
         'Name': 'Name', 'Date of Visit': 'Date of Visit', # Changed 'Name of Surveyor' to 'Name' in English
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV',
-        'Auto-saved!': 'Auto-saved! You can resume filling the form even if you refresh or lose internet temporarily.'
+        'Auto-saved!': 'Auto-saved! You can resume filling the form even if you refresh or lose internet temporarily.',
+        'Others': 'Others', # Added for "Others" option
+        'Specify Farmer Name': 'Specify Farmer Name (if Others selected)', # Added for specifying "Others"
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -66,7 +68,9 @@ dict_translations = {
         'Quantity of Silage': 'सायलेज मात्रा (किलो/दिन)', 'Source of Water': 'पानी का स्रोत (एकाधिक चयन)',
         'Name': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि', # Changed 'Name of Surveyor' to 'Name' in Hindi
         'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें',
-        'Auto-saved!': 'स्वतः सहेजा गया! आप फ़ॉर्म भरना जारी रख सकते हैं, भले ही आप ताज़ा करें या अस्थायी रूप से इंटरनेट खो दें!'
+        'Auto-saved!': 'स्वतः सहेजा गया! आप फ़ॉर्म भरना जारी रख सकते हैं, भले ही आप ताज़ा करें या अस्थायी रूप से इंटरनेट खो दें!',
+        'Others': 'अन्य', # Added for "Others" option
+        'Specify Farmer Name': 'किसान का नाम निर्दिष्ट करें (यदि अन्य चुना गया हो)', # Added for specifying "Others"
     },
     'Marathi': {
         "Language": "भाषा",
@@ -114,12 +118,14 @@ dict_translations = {
         "Yes": "होय",
         "No": "नाही",
         "Download CSV": "CSV डाउनलोड करा",
-        "Auto-saved!": "स्वयं-जतन केले! आपण रिफ्रेश केले किंवा तात्पुरते इंटरनेट गमावले तरीही आपण फॉर्म भरणे सुरू ठेवू शकता."
+        "Auto-saved!": "स्वयं-जतन केले! आपण रिफ्रेश केले किंवा तात्पुरते इंटरनेट गमावले तरीही आपण फॉर्म भरणे सुरू ठेवू शकता.",
+        'Others': 'इतर', # Added for "Others" option
+        'Specify Farmer Name': 'शेतकऱ्याचे नाव नमूद करा (इतर निवडल्यास)', # Added for specifying "Others"
     }
 }
 
 
-# --- Heritage Specific Data 
+# --- Heritage Specific Data
 VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLI","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
 "3045-ROMPICHERLA","3046-BANDAKINDAPALLE","3047-MARASANIVARIPALLI",
 "3024-DEVALAVARIPALLE","3002-KHAMBAMMITTAPALLE","3004-MARRIMAKULAPALLE","3005-NAGARIMADUGUVARIPALLE","3006-KOORAPARTHIVARIPALLE","3008-IRRIVANDLAPALLE","3009-PATHEGADA (U.I)","3011-PULICHERLA","3013-GUDAREVUPALLE","3014-ENUMALAVARIPALLE","3015-MUNTHAVANDLAPALLE","3016-REGALLU",
@@ -134,198 +140,33 @@ VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BO
 "2374-PILER","2437-MARRIMAKULAPALLE","2421-MATLOLLPALLAI","2314-KUMMARAPALLE","2338-SETTIPALLEVANDLAPALLE","2500-KAMMAPALLE","2530-AVULAPEDDIREDDIGARIPALL","2528-MARAMREDDIGARIPALLE","2526-AVULAPEDDIREDDIGARIPALL","2463-BOMMAIAHGARIPALLE","2444-ROMPICHERLA","2440-BASIREDDIGARIPALLE",
 "2013-THOTIMALAPALLE","2083-RAJUVARIPALLI H/W","2045-RAJUVARIPALLI","2288-RAJUVARIPALLI","2272-THATIGUNTAPALEM","2186-KANTAMVARIPALLE","2183-REGALLU","2178-SANKENIGUTTAPALLE","2173-MUNELLAPALLE","2160-V.K.THURPUPALLE","2228-GAJULAVARIPALLI","0296-BESTAPALLE",
 "0335-MATLOLLPALLAI","0326-LOKAVARIPALLE","0256-VOOTUPALLE","0245-BETAPALLE","0237-BATTUVARIPALLE","0417-ROMPICHERLA","0414-BODIPATIVARIPALLE","0441-BODIPATIVARIPALLE","0440-VARANASIVARIPALLE",
-"0360-CHICHILIVARIPALLE",
-"0357-AKKISANIVARIPALLE", "0394-SETTIPALLEVANDLAPALLE", "0072-VAGALLA", 
-"0056-LEMATIVARIPALLE", "0108-KONDAREDDIGARIPALLE","0016-ROMPICHERLA",
-"0030-MELLAVARIPALLE", "0197-BASIREDDIGARIPALLE", "0173-MORAVAPALLE",
-"0221-KURABAPALLE", "0130-PATHAKURVAPALLE", "0165-AGRAHARAM",
-"0151-BONAMVARIPALLE", "0649-PILER", "0645-NADIMPALLE",
-"0643-SAVVALAVARIPALLE", "0636-KURAPATHIVARIPALLE", "0689-VANKAVODDIPALLE",
-"0688-BADDALAVARIPALLI H.W.","0685-NAGARIMADUGUVARIPALLE", "0668-KANDUR",
-"0663-DEVALAVARIPALLE", "0585-SRIVARAMPURAM", "0575-RAMREDDIGARIPALLE",
-"0572-LOKAVARIPALLE", "0613-NAGAVANDLAPALLI", "0611-BODIPATIVARIPALLE",
-"0610-ROMPICHERLA", "0604-NAGAVANDLAPALLI", "0782-CHICHILIVARIPALLE",
-"0770-DEVALAVARIPALLE", "0767-PEDDAGOTTIGALLU", "0764-K.V.PALLE",
-"0762-JAGADAMVARIPALLE", "0753-BOLLINANIVARIPALLI", "0813-ROMPICHERLA",
-"0811-ALAKAMVARIPALLE", "0809-KOTAKADAPALLE", "0794-PEDDAGOTTIGALLU",
-"0793-DIGUVAJUPALLI", "0789-SODUM", "0788-BURUJUPALLE",
-"0786-PEDDAGOTTIGALLU CROSS", "0719-NADIMPALLE", "0718-PEDDAGOTTIGALLU",
-"0714-BODIPATIVARIPALLE", "0709-REDDIVARIPALLE", "0700-RAMIREDDIGARIPALLE",
-"0721-SODUM", "0747-KURAVAPALLE", "0745-ETUKURIVARIPALLE",
-"0743-ROMPICHERLA", "0736-VOOTUPALLE", "0732-ROMPICHERLA",
-"0727-DUSSAVANDLA PALLI", "0726-SAVVALAVARIPALLE", "0508-MUREVANDLAPALLE",
-"0490-MATAMPALLE", "0551-TALUPULA", "0512-BONAMVARIPALLE",
-"0473-KURAVAPALLE", "0477-VARANASIVARIPALLE"
-]
-
-# Extracted Farmer Names and Member Codes from the image
-FARMER_DATA = {
-    "0008": "D.PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
-    "0006":"G.Ratnamma", "0012":"V.Devaki", "0006":"G.Ratnamma", "0008": "D.PRASAD REDDY",
-    "0007": "INDRAVATHI RAMADEVI", "0013": "M.GANGULU", "0014": "K VARADHA NAIDU",
-    "0017": "B SAMPURNA", "0015": "J.GANGULU", "0002": "KRISHNAMA NAIDU",
-    "0021": "M.S.CHOWDARY", "0029": "DASARI VENKATAIAH", "0030": "K.M.KANTHAMMA",
-    "0036": "D.BALAKRISHNA", "0037": "C.SURYA PRAKASH", "0039": "D.CHANDRAMMA",
-    "0041": "G.NARASIMHA NAIDU", "0043": "REDDI RAMADEVI", "0044": "D.CHANDRAMMA",
-    "0045": "S.PEDDAIAH", "0046": "D.PEDDAIAH", "0047": "K.K.KADIRAMMA",
-    "0001": "M.NARAYANAMMA", "0002": "S.K.SUBBAIAH", "0004": "C.M.NARAYANA",
-    "0005": "D.MALLAIAH", "0006": "G.CHANDRAIAH", "0008": "J.RAMADEVI",
-    "0009": "G.SWARNAMMA", "0011": "J.ESWARAMMA", "0013": "K.GURAVAIAH",
-    "0014": "P.DEVAKI DEVI", "0015": "K.NARASIMHULU", "0016": "P REDDY PRASAD",
-    "0018": "D.DEVAKI RAMADEVI", "0019": "P.SATYAMMA", "0020": "B.SAMPURNA",
-    "0021": "P.PEDDAIAH", "0022": "REDDISEKHAR", "0023": "V.SUBRAMANYAM",
-    "0071": "V.REDDY RANI", "0072": "B.GANGULU", "0074": "K.YASHODHA",
-    "0075": "D.RAMADEVI", "0076": "H.RAMADEVI", "0077": "R.RAMADEVI",
-    "0078": "B.RANI", "0079": "K.VENKATAIAH", "0080": "P.SREERAM REDDY",
-    "0081": "M.RAMADEVI", "0082": "M.PENCHALAMAIAH", "0083": "M.M.RATHNAMMA",
-    "0084": "N.GANGULU", "0085": "N.RAMALINGAM", "0086": "N.RAMADEVI",
-    "0087": "V.CHANDRAIAH", "0088": "N.SRINIVASULU", "0089": "M.RAMADEVI",
-    "0090": "B.MURALI", "0091": "S.CHANDRAIAH", "0092": "S.SABEEN TAJ",
-    "0048": "P.LAKSHMAMMA", "0049": "V.RANI", "0050": "K.PEDDAMMA",
-    "0051": "C.VENKATA SUBBA REDDY", "0052": "S.NAGARJUNA", "0055": "E.CHANDRAIAH",
-    "0057": "S.KASAMMA", "0059": "K.NARASIMHA", "0070": "K.NARAYANA",
-    "0069": "K.NARASIMHULU", "0068": "K.RAJAMMA", "0067": "P.CHANDRAIAH",
-    "0066": "M.RAJAMMA", "0060": "P.BHARATHAMMA", "0061": "V.VENKATA RAMANA",
-    "0062": "P.BHARATHAMMA", "0064": "V.PADMAVATHI", "0063": "V.PADMAVATHI",
-    "1664": "G.RAMADEVI", "1651": "P.GIRI BABU", "1740": "G.SUBRAMANYAM",
-    "1718": "M.BABU", "1542": "S.BABU", "1937": "SREENIVASULU",
-    "1993": "J.CHANDRAMMA", "1959": "A.CHANDRAMMA", "1812": "S.BHARATHI",
-    "1781": "A.RAMADEVI", "1773": "P.SYAMALAMMA", "1770": "M.DEVAMMA",
-    "1868": "T.LAKSHMINARI", "1824": "P.BHARATHAMMA", "0884": "M.DEVAMMA",
-    "0881": "M.DEVASENEV", "0880": "M.LAKSHMINARIMMA", "0878": "M.LAKSHMINARIMMA",
-    "0876": "N.NAGARATHNAM", "0874": "N.VENKATARAMANA", "0871": "C.RAMADEVI",
-    "0868": "M.LAKSHMINARIMMA", "0863": "G.PEDDAIAH", "0906": "K.GANGAMMA",
-    "0900": "R.SATYAMMA", "0895": "V.PADMAVATHI", "0893": "G.BALAKRISHNA",
-    "0888": "C.RAMADEVI", "0887": "K.GANGAMMA", "0830": "K.ESWARAMMA",
-    "0826": "G.NARASIMHULU", "0824": "M.VENKATAIAH", "0859": "G.NARASIMHULU",
-    "0851": "K.KRISHNA REDDY", "0848": "G.CHANDRAIAH", "0846": "V.GANGAMMA",
-    "0842": "K.SWARNAMMA", "0839": "B.SATYAMMA", "1058": "P.RAMADEVI",
-    "1057": "K.RAMANAIAH", "1052": "P.RAMADEVI", "1017": "N.NARAYANAMMA",
-    "1003": "N.PEDDI REDDY", "1272": "G.PEDDI REDDY", "1240": "K.PEDDI REDDY",
-    "0916": "M.KRISHNAMA NAIDU", "0915": "S.BALAKRISHNA REDDY", "0982": "C.MUNIREDDY",
-    "2388": "G.PEDDI REDDY", "2380": "K.MUNIREDDY", "2374": "N.RAJAGOPAL",
-    "2437": "M.ADILAKSHMI", "2421": "M.MUNIREDDY", "2314": "K.CHANDRAIAH",
-    "2338": "A.CHANDRAMMA", "2500": "T.VENKATAIAH", "2530": "A.RAMADEVI",
-    "2528": "M.SUBRAMANYAM", "2526": "A.GANGAMMA", "2463": "B.BUMMAIAHGARIPALLE",
-    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA", # <-- Comma added here
-    "2013": "THOTIMALAPALLE",
-    "2083": "RAJUVARIPALLI H/W", "2045": "RAJUVARIPALLI", "2288": "RAJUVARIPALLI",
-    "2272": "THATIGUNTAPALEM", "2186": "KANTAMVARIPALLE", "2183": "REGALLU",
-    "2178": "SANKENIGUTTAPALLE", "2173": "MUNELLAPALLE", "2160": "V.K.THURPUPALLE",
-    "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE",
-    "0335": "MATLOLLPALLAI", "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
-    "0237": "BATTUVARIPALLE", "0417": "ROMPICHERLA", "0414": "BODIPATIVARIPALLE",
-    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE", # <-- Comma added here
-    "0360":"CHICHILIVARIPALLE", # This was the line where the error was reported
-    "0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA", # <-- Comma added here
-    "0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
-    "0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
-    "0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
-    "0151":"BONAMVARIPALLE", "0649":"PILER", "0645":"NADIMPALLE",
-    "0643":"SAVVALAVARIPALLE", "0636":"KURAPATHIVARIPALLE", "0689":"VANKAVODDIPALLE",
-    "0688":"BADDALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
-    "0663":"DEVALAVARIPALLE", "0585":"SRIVARAMPURAM", "0575":"RAMREDDIGARIPALLE",
-    "0572":"LOKAVARIPALLE", "0613":"NAGAVANDLAPALLI", "0611":"BODIPATIVARIPALLE",
-    "0610":"ROMPICHERLA", "0604":"NAGAVANDLAPALLI", "0782":"CHICHILIVARIPALLE",
-    "0770":"DEVALAVARIPALLE", "0767":"PEDDAGOTTIGALLU", "0764":"K.V.PALLE",
-    "0762":"JAGADAMVARIPALLE", "0753":"BOLLINANIVARIPALLI", "0813":"ROMPICHERLA",
-    "0811":"ALAKAMVARIPALLE", "0809":"KOTAKADAPALLE", "0794":"PEDDAGOTTIGALLU",
-    "0793":"DIGUVAJUPALLI", "0789":"SODUM", "0788":"BURUJUPALLE",
-    "0786":"PEDDAGOTTIGALLU CROSS", "0719":"NADIMPALLE", "0718":"PEDDAGOTTIGALLU",
-    "0714":"BODIPATIVARIPALLE", "0709":"REDDIVARIPALLE", "0700":"RAMIREDDIGARIPALLE",
-    "0721":"SODUM", "0747":"KURAVAPALLE", "0745":"ETUKURIVARIPALLE",
-    "0743":"ROMPICHERLA", "0736":"VOOTUPALLE", "0732":"ROMPICHERLA",
-    "0727":"DUSSAVANDLA PALLI", "0726":"SAVVALAVARIPALLE", "0508":"MUREVANDLAPALLE",
-    "0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
-    "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
-}
-
-
-FARMER_DATA = {
-    "0008": "D.PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
-    "0006":"G.Ratnamma", "0012":"V.Devaki", "0006":"G.Ratnamma", "0008": "D.PRASAD REDDY",
-    "0007": "INDRAVATHI RAMADEVI", "0013": "M.GANGULU", "0014": "K VARADHA NAIDU",
-    "0017": "B SAMPURNA", "0015": "J.GANGULU", "0002": "KRISHNAMA NAIDU",
-    "0021": "M.S.CHOWDARY", "0029": "DASARI VENKATAIAH", "0030": "K.M.KANTHAMMA",
-    "0036": "D.BALAKRISHNA", "0037": "C.SURYA PRAKASH", "0039": "D.CHANDRAMMA",
-    "0041": "G.NARASIMHA NAIDU", "0043": "REDDI RAMADEVI", "0044": "D.CHANDRAMMA",
-    "0045": "S.PEDDAIAH", "0046": "D.PEDDAIAH", "0047": "K.K.KADIRAMMA",
-    "0001": "M.NARAYANAMMA", "0002": "S.K.SUBBAIAH", "0004": "C.M.NARAYANA",
-    "0005": "D.MALLAIAH", "0006": "G.CHANDRAIAH", "0008": "J.RAMADEVI",
-    "0009": "G.SWARNAMMA", "0011": "J.ESWARAMMA", "0013": "K.GURAVAIAH",
-    "0014": "P.DEVAKI DEVI", "0015": "K.NARASIMHULU", "0016": "P REDDY PRASAD",
-    "0018": "D.DEVAKI RAMADEVI", "0019": "P.SATYAMMA", "0020": "B.SAMPURNA",
-    "0021": "P.PEDDAIAH", "0022": "REDDISEKHAR", "0023": "V.SUBRAMANYAM",
-    "0071": "V.REDDY RANI", "0072": "B.GANGULU", "0074": "K.YASHODHA",
-    "0075": "D.RAMADEVI", "0076": "H.RAMADEVI", "0077": "R.RAMADEVI",
-    "0078": "B.RANI", "0079": "K.VENKATAIAH", "0080": "P.SREERAM REDDY",
-    "0081": "M.RAMADEVI", "0082": "M.PENCHALAMAIAH", "0083": "M.M.RATHNAMMA",
-    "0084": "N.GANGULU", "0085": "N.RAMALINGAM", "0086": "N.RAMADEVI",
-    "0087": "V.CHANDRAIAH", "0088": "N.SRINIVASULU", "0089": "M.RAMADEVI",
-    "0090": "B.MURALI", "0091": "S.CHANDRAIAH", "0092": "S.SABEEN TAJ",
-    "0048": "P.LAKSHMAMMA", "0049": "V.RANI", "0050": "K.PEDDAMMA",
-    "0051": "C.VENKATA SUBBA REDDY", "0052": "S.NAGARJUNA", "0055": "E.CHANDRAIAH",
-    "0057": "S.KASAMMA", "0059": "K.NARASIMHA", "0070": "K.NARAYANA",
-    "0069": "K.NARASIMHULU", "0068": "K.RAJAMMA", "0067": "P.CHANDRAIAH",
-    "0066": "M.RAJAMMA", "0060": "P.BHARATHAMMA", "0061": "V.VENKATA RAMANA",
-    "0062": "P.BHARATHAMMA", "0064": "V.PADMAVATHI", "0063": "V.PADMAVATHI",
-    "1664": "G.RAMADEVI", "1651": "P.GIRI BABU", "1740": "G.SUBRAMANYAM",
-    "1718": "M.BABU", "1542": "S.BABU", "1937": "SREENIVASULU",
-    "1993": "J.CHANDRAMMA", "1959": "A.CHANDRAMMA", "1812": "S.BHARATHI",
-    "1781": "A.RAMADEVI", "1773": "P.SYAMALAMMA", "1770": "M.DEVAMMA",
-    "1868": "T.LAKSHMINARI", "1824": "P.BHARATHAMMA", "0884": "M.DEVAMMA",
-    "0881": "M.DEVASENEV", "0880": "M.LAKSHMINARIMMA", "0878": "M.LAKSHMINARIMMA",
-    "0876": "N.NAGARATHNAM", "0874": "N.VENKATARAMANA", "0871": "C.RAMADEVI",
-    "0868": "M.LAKSHMINARIMMA", "0863": "G.PEDDAIAH", "0906": "K.GANGAMMA",
-    "0900": "R.SATYAMMA", "0895": "V.PADMAVATHI", "0893": "G.BALAKRISHNA",
-    "0888": "C.RAMADEVI", "0887": "K.GANGAMMA", "0830": "K.ESWARAMMA",
-    "0826": "G.NARASIMHULU", "0824": "M.VENKATAIAH", "0859": "G.NARASIMHULU",
-    "0851": "K.KRISHNA REDDY", "0848": "G.CHANDRAIAH", "0846": "V.GANGAMMA",
-    "0842": "K.SWARNAMMA", "0839": "B.SATYAMMA", "1058": "P.RAMADEVI",
-    "1057": "K.RAMANAIAH", "1052": "P.RAMADEVI", "1017": "N.NARAYANAMMA",
-    "1003": "N.PEDDI REDDY", "1272": "G.PEDDI REDDY", "1240": "K.PEDDI REDDY",
-    "0916": "M.KRISHNAMA NAIDU", "0915": "S.BALAKRISHNA REDDY", "0982": "C.MUNIREDDY",
-    "2388": "G.PEDDI REDDY", "2380": "K.MUNIREDDY", "2374": "N.RAJAGOPAL",
-    "2437": "M.ADILAKSHMI", "2421": "M.MUNIREDDY", "2314": "K.CHANDRAIAH",
-    "2338": "A.CHANDRAMMA", "2500": "T.VENKATAIAH", "2530": "A.RAMADEVI",
-    "2528": "M.SUBRAMANYAM", "2526": "A.GANGAMMA", "2463": "B.BUMMAIAHGARIPALLE",
-    "2444": "C.RAMADEVI", "2440": "B.SWARNAMMA",
-    "2013": "THOTIMALAPALLE",
-    "2083": "RAJUVARIPALLI H/W", "2045": "RAJUVARIPALLI", "2288": "RAJUVARIPALLI",
-    "2272": "THATIGUNTAPALEM", "2186": "KANTAMVARIPALLE", "2183": "REGALLU",
-    "2178": "SANKENIGUTTAPALLE", "2173": "MUNELLAPALLE", "2160": "V.K.THURPUPALLE",
-    "2228": "GAJULAVARIPALLI", "0296": "BESTAPALLE",
-    "0335": "MATLOLLPALLAI", "0326": "LOKAVARIPALLE", "0256": "VOOTUPALLE", "0245": "BETAPALLE",
-    "0237": "BATTUVARIPALLE", "0417": "ROMPICHERLA", "0414": "BODIPATIVARIPALLE",
-    "0441": "BODIPATIVARIPALLE", "0440": "VARANASIVARIPALLE", # <-- Comma added here
-    "0360":"CHICHILIVARIPALLE", # This was the line where the error was reported
-    "0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA", # <-- Comma added here
-    "0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
-    "0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
-    "0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
-    "0151":"BONAMVARIPALLE", "0649":"PILER", "0645":"NADIMPALLE",
-    "0643":"SAVVALAVARIPALLE", "0636":"KURAPATHIVARIPALLE", "0689":"VANKAVODDIPALLE",
-    "0688":"BADDALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
-    "0663":"DEVALAVARIPALLE", "0585":"SRIVARAMPURAM", "0575":"RAMREDDIGARIPALLE",
-    "0572":"LOKAVARIPALLE", "0613":"NAGAVANDLAPALLI", "0611":"BODIPATIVARIPALLE",
-    "0610":"ROMPICHERLA", "0604":"NAGAVANDLAPALLI", "0782":"CHICHILIVARIPALLE",
-    "0770":"DEVALAVARIPALLE", "0767":"PEDDAGOTTIGALLU", "0764":"K.V.PALLE",
-    "0762":"JAGADAMVARIPALLE", "0753":"BOLLINANIVARIPALLI", "0813":"ROMPICHERLA",
-    "0811":"ALAKAMVARIPALLE", "0809":"KOTAKADAPALLE", "0794":"PEDDAGOTTIGALLU",
-    "0793":"DIGUVAJUPALLI", "0789":"SODUM", "0788":"BURUJUPALLE",
-    "0786":"PEDDAGOTTIGALLU CROSS", "0719":"NADIMPALLE", "0718":"PEDDAGOTTIGALLU",
-    "0714":"BODIPATIVARIPALLE", "0709":"REDDIVARIPALLE", "0700":"RAMIREDDIGARIPALLE",
-    "0721":"SODUM", "0747":"KURAVAPALLE", "0745":"ETUKURIVARIPALLE",
-    "0743":"ROMPICHERLA", "0736":"VOOTUPALLE", "0732":"ROMPICHERLA",
-    "0727":"DUSSAVANDLA PALLI", "0726":"SAVVALAVARIPALLE", "0508":"MUREVANDLAPALLE",
-    "0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
-    "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
+"0360":"CHICHILIVARIPALLE", # This was the line where the error was reported
+"0357":"AKKISANIVARIPALLE", "0394":"SETTIPALLEVANDLAPALLE", "0072":"VAGALLA", # <-- Comma added here
+"0056":"LEMATIVARIPALLE", "0108":"KONDAREDDIGARIPALLE","0016":"ROMPICHERLA",
+"0030":"MELLAVARIPALLE", "0197":"BASIREDDIGARIPALLE", "0173":"MORAVAPALLE",
+"0221":"KURABAPALLE", "0130":"PATHAKURVAPALLE", "0165":"AGRAHARAM",
+"0151":"BONAMVARIPALLE", "0649":"PILER", "0645":"NADIMPALLE",
+"0643":"SAVVALAVARIPALLE", "0636":"KURAPATHIVARIPALLE", "0689":"VANKAVODDIPALLE",
+"0688":"BADDALAVARIPALLI H.W.","0685":"NAGARIMADUGUVARIPALLE", "0668":"KANDUR",
+"0663":"DEVALAVARIPALLE", "0585":"SRIVARAMPURAM", "0575":"RAMREDDIGARIPALLE",
+"0572":"LOKAVARIPALLE", "0613":"NAGAVANDLAPALLI", "0611":"BODIPATIVARIPALLE",
+"0610":"ROMPICHERLA", "0604":"NAGAVANDLAPALLI", "0782":"CHICHILIVARIPALLE",
+"0770":"DEVALAVARIPALLE", "0767":"PEDDAGOTTIGALLU", "0764":"K.V.PALLE",
+"0762":"JAGADAMVARIPALLE", "0753":"BOLLINANIVARIPALLI", "0813":"ROMPICHERLA",
+"0811":"ALAKAMVARIPALLE", "0809":"KOTAKADAPALLE", "0794":"PEDDAGOTTIGALLU",
+"0793":"DIGUVAJUPALLI", "0789":"SODUM", "0788":"BURUJUPALLE",
+"0786":"PEDDAGOTTIGALLU CROSS", "0719":"NADIMPALLE", "0718":"PEDDAGOTTIGALLU",
+"0714":"BODIPATIVARIPALLE", "0709":"REDDIVARIPALLE", "0700":"RAMIREDDIGARIPALLE",
+"0721":"SODUM", "0747":"KURAVAPALLE", "0745":"ETUKURIVARIPALLE",
+"0743":"ROMPICHERLA", "0736":"VOOTUPALLE", "0732":"ROMPICHERLA",
+"0727":"DUSSAVANDLA PALLI", "0726":"SAVVALAVARIPALLE", "0508":"MUREVANDLAPALLE",
+"0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
+"0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
 }
 
 # Create lists for dropdowns
 FARMER_CODES = sorted(list(FARMER_DATA.keys()))
-FARMER_NAMES = sorted(list(FARMER_DATA.values()))
-
+FARMER_NAMES_ORIGINAL = sorted(list(FARMER_DATA.values())) # Keep original names
 
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
@@ -341,7 +182,8 @@ initial_values_defaults = {
     'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None, # Handle empty list
     'hpc_code': '',
     'types': "HPC",
-    'farmer_name': FARMER_NAMES[0] if FARMER_NAMES else None, # Handle empty list
+    'farmer_name_selected': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else None, # Use a new key for the selected dropdown value
+    'farmer_name_other': '', # New field for "Others" farmer name
     'farmer_code': FARMER_CODES[0] if FARMER_CODES else None, # Handle empty list
     'gender': "Male",
     'cows': 0,
@@ -513,21 +355,35 @@ with st.form("survey_form"):
         key="types"
     )
 
+    # Add 'Others' to FARMER_NAMES options
+    farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
+
     # Dropdown for Farmer Name
     farmer_name_default_idx = 0
-    if st.session_state.farmer_name in FARMER_NAMES:
-        farmer_name_default_idx = FARMER_NAMES.index(st.session_state.farmer_name)
-    elif FARMER_NAMES:
-        st.session_state.farmer_name = FARMER_NAMES[0]
+    if st.session_state.farmer_name_selected in farmer_names_with_others:
+        farmer_name_default_idx = farmer_names_with_others.index(st.session_state.farmer_name_selected)
+    elif farmer_names_with_others:
+        st.session_state.farmer_name_selected = farmer_names_with_others[0]
     else:
-        st.session_state.farmer_name = None
+        st.session_state.farmer_name_selected = None
 
-    farmer_name = st.selectbox(
-        labels['Farmer Name'], options=FARMER_NAMES,
+    farmer_name_selected = st.selectbox(
+        labels['Farmer Name'], options=farmer_names_with_others,
         index=farmer_name_default_idx,
-        key="farmer_name",
-        disabled=(not FARMER_NAMES)
+        key="farmer_name_selected",
+        disabled=(not farmer_names_with_others)
     )
+
+    # Conditional text input for "Others" farmer name
+    if farmer_name_selected == labels['Others']:
+        farmer_name_other = st.text_input(
+            labels['Specify Farmer Name'],
+            value=st.session_state.farmer_name_other,
+            key="farmer_name_other"
+        )
+    else:
+        st.session_state.farmer_name_other = "" # Clear if "Others" is not selected
+        farmer_name_other = "" # This will be empty for data collection
 
     # Dropdown for Farmer Code
     farmer_code_default_idx = 0
@@ -774,6 +630,12 @@ if st.session_state.app_initialized_flag:
 if submit_button:
     now = datetime.datetime.now()
 
+    # Determine the final farmer name to save
+    final_farmer_name = st.session_state.farmer_name_selected
+    if final_farmer_name == labels['Others']:
+        final_farmer_name = st.session_state.farmer_name_other if st.session_state.farmer_name_other else "Others (Not specified)"
+
+
     # Collect all data directly from st.session_state which holds the latest values
     data = {
         'Timestamp': now.isoformat(),
@@ -781,7 +643,7 @@ if submit_button:
         'VLCC Name': st.session_state.vlcc_name,
         'HPC/MCC Code': st.session_state.hpc_code,
         'Types': st.session_state.types,
-        'Farmer Name': st.session_state.farmer_name,
+        'Farmer Name': final_farmer_name, # Use the determined farmer name here
         'Farmer Code': st.session_state.farmer_code,
         'Gender': st.session_state.gender,
         'Number of Cows': st.session_state.cows,
