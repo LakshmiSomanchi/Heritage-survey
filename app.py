@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import datetime
 import os
-import json # To save/load session state as JSON
+import json
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
@@ -351,8 +351,12 @@ def load_draft():
                     st.session_state[key] = list(value) if isinstance(value, list) else []
                 else:
                     st.session_state[key] = value
-
-            # Re-validate dropdown selections based on current language
+            
+            # --- VALIDATE VLCC_NAME AFTER LOADING DRAFT ---
+            if 'vlcc_name' in st.session_state and st.session_state['vlcc_name'] not in VLCC_NAMES:
+                st.session_state['vlcc_name'] = VLCC_NAMES[0] if VLCC_NAMES else None
+            
+            # Re-validate other dropdown selections based on current language
             current_labels = dict_translations.get(st.session_state.get('lang_select', 'English'), dict_translations['English'])
             
             if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
@@ -384,9 +388,10 @@ if 'app_initialized_flag' not in st.session_state:
     
     # Initialize all defaults first
     for key, default_value in initial_values_defaults.items():
-        st.session_state[key] = default_value
+        if key not in st.session_state: # Only set if not already present from a previous, possibly invalid, run
+            st.session_state[key] = default_value
     
-    # Then try to load draft, which will overwrite defaults if successful
+    # Then try to load draft, which will overwrite defaults if successful and valid
     load_draft()
 
 # Language Selection
@@ -417,14 +422,13 @@ else:
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
 
-    # VLCC Name
+    # VLCC Name - No direct modification to st.session_state.vlcc_name here
+    # The validation is done in load_draft() or initial setup
     vlcc_name_default_idx = 0
     if st.session_state.vlcc_name in VLCC_NAMES:
         vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.vlcc_name)
-    elif VLCC_NAMES: # If current session state value is invalid but options exist, default to first
-        st.session_state.vlcc_name = VLCC_NAMES[0]
-    else: # If no VLCC names, set to None
-        st.session_state.vlcc_name = None
+    elif VLCC_NAMES: # Fallback if session state is still somehow invalid, but not modifying session_state directly
+        vlcc_name_default_idx = 0 # Default to first valid option for display purposes
 
     vlcc_name = st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
@@ -458,10 +462,11 @@ with st.form("survey_form"):
     farmer_name_default_idx = 0
     if st.session_state.farmer_name_selected in farmer_names_with_others:
         farmer_name_default_idx = farmer_names_with_others.index(st.session_state.farmer_name_selected)
-    elif farmer_names_with_others: # If current session state value is invalid but options exist, default to first
-        st.session_state.farmer_name_selected = farmer_names_with_others[0]
-    else: # If no farmer names, set to None
-        st.session_state.farmer_name_selected = None
+    elif farmer_names_with_others: # Fallback for display
+        farmer_name_default_idx = 0
+    else:
+        # If no farmer names, set to None for display but don't modify session state
+        pass # st.session_state.farmer_name_selected should be handled in initial setup
 
     farmer_name_selected = st.selectbox(
         labels['Farmer Name'], options=farmer_names_with_others,
@@ -485,10 +490,10 @@ with st.form("survey_form"):
     farmer_code_default_idx = 0
     if st.session_state.farmer_code in FARMER_CODES:
         farmer_code_default_idx = FARMER_CODES.index(st.session_state.farmer_code)
-    elif FARMER_CODES: # If current session state value is invalid but options exist, default to first
-        st.session_state.farmer_code = FARMER_CODES[0]
-    else: # If no farmer codes, set to None
-        st.session_state.farmer_code = None
+    elif FARMER_CODES: # Fallback for display
+        farmer_code_default_idx = 0
+    else:
+        pass # st.session_state.farmer_code should be handled in initial setup
 
     farmer_code = st.selectbox(
         labels['Farmer Code'], options=FARMER_CODES,
@@ -651,7 +656,7 @@ with st.form("survey_form"):
             key="mineral_qty"
         )
     else:
-        st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
+        st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else "" # Ensure a string or None
         st.session_state.mineral_qty = 0.0
         mineral_brand = ""
         mineral_qty = 0.0
@@ -770,7 +775,18 @@ with st.form("survey_form"):
             # Clear current form values by re-initializing session state for form-related keys
             for key, default_value in initial_values_defaults.items():
                 # Only reset fields that are part of the form, not app-wide settings like 'lang_select'
-                if key not in ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']:
+                # Ensure vlcc_name is set to the *first* default value after submission for fresh form
+                if key == 'vlcc_name':
+                    st.session_state[key] = VLCC_NAMES[0] if VLCC_NAMES else None
+                elif key == 'farmer_name_selected':
+                    st.session_state[key] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others'
+                elif key == 'farmer_code':
+                    st.session_state[key] = FARMER_CODES[0] if FARMER_CODES else None
+                elif key == 'mineral_brand':
+                    st.session_state[key] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
+                elif key == 'surveyor_name':
+                    st.session_state[key] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
+                elif key not in ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']:
                     st.session_state[key] = default_value
 
             # Remove the draft file after successful submission
