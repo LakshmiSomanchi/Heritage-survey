@@ -585,10 +585,10 @@ with st.form("survey_form"):
 
     st.header(labels['Specific Questions'])
     green_fodder_options = (labels['Yes'], labels['No'])
-    current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0]) # Safely get
+    current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0]) # Corrected variable name here
     green_fodder_default_idx = 0
-    if current_green_fod in green_fodder_options:
-        green_fodder_default_idx = green_fodder_options.index(current_green_fod)
+    if current_green_fodder in green_fodder_options: # Corrected variable name here
+        green_fodder_default_idx = green_fodder_options.index(current_green_fodder) # Corrected variable name here
     green_fodder = st.radio(
         labels['Green Fodder'], green_fodder_options,
         index=green_fodder_default_idx,
@@ -762,10 +762,9 @@ with st.form("survey_form"):
             uploaded_files = uploaded_files[:3]
 
         for uploaded_file in uploaded_files:
-            # Check if this file name (or path) is already in the list
-            # A more robust check might involve hashing content for true duplicates
             is_already_in_state = False
             for existing_path in st.session_state.uploaded_photo_paths:
+                # Check for filename match (simplified, can be more robust with hashing)
                 if os.path.basename(uploaded_file.name).replace(" ", "_") in os.path.basename(existing_path):
                     is_already_in_state = True
                     break
@@ -779,7 +778,6 @@ with st.form("survey_form"):
                 unique_filename = f"{timestamp}_{uploaded_file.name.replace(' ', '_')}"
                 photo_path = os.path.join(IMAGE_DIR, unique_filename)
 
-                # Ensure we don't exceed 3 photos in total (including existing draft photos)
                 if len(st.session_state.uploaded_photo_paths) < 3:
                     with open(photo_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())
@@ -787,7 +785,6 @@ with st.form("survey_form"):
                     st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
                 else:
                     st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
-                    # No need to remove file if it was never written due to limit
             except Exception as e:
                 st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
     else:
@@ -819,8 +816,7 @@ with st.form("survey_form"):
         key="visit_date"
     )
 
-    # --- Submit Button ---
-    # THIS BUTTON MUST BE INSIDE THE st.form BLOCK
+    # --- Submit Button (MUST BE INSIDE THE FORM) ---
     submitted = st.form_submit_button(labels['Submit'])
 
     if submitted:
@@ -880,9 +876,7 @@ with st.form("survey_form"):
                 df.to_csv(file_path, mode='a', header=False, index=False)
             st.success("Survey data submitted successfully!")
 
-            # --- CORRECTED RESET LOGIC ---
             # Clear relevant keys from session_state for a fresh form on next rerun.
-            # No need to iterate through initial_values_defaults, just the keys we manage.
             keys_to_clear = list(initial_values_defaults.keys()) # Make a copy
             # Exclude persistent keys like lang_select and app_initialized_flag
             keys_to_clear.remove('lang_select')
@@ -932,7 +926,7 @@ def load_all_survey_data():
         return pd.concat(list_df, ignore_index=True)
     return pd.DataFrame()
 
-# Download Button for all collected data
+# Download Button for all collected data (outside the form)
 st.markdown("---")
 if st.button(labels['Download CSV']):
     all_data_df = load_all_survey_data()
