@@ -17,7 +17,6 @@ os.makedirs(DRAFT_DIR, exist_ok=True)
 # Streamlit Page Config - THIS MUST BE THE FIRST STREAMLIT COMMAND
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
-
 # Multilingual Translations
 dict_translations = {
     'English': {
@@ -40,11 +39,11 @@ dict_translations = {
         'Quantity of Mineral Mixture': 'Quantity of Mineral Mixture (gm/day)',
         'Silage': 'Silage', 'Source and Price of Silage': 'Source and Price of Silage',
         'Quantity of Silage': 'Quantity of Silage (Kg/day)', 'Source of Water': 'Source of Water (Multiple Select)',
-        'Name': 'Name', 'Date of Visit': 'Date of Visit', # Changed 'Name of Surveyor' to 'Name' in English
+        'Name': 'Name', 'Date of Visit': 'Date of Visit',
         'Submit': 'Submit', 'Yes': 'Yes', 'No': 'No', 'Download CSV': 'Download CSV',
         'Auto-saved!': 'Auto-saved! You can resume filling the form even if you refresh or lose internet temporarily.',
-        'Others': 'Others', # Added for "Others" option
-        'Specify Farmer Name': 'Specify Farmer Name (if Others selected)', # Added for specifying "Others"
+        'Others': 'Others',
+        'Specify Farmer Name': 'Specify Farmer Name (if Others selected)',
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -66,11 +65,11 @@ dict_translations = {
         'Quantity of Mineral Mixture': 'खनिज मिश्रण मात्रा (ग्राम/दिन)',
         'Silage': 'सायलेज', 'Source and Price of Silage': 'सायलेज स्रोत और मूल्य',
         'Quantity of Silage': 'सायलेज मात्रा (किलो/दिन)', 'Source of Water': 'पानी का स्रोत (एकाधिक चयन)',
-        'Name': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि', # Changed 'Name of Surveyor' to 'Name' in Hindi
+        'Name': 'सर्वेक्षक का नाम', 'Date of Visit': 'दौरे की तिथि',
         'Submit': 'जमा करें', 'Yes': 'हाँ', 'No': 'नहीं', 'Download CSV': 'CSV डाउनलोड करें',
         'Auto-saved!': 'स्वतः सहेजा गया! आप फ़ॉर्म भरना जारी रख सकते हैं, भले ही आप ताज़ा करें या अस्थायी रूप से इंटरनेट खो दें!',
-        'Others': 'अन्य', # Added for "Others" option
-        'Specify Farmer Name': 'किसान का नाम निर्दिष्ट करें (यदि अन्य चुना गया हो)', # Added for specifying "Others"
+        'Others': 'अन्य',
+        'Specify Farmer Name': 'किसान का नाम निर्दिष्ट करें (यदि अन्य चुना गया हो)',
     },
     'Marathi': {
         "Language": "भाषा",
@@ -109,59 +108,72 @@ dict_translations = {
         "Silage": "सायलेज",
         "Source and Price of Silage": "सायलेजचा स्त्रोत आणि किंमत",
         "Quantity of Silage": "सायलेजचे प्रमाण (किलो/दिवस)",
-        "Type of Farm": "शेताचा प्रकार",
-        "Other Type of Farm (if selected above)": "इतर शेताचा प्रकार (वर निवडल्यास)",
         "Source of Water": "पाण्याचा स्त्रोत (अनेक निवडा)",
-        "Name": "सर्वेक्षकाचे नाव", # Changed 'Name of Surveyor' to 'Name' in Marathi
+        "Name": "सर्वेक्षकाचे नाव",
         "Date of Visit": "भेटीची तारीख",
         "Submit": "सादर करा",
         "Yes": "होय",
         "No": "नाही",
         "Download CSV": "CSV डाउनलोड करा",
         "Auto-saved!": "स्वयं-जतन केले! आपण रिफ्रेश केले किंवा तात्पुरते इंटरनेट गमावले तरीही आपण फॉर्म भरणे सुरू ठेवू शकता.",
-        'Others': 'इतर', # Added for "Others" option
-        'Specify Farmer Name': 'शेतकऱ्याचे नाव नमूद करा (इतर निवडल्यास)', # Added for specifying "Others"
+        'Others': 'इतर',
+        'Specify Farmer Name': 'शेतकऱ्याचे नाव नमूद करा (इतर निवडल्यास)',
     }
 }
 
-
 # --- Heritage Specific Data
-VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BOMMAICHERUVUPALLI","3030-BADDALAVARIPALLI","3033-CHINNAGOTTIGALLU","3034-VODDIPALLE","3036-MUDUPULAVEMULA","3037-BAYYAREDDYGARIPALLE","3038-DODDIPALLE","3040-MARAMREDDYGARIPALLE","3041-GUTTAPALEM","3042-CHERUVUMUNDARAPALLI","3044-VARAMPATIVARIPALLE",
-"3045-ROMPICHERLA","3046-BANDAKINDAPALLE","3047-MARASANIVARIPALLI",
-"3024-DEVALAVARIPALLE","3002-KHAMBAMMITTAPALLE","3004-MARRIMAKULAPALLE","3005-NAGARIMADUGUVARIPALLE","3006-KOORAPARTHIVARIPALLE","3008-IRRIVANDLAPALLE","3009-PATHEGADA (U.I)","3011-PULICHERLA","3013-GUDAREVUPALLE","3014-ENUMALAVARIPALLE","3015-MUNTHAVANDLAPALLE","3016-REGALLU",
-"3018-REDDIVARIPALLE","3019-MAJJIGAVANDLAPALLE","3020-VENKATADASARAPALLE","3021-BURRAVANDLAPALLE","3022-KODEKAMBAMVARIPALLI","3023-SEENAPPAGARIPALLE","3071-KOTAKADAPALLE","3072-KOTAKADAPALLE","3074-PODALAKUNTALAPALLE","3075-SOMALA","3076-SOMALA","3077-SOMALA","3078-CHINNAGOTTIGALLU","3079-MATLOLLPALLAI",
-"3080-POLIKIMAKULAPALLE","3081-K.GOLLAPALLE","3082-CHERUKUVARIPALLE","3083-SODUM","3084-PILER","3085-CHERUKUVARIPALLE","3086-SOMALA","3087-SODUM","3088-YERRAVARIPALEM",
-"3089-GUDAREVUPALLE","3090-SOMALA","3091-PUTTAVARIPALLE","3092-VAGALLA","3048-R.KUMMARA PALLE","3049-HANUMANTHARAYUNIPETA","3050-CHENCHAMAREDDIGARIPALLE","3051-BODUMALLUVARIPALLE","3052-BANDAKINDAPALLE","3055-NAKKALADINNEVODDIPALLE","3057-KUKKALODDU",
-"3059-GUNDLAKADAPALLI","3070-PEDDAPANJANI","3069-PEDDAPALLI","3068-KADIRAKUNTA","3067-KOTALA","3066-VLLIGATLA(U.I)","3060-BALIREDDIGARIPALLE","3061-SODUM","3062-GONGIVARIPALLE","3064-SRINADHAPURAM","3063-GANGUVARIPALLE","1664-DEVALAMPETA","1651-YERRAGUNTLAVARIPALLE","1740-KALIKIRI","1718-KOTHA PALLE",
-"1542-HARIJANAWADA","1937-KAMMAPALLE","1993-T.SANDRAVARIPALLE","1959-MANCHOORIVARIPALLE","1812-GANGIREDDIGARIPALLE","1781-ROMPICHERLA","1773-SREERAMULAVADDIPALLE","1770-THATIGUNTAPALEM","1868-ROMPICHERLA","1824-YERRAGUNTLAVARIPALLE","0884-KOTHAPALLE","0881-ROMPICHERLA","0880-MUREVANDLAPALLE","0878-KALIKIRI","0876-DIGUVAJUPALLI",
-"0874-KONDAREDDIGARIPALLE","0871-ROMPICHERLA","0868-NAGARIMADUGUVARIPALLE","0863-KHAMBAMMITTAPALLE","0906-REDDIVARIPALLE","0900-GOLLAPALLE","0895-PEDDAMALLELA","0893-PEDDIREDDIGARIPALLE","0888-BANDARALAVARIPALLE","0887-ELLAMPALLE","0830-REGALLU","0826-MUNIREDDIGARIPALLE","0824-PILER",
-"0859-KRIHSNAREDDIGARIPALLE","0851-GYARAMPALLE","0848-ELLAREDDIGARIPALLE","0846-KURAVAPALLE","0842-PEDDAMALLELA","0839-BANDAMVARIPALLE","1058-CHERUKUVARIPALLE","1057-CHERUKUVARIPALLE","1052-NANJAMPETA","1017-KHAMBAMVARIPALLE","1003-PUTTAVANDLAPALLE THANDA","1272-USTIKAYALAPENTA",
-"1240-MITTAPALLE","0916-AGRAHARAM","0915-CHALLAVARIPALLE","0982-KUCHAMVARIPALLE","2388-SAGGAMVARI ENDLU","2380-PILER",
-"2374-PILER","2437-MARRIMAKULAPALLE","2421-MATLOLLPALLAI","2314-KUMMARAPALLE","2338-SETTIPALLEVANDLAPALLE","2500-KAMMAPALLE","2530-AVULAPEDDIREDDIGARIPALL","2528-MARAMREDDIGARIPALLE","2526-AVULAPEDDIREDDIGARIPALL","2463-BOMMAIAHGARIPALLE","2444-ROMPICHERLA","2440-BASIREDDIGARIPALLE",
-"2013-THOTIMALAPALLE","2083-RAJUVARIPALLI H/W","2045-RAJUVARIPALLI","2288-RAJUVARIPALLI","2272-THATIGUNTAPALEM","2186-KANTAMVARIPALLE","2183-REGALLU","2178-SANKENIGUTTAPALLE","2173-MUNELLAPALLE","2160-V.K.THURPUPALLE","2228-GAJULAVARIPALLI","0296-BESTAPALLE",
-"0335-MATLOLLPALLAI","0326-LOKAVARIPALLE","0256-VOOTUPALLE","0245-BETAPALLE","0237-BATTUVARIPALLE","0417-ROMPICHERLA","0414-BODIPATIVARIPALLE","0441-BODIPATIVARIPALLE","0440-VARANASIVARIPALLE",
-"0360-CHICHILIVARIPALLE",
-"0357-AKKISANIVARIPALLE", "0394-SETTIPALLEVANDLAPALLE", "0072-VAGALLA",
-"0056-LEMATIVARIPALLE", "0108-KONDAREDDIGARIPALLE","0016-ROMPICHERLA",
-"0030-MELLAVARIPALLE", "0197-BASIREDDIGARIPALLE", "0173-MORAVAPALLE",
-"0221-KURABAPALLE", "0130-PATHAKURVAPALLE", "0165-AGRAHARAM",
-"0151-BONAMVARIPALLE", "0649-PILER", "0645-NADIMPALLE",
-"0643-SAVVALAVARIPALLE", "0636-KURAPATHIVARIPALLE", "0689-VANKAVODDIPALLE",
-"0688-BADDALAVARIPALLI H.W.","0685-NAGARIMADUGUVARIPALLE", "0668-KANDUR",
-"0663-DEVALAVARIPALLE", "0585-SRIVARAMPURAM", "0575-RAMREDDIGARIPALLE",
-"0572-LOKAVARIPALLE", "0613-NAGAVANDLAPALLI", "0611-BODIPATIVARIPALLE",
-"0610-ROMPICHERLA", "0604-NAGAVANDLAPALLI", "0782-CHICHILIVARIPALLE",
-"0770-DEVALAVARIPALLE", "0767-PEDDAGOTTIGALLU", "0764-K.V.PALLE",
-"0762-JAGADAMVARIPALLE", "0753-BOLLINANIVARIPALLI", "0813-ROMPICHERLA",
-"0811-ALAKAMVARIPALLE", "0809-KOTAKADAPALLE", "0794-PEDDAGOTTIGALLU",
-"0793-DIGUVAJUPALLI", "0789-SODUM", "0788-BURUJUPALLE",
-"0786-PEDDAGOTTIGALLU CROSS", "0719-NADIMPALLE", "0718-PEDDAGOTTIGALLU",
-"0714-BODIPATIVARIPALLE", "0709-REDDIVARIPALLE", "0700-RAMIREDDIGARIPALLE",
-"0721-SODUM", "0747-KURAVAPALLE", "0745-ETUKURIVARIPALLE",
-"0743-ROMPICHERLA", "0736-VOOTUPALLE", "0732-ROMPICHERLA",
-"0727-DUSSAVANDLA PALLI", "0726-SAVVALAVARIPALLE", "0508-MUREVANDLAPALLE",
-"0490-MATAMPALLE", "0551-TALUPULA", "0512-BONAMVARIPALLE",
-"0473-KURAVAPALLE", "0477-VARANASIVARIPALLE"
+VLCC_NAMES = [
+    "3025-K.V.PALLE", "3026-KOTHA PALLE", "3028-BONAMVARIPALLE", "3029-BOMMAICHERUVUPALLI",
+    "3030-BADDALAVARIPALLI", "3033-CHINNAGOTTIGALLU", "3034-VODDIPALLE", "3036-MUDUPULAVEMULA",
+    "3037-BAYYAREDDYGARIPALLE", "3038-DODDIPALLE", "3040-MARAMREDDYGARIPALLE", "3041-GUTTAPALEM",
+    "3042-CHERUVUMUNDARAPALLI", "3044-VARAMPATIVARIPALLE", "3045-ROMPICHERLA", "3046-BANDAKINDAPALLE",
+    "3047-MARASANIVARIPALLI", "3024-DEVALAVARIPALLE", "3002-KHAMBAMMITTAPALLE", "3004-MARRIMAKULAPALLE",
+    "3005-NAGARIMADUGUVARIPALLE", "3006-KOORAPARTHIVARIPALLE", "3008-IRRIVANDLAPALLE", "3009-PATHEGADA (U.I)",
+    "3011-PULICHERLA", "3013-GUDAREVUPALLE", "3014-ENUMALAVARIPALLE", "3015-MUNTHAVANDLAPALLE", "3016-REGALLU",
+    "3018-REDDIVARIPALLE", "3019-MAJJIGAVANDLAPALLE", "3020-VENKATADASARAPALLE", "3021-BURRAVANDLAPALLE",
+    "3022-KODEKAMBAMVARIPALLI", "3023-SEENAPPAGARIPALLE", "3071-KOTAKADAPALLE", "3072-KOTAKADAPALLE",
+    "3074-PODALAKUNTALAPALLE", "3075-SOMALA", "3076-SOMALA", "3077-SOMALA", "3078-CHINNAGOTTIGALLU",
+    "3079-MATLOLLPALLAI", "3080-POLIKIMAKULAPALLE", "3081-K.GOLLAPALLE", "3082-CHERUKUVARIPALLE",
+    "3083-SODUM", "3084-PILER", "3085-CHERUKUVARIPALLE", "3086-SOMALA", "3087-SODUM", "3088-YERRAVARIPALEM",
+    "3089-GUDAREVUPALLE", "3090-SOMALA", "3091-PUTTAVARIPALLE", "3092-VAGALLA", "3048-R.KUMMARA PALLE",
+    "3049-HANUMANTHARAYUNIPETA", "3050-CHENCHAMAREDDIGARIPALLE", "3051-BODUMALLUVARIPALLE", "3052-BANDAKINDAPALLE",
+    "3055-NAKKALADINNEVODDIPALLE", "3057-KUKKALODDU", "3059-GUNDLAKADAPALLI", "3070-PEDDAPANJANI",
+    "3069-PEDDAPALLI", "3068-KADIRAKUNTA", "3067-KOTALA", "3066-VLLIGATLA(U.I)", "3060-BALIREDDIGARIPALLE",
+    "3061-SODUM", "3062-GONGIVARIPALLE", "3064-SRINADHAPURAM", "3063-GANGUVARIPALLE", "1664-DEVALAMPETA",
+    "1651-YERRAGUNTLAVARIPALLE", "1740-KALIKIRI", "1718-KOTHA PALLE", "1542-HARIJANAWADA", "1937-KAMMAPALLE",
+    "1993-T.SANDRAVARIPALLE", "1959-MANCHOORIVARIPALLE", "1812-GANGIREDDIGARIPALLE", "1781-ROMPICHERLA",
+    "1773-SREERAMULAVADDIPALLE", "1770-THATIGUNTAPALEM", "1868-ROMPICHERLA", "1824-YERRAGUNTLAVARIPALLE",
+    "0884-KOTHAPALLE", "0881-ROMPICHERLA", "0880-MUREVANDLAPALLE", "0878-KALIKIRI", "0876-DIGUVAJUPALLI",
+    "0874-KONDAREDDIGARIPALLE", "0871-ROMPICHERLA", "0868-NAGARIMADUGUVARIPALLE", "0863-KHAMBAMMITTAPALLE",
+    "0906-REDDIVARIPALLE", "0900-GOLLAPALLE", "0895-PEDDAMALLELA", "0893-PEDDIREDDIGARIPALLE",
+    "0888-BANDARALAVARIPALLE", "0887-ELLAMPALLE", "0830-REGALLU", "0826-MUNIREDDIGARIPALLE", "0824-PILER",
+    "0859-KRIHSNAREDDIGARIPALLE", "0851-GYARAMPALLE", "0848-ELLAREDDIGARIPALLE", "0846-KURAVAPALLE",
+    "0842-PEDDAMALLELA", "0839-BANDAMVARIPALLE", "1058-CHERUKUVARIPALLE", "1057-CHERUKUVARIPALLE",
+    "1052-NANJAMPETA", "1017-KHAMBAMVARIPALLE", "1003-PUTTAVANDLAPALLE THANDA", "1272-USTIKAYALAPENTA",
+    "1240-MITTAPALLE", "0916-AGRAHARAM", "0915-CHALLAVARIPALLE", "0982-KUCHAMVARIPALLE", "2388-SAGGAMVARI ENDLU",
+    "2380-PILER", "2374-PILER", "2437-MARRIMAKULAPALLE", "2421-MATLOLLPALLAI", "2314-KUMMARAPALLE",
+    "2338-SETTIPALLEVANDLAPALLE", "2500-KAMMAPALLE", "2530-AVULAPEDDIREDDIGARIPALL", "2528-MARAMREDDIGARIPALLE",
+    "2526-AVULAPEDDIREDDIGARIPALL", "2463-BOMMAIAHGARIPALLE", "2444-ROMPICHERLA", "2440-BASIREDDIGARIPALLE",
+    "2013-THOTIMALAPALLE", "2083-RAJUVARIPALLI H/W", "2045-RAJUVARIPALLI", "2288-RAJUVARIPALLI",
+    "2272-THATIGUNTAPALEM", "2186-KANTAMVARIPALLE", "2183-REGALLU", "2178-SANKENIGUTTAPALLE",
+    "2173-MUNELLAPALLE", "2160-V.K.THURPUPALLE", "2228-GAJULAVARIPALLI", "0296-BESTAPALLE",
+    "0335-MATLOLLPALLAI", "0326-LOKAVARIPALLE", "0256-VOOTUPALLE", "0245-BETAPALLE", "0237-BATTUVARIPALLE",
+    "0417-ROMPICHERLA", "0414-BODIPATIVARIPALLE", "0441-BODIPATIVARIPALLE", "0440-VARANASIVARIPALLE",
+    "0360-CHICHILIVARIPALLE", "0357-AKKISANIVARIPALLE", "0394-SETTIPALLEVANDLAPALLE", "0072-VAGALLA",
+    "0056-LEMATIVARIPALLE", "0108-KONDAREDDIGARIPALLE", "0016-ROMPICHERLA", "0030-MELLAVARIPALLE",
+    "0197-BASIREDDIGARIPALLE", "0173-MORAVAPALLE", "0221-KURABAPALLE", "0130-PATHAKURVAPALLE",
+    "0165-AGRAHARAM", "0151-BONAMVARIPALLE", "0649-PILER", "0645-NADIMPALLE", "0643-SAVVALAVARIPALLE",
+    "0636-KURAPATHIVARIPALLE", "0689-VANKAVODDIPALLE", "0688-BADDALAVARIPALLI H.W.", "0685-NAGARIMADUGUVARIPALLE",
+    "0668-KANDUR", "0663-DEVALAVARIPALLE", "0585-SRIVARAMPURAM", "0575-RAMREDDIGARIPALLE", "0572-LOKAVARIPALLE",
+    "0613-NAGAVANDLAPALLI", "0611-BODIPATIVARIPALLE", "0610-ROMPICHERLA", "0604-NAGAVANDLAPALLI",
+    "0782-CHICHILIVARIPALLE", "0770-DEVALAVARIPALLE", "0767-PEDDAGOTTIGALLU", "0764-K.V.PALLE",
+    "0762-JAGADAMVARIPALLE", "0753-BOLLINANIVARIPALLI", "0813-ROMPICHERLA", "0811-ALAKAMVARIPALLE",
+    "0809-KOTAKADAPALLE", "0794-PEDDAGOTTIGALLU", "0793-DIGUVAJUPALLI", "0789-SODUM", "0788-BURUJUPALLE",
+    "0786-PEDDAGOTTIGALLU CROSS", "0719-NADIMPALLE", "0718-PEDDAGOTTIGALLU", "0714-BODIPATIVARIPALLE",
+    "0709-REDDIVARIPALLE", "0700-RAMIREDDIGARIPALLE", "0721-SODUM", "0747-KURAVAPALLE", "0745-ETUKURIVARIPALLE",
+    "0743-ROMPICHERLA", "0736-VOOTUPALLE", "0732-ROMPICHERLA", "0727-DUSSAVANDLA PALLI", "0726-SAVVALAVARIPALLE",
+    "0508-MUREVANDLAPALLE", "0490-MATAMPALLE", "0551-TALUPULA", "0512-BONAMVARIPALLE", "0473-KURAVAPALLE",
+    "0477-VARANASIVARIPALLE"
 ]
 
 # Create a dictionary for farmer data
@@ -261,7 +273,7 @@ FARMER_DATA = {
 
 # Create lists for dropdowns
 FARMER_CODES = sorted(list(FARMER_DATA.keys())) if FARMER_DATA else []
-FARMER_NAMES_ORIGINAL = sorted(list(FARMER_DATA.values())) if FARMER_DATA else [] # Keep original names
+FARMER_NAMES_ORIGINAL = sorted(list(FARMER_DATA.values())) if FARMER_DATA else []
 
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
@@ -269,18 +281,16 @@ PELLET_FEED_BRANDS = ["Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power
 MINERAL_MIXTURE_BRANDS = ["Herita Vit", "Herita Min", "Other (Specify)"]
 WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
-# -----------------------------
 
-# Define initial_values_defaults at the global scope, before any functions use it
+# Define initial_values_defaults at the global scope
 initial_values_defaults = {
     'lang_select': "English",
-    'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None, # Handle empty list
+    'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None,
     'hpc_code': '',
     'types': "HPC",
-    # Ensure a valid default for farmer_name_selected, even if FARMER_NAMES_ORIGINAL is empty initially
     'farmer_name_selected': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others',
-    'farmer_name_other': '', # New field for "Others" farmer name
-    'farmer_code': FARMER_CODES[0] if FARMER_CODES else None, # Handle empty list
+    'farmer_name_other': '',
+    'farmer_code': FARMER_CODES[0] if FARMER_CODES else None,
     'gender': "Male",
     'cows': 0,
     'cattle_in_milk': 0,
@@ -299,25 +309,21 @@ initial_values_defaults = {
     'pellet_feed_brands': [],
     'pellet_feed_qty': 0.0,
     'mineral_mixture': "Yes",
-    'mineral_brand': MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None, # Handle empty list
+    'mineral_brand': MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None,
     'mineral_qty': 0.0,
     'silage': "Yes",
     'silage_source': '',
     'silage_qty': 0.0,
     'water_sources': [],
-    'surveyor_name': SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None, # Handle empty list
+    'surveyor_name': SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None,
     'visit_date': datetime.date.today()
 }
 
 # Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
-
-    # Collect all current session state items related to the form
-    # Exclude non-serializable objects and form-specific keys
     draft_data = {key: st.session_state[key] for key in initial_values_defaults.keys() if key in st.session_state}
-
-    # Handle date objects for JSON serialization
+    
     if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
         draft_data['visit_date'] = draft_data['visit_date'].isoformat()
 
@@ -336,25 +342,20 @@ def load_draft():
             with open(draft_filename, 'r') as f:
                 loaded_data = json.load(f)
 
-            # Update st.session_state with loaded data
             for key, value in loaded_data.items():
                 if key == 'visit_date' and isinstance(value, str):
                     try:
                         st.session_state[key] = datetime.date.fromisoformat(value)
                     except ValueError:
-                        st.session_state[key] = initial_values_defaults.get(key, datetime.date.today()) # Fallback to default
+                        st.session_state[key] = initial_values_defaults.get(key, datetime.date.today())
                 elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources']:
-                    # Ensure multiselect defaults are lists, even if loaded as something else
                     st.session_state[key] = list(value) if isinstance(value, list) else []
                 else:
                     st.session_state[key] = value
 
-            # After loading, explicitly set language-dependent options based on the loaded language
             current_labels = dict_translations.get(st.session_state.get('lang_select', 'English'), dict_translations['English'])
-
-            # Ensure dropdowns use current labels for their defaults if value is loaded
-            # This handles cases where values like "Yes" might not match current labels directly
-            # Also, handle cases where the loaded value might not be in the current options list (e.g., if options change)
+            
+            # Ensure dropdowns use current labels
             if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
                 st.session_state['types'] = current_labels['HPC']
             if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
@@ -373,26 +374,24 @@ def load_draft():
             st.toast("Draft loaded successfully!")
             return True
         except Exception as e:
-            st.error(f"Error loading draft: {e}. Please try clearing local storage or starting a new draft.")
+            st.error(f"Error loading draft: {e}")
             return False
     return False
 
-# Initialize session state with default values, or load from draft
+# Initialize session state
 if st.session_state.get('app_initialized_flag', False) is False:
     st.session_state.app_initialized_flag = True
-
-    # Initialize last_saved_time_persistent here to prevent AttributeError
-    st.session_state.last_saved_time_persistent = None # Initialize as None or empty string
-
+    st.session_state.last_saved_time_persistent = None
+    
     loaded_a_draft = load_draft()
-
+    
     if not loaded_a_draft:
         for key, default_value in initial_values_defaults.items():
-            if key not in st.session_state: # Only set if not already loaded by draft
+            if key not in st.session_state:
                 st.session_state[key] = default_value
 
 # Language Selection
-initial_lang_options = ("English", "Hindi", "Marathi") # Restricted language options
+initial_lang_options = ("English", "Hindi", "Marathi")
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select) if st.session_state.lang_select in initial_lang_options else 0
 lang = st.selectbox(
     "Language / भाषा / भाषा",
@@ -405,12 +404,11 @@ labels = dict_translations.get(lang, dict_translations['English'])
 # Title
 st.title(labels['Farmer Profile'])
 
-# Display auto-save status.
+# Display auto-save status
 if st.session_state.last_saved_time_persistent:
     st.info(f"{labels['Auto-saved!']} Last saved: {st.session_state.last_saved_time_persistent}")
 else:
     st.info("No auto-saved draft found, or draft cleared. Start filling the form!")
-
 
 # Form Start
 with st.form("survey_form"):
@@ -515,7 +513,6 @@ with st.form("survey_form"):
         key="cows"
     )
 
-    # Add the missing fields after the existing ones in the form
     cattle_in_milk = st.number_input(
         labels['No. of Cattle in Milk'], min_value=0,
         value=int(st.session_state.cattle_in_milk),
