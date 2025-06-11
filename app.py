@@ -135,7 +135,7 @@ dict_translations = {
         'Photo uploaded successfully!': 'फोटो यशस्वीरित्या अपलोड झाला!',
         'No photo uploaded.': 'कोणताही फोटो अपलोड केला नाही.',
         'Error uploading photo:': 'फोटो अपलोड करताना त्रुटी:',
-        'Please upload up to 3 photos.': 'कृपया 3 पर्यंत फोटो अपलोड करा.'
+        'Please upload up to 3 photos.': 'कृपया 3 पर्यंत फोटो अपलोड करा!'
     }
 }
 
@@ -341,6 +341,7 @@ initial_values_defaults = {
 # Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+    # Get current values from session_state, falling back to defaults if not present
     draft_data = {key: st.session_state.get(key, initial_values_defaults.get(key)) for key in initial_values_defaults.keys()}
     
     # Convert datetime.date objects to string for JSON serialization
@@ -369,11 +370,13 @@ def load_draft():
                     except ValueError:
                         st.session_state[key] = initial_values_defaults.get(key, datetime.date.today())
                 elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_photo_paths']:
+                    # Ensure multiselect defaults are lists
                     st.session_state[key] = list(value) if isinstance(value, list) else []
                 else:
                     st.session_state[key] = value
             
-            # --- VALIDATE VLCC_NAME AFTER LOADING DRAFT ---
+            # --- VALIDATE DROPDOWN SELECTIONS AFTER LOADING DRAFT ---
+            # Ensure vlcc_name is a valid option if it exists in loaded_data
             if 'vlcc_name' in st.session_state and st.session_state['vlcc_name'] not in VLCC_NAMES:
                 st.session_state['vlcc_name'] = VLCC_NAMES[0] if VLCC_NAMES else None
             
@@ -394,6 +397,22 @@ def load_draft():
                 st.session_state['mineral_mixture'] = current_labels['Yes']
             if 'silage' in st.session_state and st.session_state['silage'] not in (current_labels['Yes'], current_labels['No']):
                 st.session_state['silage'] = current_labels['Yes']
+            
+            # For farmer_name_selected, ensure it's a valid option or "Others"
+            if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in (FARMER_NAMES_ORIGINAL + [current_labels['Others']]):
+                 st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
+
+            # For farmer_code, ensure it's a valid option
+            if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES:
+                st.session_state['farmer_code'] = FARMER_CODES[0] if FARMER_CODES else None
+
+            # For mineral_brand, ensure it's a valid option
+            if 'mineral_brand' in st.session_state and st.session_state['mineral_brand'] not in MINERAL_MIXTURE_BRANDS:
+                st.session_state['mineral_brand'] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
+            
+            # For surveyor_name, ensure it's a valid option
+            if 'surveyor_name' in st.session_state and st.session_state['surveyor_name'] not in SURVEYOR_NAMES:
+                st.session_state['surveyor_name'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
 
             st.toast("Draft loaded successfully!")
             return True
@@ -409,7 +428,7 @@ if 'app_initialized_flag' not in st.session_state:
     
     # Initialize all defaults first
     for key, default_value in initial_values_defaults.items():
-        if key not in st.session_state: # Only set if not already present from a previous, possibly invalid, run
+        if key not in st.session_state:
             st.session_state[key] = default_value
     
     # Then try to load draft, which will overwrite defaults if successful and valid
@@ -417,9 +436,8 @@ if 'app_initialized_flag' not in st.session_state:
 
 # Language Selection
 initial_lang_options = ("English", "Hindi", "Marathi")
-# Ensure the selected language is always one of the valid options
 if st.session_state.lang_select not in initial_lang_options:
-    st.session_state.lang_select = "English" # Default to English if invalid
+    st.session_state.lang_select = "English"
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select)
 
 lang = st.selectbox(
@@ -443,51 +461,45 @@ else:
 with st.form("survey_form"):
     st.header(labels['Farmer Profile'])
 
-    # VLCC Name - No direct modification to st.session_state.vlcc_name here
-    # The validation is done in load_draft() or initial setup
+    # Safely get vlcc_name from session state for default index
+    current_vlcc_name = st.session_state.get('vlcc_name', VLCC_NAMES[0] if VLCC_NAMES else None)
     vlcc_name_default_idx = 0
-    if st.session_state.vlcc_name in VLCC_NAMES:
-        vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.vlcc_name)
-    elif VLCC_NAMES: # Fallback if session state is still somehow invalid, but not modifying session_state directly
-        vlcc_name_default_idx = 0 # Default to first valid option for display purposes
+    if current_vlcc_name in VLCC_NAMES:
+        vlcc_name_default_idx = VLCC_NAMES.index(current_vlcc_name)
+    elif VLCC_NAMES:
+        vlcc_name_default_idx = 0
 
     vlcc_name = st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
         index=vlcc_name_default_idx,
         key="vlcc_name",
-        disabled=(not VLCC_NAMES) # Disable if no options
+        disabled=(not VLCC_NAMES)
     )
 
-    # HPC/MCC Code
     hpc_code = st.text_input(
         labels['HPC/MCC Code'],
-        value=st.session_state.hpc_code,
+        value=st.session_state.get('hpc_code', ''), # Safely get
         key="hpc_code"
     )
 
-    # Types
     types_options = (labels['HPC'], labels['MCC'])
+    current_types = st.session_state.get('types', types_options[0]) # Safely get
     types_default_idx = 0
-    if st.session_state.types in types_options:
-        types_default_idx = types_options.index(st.session_state.types)
+    if current_types in types_options:
+        types_default_idx = types_options.index(current_types)
     types = st.selectbox(
         labels['Types'], types_options,
         index=types_default_idx,
         key="types"
     )
 
-    # Add 'Others' to FARMER_NAMES options
     farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
-
-    # Dropdown for Farmer Name
+    current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_with_others[0] if farmer_names_with_others else labels['Others'])
     farmer_name_default_idx = 0
-    if st.session_state.farmer_name_selected in farmer_names_with_others:
-        farmer_name_default_idx = farmer_names_with_others.index(st.session_state.farmer_name_selected)
-    elif farmer_names_with_others: # Fallback for display
+    if current_farmer_name_selected in farmer_names_with_others:
+        farmer_name_default_idx = farmer_names_with_others.index(current_farmer_name_selected)
+    elif farmer_names_with_others:
         farmer_name_default_idx = 0
-    else:
-        # If no farmer names, set to None for display but don't modify session state
-        pass # st.session_state.farmer_name_selected should be handled in initial setup
 
     farmer_name_selected = st.selectbox(
         labels['Farmer Name'], options=farmer_names_with_others,
@@ -496,25 +508,24 @@ with st.form("survey_form"):
         disabled=(not farmer_names_with_others)
     )
 
-    # Conditional text input for "Others" farmer name
     if farmer_name_selected == labels['Others']:
         farmer_name_other = st.text_input(
             labels['Specify Farmer Name'],
-            value=st.session_state.farmer_name_other,
+            value=st.session_state.get('farmer_name_other', ''), # Safely get
             key="farmer_name_other"
         )
     else:
-        st.session_state.farmer_name_other = "" # Clear if "Others" is not selected
-        farmer_name_other = "" # This will be empty for data collection
+        # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
+        if st.session_state.get('farmer_name_selected') != labels['Others'] and 'farmer_name_other' in st.session_state:
+             del st.session_state['farmer_name_other']
+        farmer_name_other = ""
 
-    # Dropdown for Farmer Code
+    current_farmer_code = st.session_state.get('farmer_code', FARMER_CODES[0] if FARMER_CODES else None) # Safely get
     farmer_code_default_idx = 0
-    if st.session_state.farmer_code in FARMER_CODES:
-        farmer_code_default_idx = FARMER_CODES.index(st.session_state.farmer_code)
-    elif FARMER_CODES: # Fallback for display
+    if current_farmer_code in FARMER_CODES:
+        farmer_code_default_idx = FARMER_CODES.index(current_farmer_code)
+    elif FARMER_CODES:
         farmer_code_default_idx = 0
-    else:
-        pass # st.session_state.farmer_code should be handled in initial setup
 
     farmer_code = st.selectbox(
         labels['Farmer Code'], options=FARMER_CODES,
@@ -523,11 +534,11 @@ with st.form("survey_form"):
         disabled=(not FARMER_CODES)
     )
 
-    # Gender
     gender_options = (labels['Male'], labels['Female'])
+    current_gender = st.session_state.get('gender', gender_options[0]) # Safely get
     gender_default_idx = 0
-    if st.session_state.gender in gender_options:
-        gender_default_idx = gender_options.index(st.session_state.gender)
+    if current_gender in gender_options:
+        gender_default_idx = gender_options.index(current_gender)
     gender = st.selectbox(
         labels['Gender'], gender_options,
         index=gender_default_idx,
@@ -535,49 +546,49 @@ with st.form("survey_form"):
     )
 
     st.header(labels['Farm Details'])
-    # Number of Cows
     cows = st.number_input(
         labels['Number of Cows'], min_value=0,
-        value=int(st.session_state.cows), # Cast to int for number_input
+        value=int(st.session_state.get('cows', 0)), # Safely get
         key="cows"
     )
 
     cattle_in_milk = st.number_input(
         labels['No. of Cattle in Milk'], min_value=0,
-        value=int(st.session_state.cattle_in_milk),
+        value=int(st.session_state.get('cattle_in_milk', 0)),
         key="cattle_in_milk"
     )
     calves = st.number_input(
         labels['No. of Calves/Heifers'], min_value=0,
-        value=int(st.session_state.calves),
+        value=int(st.session_state.get('calves', 0)),
         key="calves"
     )
     desi_cows = st.number_input(
         labels['No. of Desi cows'], min_value=0,
-        value=int(st.session_state.desi_cows),
+        value=int(st.session_state.get('desi_cows', 0)),
         key="desi_cows"
     )
     crossbreed_cows = st.number_input(
         labels['No. of Cross breed cows'], min_value=0,
-        value=int(st.session_state.crossbreed_cows),
+        value=int(st.session_state.get('crossbreed_cows', 0)),
         key="crossbreed_cows"
     )
     buffalo = st.number_input(
         labels['No. of Buffalo'], min_value=0,
-        value=int(st.session_state.buffalo),
+        value=int(st.session_state.get('buffalo', 0)),
         key="buffalo"
     )
     milk_production = st.number_input(
         labels['Milk Production'], min_value=0.0, format="%.2f",
-        value=float(st.session_state.milk_production),
+        value=float(st.session_state.get('milk_production', 0.0)),
         key="milk_production"
     )
 
     st.header(labels['Specific Questions'])
     green_fodder_options = (labels['Yes'], labels['No'])
+    current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0]) # Safely get
     green_fodder_default_idx = 0
-    if st.session_state.green_fodder in green_fodder_options:
-        green_fodder_default_idx = green_fodder_options.index(st.session_state.green_fodder)
+    if current_green_fod in green_fodder_options:
+        green_fodder_default_idx = green_fodder_options.index(current_green_fod)
     green_fodder = st.radio(
         labels['Green Fodder'], green_fodder_options,
         index=green_fodder_default_idx,
@@ -586,25 +597,26 @@ with st.form("survey_form"):
     if green_fodder == labels['Yes']:
         green_fodder_types = st.multiselect(
             labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
-            default=st.session_state.green_fodder_types,
+            default=st.session_state.get('green_fodder_types', []), # Safely get
             key="green_fodder_types"
         )
         green_fodder_qty = st.number_input(
             labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.green_fodder_qty),
+            value=float(st.session_state.get('green_fodder_qty', 0.0)),
             key="green_fodder_qty"
         )
     else:
         # Clear associated session state values when "No" is selected
-        st.session_state.green_fodder_types = []
-        st.session_state.green_fodder_qty = 0.0
-        green_fodder_types = [] # For data collection
-        green_fodder_qty = 0.0 # For data collection
+        if 'green_fodder_types' in st.session_state: del st.session_state['green_fodder_types']
+        if 'green_fodder_qty' in st.session_state: del st.session_state['green_fodder_qty']
+        green_fodder_types = []
+        green_fodder_qty = 0.0
 
     dry_fodder_options = (labels['Yes'], labels['No'])
+    current_dry_fodder = st.session_state.get('dry_fodder', dry_fodder_options[0])
     dry_fodder_default_idx = 0
-    if st.session_state.dry_fodder in dry_fodder_options:
-        dry_fodder_default_idx = dry_fodder_options.index(st.session_state.dry_fodder)
+    if current_dry_fodder in dry_fodder_options:
+        dry_fodder_default_idx = dry_fodder_options.index(current_dry_fodder)
     dry_fodder = st.radio(
         labels['Dry Fodder'], dry_fodder_options,
         index=dry_fodder_default_idx,
@@ -613,24 +625,25 @@ with st.form("survey_form"):
     if dry_fodder == labels['Yes']:
         dry_fodder_types = st.multiselect(
             labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
-            default=st.session_state.dry_fodder_types,
+            default=st.session_state.get('dry_fodder_types', []),
             key="dry_fodder_types"
         )
         dry_fodder_qty = st.number_input(
             labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.dry_fodder_qty),
+            value=float(st.session_state.get('dry_fodder_qty', 0.0)),
             key="dry_fodder_qty"
         )
     else:
-        st.session_state.dry_fodder_types = []
-        st.session_state.dry_fodder_qty = 0.0
+        if 'dry_fodder_types' in st.session_state: del st.session_state['dry_fodder_types']
+        if 'dry_fodder_qty' in st.session_state: del st.session_state['dry_fodder_qty']
         dry_fodder_types = []
         dry_fodder_qty = 0.0
 
     pellet_feed_options = (labels['Yes'], labels['No'])
+    current_pellet_feed = st.session_state.get('pellet_feed', pellet_feed_options[0])
     pellet_feed_default_idx = 0
-    if st.session_state.pellet_feed in pellet_feed_options:
-        pellet_feed_default_idx = pellet_feed_options.index(st.session_state.pellet_feed)
+    if current_pellet_feed in pellet_feed_options:
+        pellet_feed_default_idx = pellet_feed_options.index(current_pellet_feed)
     pellet_feed = st.radio(
         labels['Pellet Feed'], pellet_feed_options,
         index=pellet_feed_default_idx,
@@ -639,33 +652,35 @@ with st.form("survey_form"):
     if pellet_feed == labels['Yes']:
         pellet_feed_brands = st.multiselect(
             labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
-            default=st.session_state.pellet_feed_brands,
+            default=st.session_state.get('pellet_feed_brands', []),
             key="pellet_feed_brands"
         )
         pellet_feed_qty = st.number_input(
             labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.pellet_feed_qty),
+            value=float(st.session_state.get('pellet_feed_qty', 0.0)),
             key="pellet_feed_qty"
         )
     else:
-        st.session_state.pellet_feed_brands = []
-        st.session_state.pellet_feed_qty = 0.0
+        if 'pellet_feed_brands' in st.session_state: del st.session_state['pellet_feed_brands']
+        if 'pellet_feed_qty' in st.session_state: del st.session_state['pellet_feed_qty']
         pellet_feed_brands = []
         pellet_feed_qty = 0.0
 
     mineral_mixture_options = (labels['Yes'], labels['No'])
+    current_mineral_mixture = st.session_state.get('mineral_mixture', mineral_mixture_options[0])
     mineral_mixture_default_idx = 0
-    if st.session_state.mineral_mixture in mineral_mixture_options:
-        mineral_mixture_default_idx = mineral_mixture_options.index(st.session_state.mineral_mixture)
+    if current_mineral_mixture in mineral_mixture_options:
+        mineral_mixture_default_idx = mineral_mixture_options.index(current_mineral_mixture)
     mineral_mixture = st.radio(
         labels['Mineral Mixture'], mineral_mixture_options,
         index=mineral_mixture_default_idx,
         key="mineral_mixture"
     )
     if mineral_mixture == labels['Yes']:
+        current_mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
         mineral_brand_default_idx = 0
-        if st.session_state.mineral_brand in MINERAL_MIXTURE_BRANDS:
-            mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.mineral_brand)
+        if current_mineral_brand in MINERAL_MIXTURE_BRANDS:
+            mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(current_mineral_brand)
         mineral_brand = st.selectbox(
             labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
             index=mineral_brand_default_idx,
@@ -673,19 +688,20 @@ with st.form("survey_form"):
         )
         mineral_qty = st.number_input(
             labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.mineral_qty),
+            value=float(st.session_state.get('mineral_qty', 0.0)),
             key="mineral_qty"
         )
     else:
-        st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else "" # Ensure a string or None
-        st.session_state.mineral_qty = 0.0
+        if 'mineral_brand' in st.session_state: del st.session_state['mineral_brand']
+        if 'mineral_qty' in st.session_state: del st.session_state['mineral_qty']
         mineral_brand = ""
         mineral_qty = 0.0
 
     silage_options = (labels['Yes'], labels['No'])
+    current_silage = st.session_state.get('silage', silage_options[0])
     silage_default_idx = 0
-    if st.session_state.silage in silage_options:
-        silage_default_idx = silage_options.index(st.session_state.silage)
+    if current_silage in silage_options:
+        silage_default_idx = silage_options.index(current_silage)
     silage = st.radio(
         labels['Silage'], silage_options,
         index=silage_default_idx,
@@ -694,23 +710,23 @@ with st.form("survey_form"):
     if silage == labels['Yes']:
         silage_source = st.text_input(
             labels['Source and Price of Silage'],
-            value=st.session_state.silage_source,
+            value=st.session_state.get('silage_source', ''),
             key="silage_source"
         )
         silage_qty = st.number_input(
             labels['Quantity of Silage'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.silage_qty),
+            value=float(st.session_state.get('silage_qty', 0.0)),
             key="silage_qty"
         )
     else:
-        st.session_state.silage_source = ""
-        st.session_state.silage_qty = 0.0
+        if 'silage_source' in st.session_state: del st.session_state['silage_source']
+        if 'silage_qty' in st.session_state: del st.session_state['silage_qty']
         silage_source = ""
         silage_qty = 0.0
 
     water_sources = st.multiselect(
         labels['Source of Water'], WATER_SOURCE_OPTIONS,
-        default=st.session_state.water_sources,
+        default=st.session_state.get('water_sources', []),
         key="water_sources"
     )
 
@@ -724,7 +740,7 @@ with st.form("survey_form"):
     )
 
     # Display existing photos in the draft if any
-    if st.session_state.uploaded_photo_paths:
+    if st.session_state.get('uploaded_photo_paths'):
         st.subheader("Currently uploaded photos (Draft):")
         cols = st.columns(3)
         for i, photo_path in enumerate(st.session_state.uploaded_photo_paths):
@@ -741,71 +757,70 @@ with st.form("survey_form"):
 
     # Process new uploads
     if uploaded_files:
-        # Limit to 3 files if more are uploaded
         if len(uploaded_files) > 3:
             st.warning(labels['Please upload up to 3 photos.'])
-            uploaded_files = uploaded_files[:3] # Take only the first 3
+            uploaded_files = uploaded_files[:3]
 
-        # Clear existing paths and save new ones
-        # This part should probably be moved to a callback function if you want to avoid re-upload on every rerun
-        # For now, it's inside the form, meaning it will re-process on submit.
-        # However, the key "image_uploader" will retain the uploaded files until the form is cleared/reset.
-        # This is where the photo path handling needs to be careful to not overwrite too eagerly.
-        # Let's refine this to append/manage.
-        
-        # New: If there are new files, append them to the session state list, respecting the limit.
         for uploaded_file in uploaded_files:
-            try:
-                # Check if this file has already been processed in the current form instance
-                # This is a simple check, more robust might involve hashing content.
-                if any(uploaded_file.name in path for path in st.session_state.uploaded_photo_paths):
-                    continue # Skip if already in the list
+            # Check if this file name (or path) is already in the list
+            # A more robust check might involve hashing content for true duplicates
+            is_already_in_state = False
+            for existing_path in st.session_state.uploaded_photo_paths:
+                if os.path.basename(uploaded_file.name).replace(" ", "_") in os.path.basename(existing_path):
+                    is_already_in_state = True
+                    break
+            
+            if is_already_in_state:
+                continue # Skip if already processed
 
-                # Create a unique filename for the uploaded image
-                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f") # Add microseconds for higher uniqueness
+            try:
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
                 file_extension = uploaded_file.name.split('.')[-1]
                 unique_filename = f"{timestamp}_{uploaded_file.name.replace(' ', '_')}"
                 photo_path = os.path.join(IMAGE_DIR, unique_filename)
 
-                with open(photo_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                
-                # Add to session state only if we are within the limit
+                # Ensure we don't exceed 3 photos in total (including existing draft photos)
                 if len(st.session_state.uploaded_photo_paths) < 3:
+                    with open(photo_path, "wb") as f:
+                        f.write(uploaded_file.getbuffer())
                     st.session_state.uploaded_photo_paths.append(photo_path)
                     st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
                 else:
-                    st.warning(f"Skipping {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
-                    # Optionally remove the newly saved file if it exceeds the limit immediately
-                    os.remove(photo_path) # Clean up the excess file
+                    st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
+                    # No need to remove file if it was never written due to limit
             except Exception as e:
                 st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
     else:
-        if not st.session_state.uploaded_photo_paths:
+        if not st.session_state.get('uploaded_photo_paths'): # Use .get() for safety
             st.info(labels['No photo uploaded.'])
 
 
     st.header("Survey Details")
+    current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None) # Safely get
     surveyor_name_default_idx = 0
-    if st.session_state.surveyor_name in SURVEYOR_NAMES:
-        surveyor_name_default_idx = SURVEYOR_NAMES.index(st.session_state.surveyor_name)
+    if current_surveyor_name in SURVEYOR_NAMES:
+        surveyor_name_default_idx = SURVEYOR_NAMES.index(current_surveyor_name)
     surveyor_name = st.selectbox(
         labels['Name'], SURVEYOR_NAMES,
         index=surveyor_name_default_idx,
         key="surveyor_name"
     )
     
-    # Ensure visit_date is a datetime.date object before passing to st.date_input
-    if not isinstance(st.session_state.visit_date, datetime.date):
-        st.session_state.visit_date = datetime.date.today()
+    current_visit_date = st.session_state.get('visit_date', datetime.date.today())
+    if not isinstance(current_visit_date, datetime.date):
+        try:
+            current_visit_date = datetime.date.fromisoformat(current_visit_date)
+        except (TypeError, ValueError):
+            current_visit_date = datetime.date.today()
 
     visit_date = st.date_input(
         labels['Date of Visit'],
-        value=st.session_state.visit_date,
+        value=current_visit_date,
         key="visit_date"
     )
 
     # --- Submit Button ---
+    # THIS BUTTON MUST BE INSIDE THE st.form BLOCK
     submitted = st.form_submit_button(labels['Submit'])
 
     if submitted:
@@ -866,19 +881,24 @@ with st.form("survey_form"):
             st.success("Survey data submitted successfully!")
 
             # --- CORRECTED RESET LOGIC ---
-            # Instead of setting st.session_state values directly for widgets already instantiated,
-            # clear the relevant keys from session_state. When rerun, they will get their
-            # default values from initial_values_defaults.
-            for key in initial_values_defaults.keys():
-                if key != 'lang_select' and key != 'app_initialized_flag' and key != 'last_saved_time_persistent':
-                    if key in st.session_state: # Only delete if it exists
-                        del st.session_state[key]
+            # Clear relevant keys from session_state for a fresh form on next rerun.
+            # No need to iterate through initial_values_defaults, just the keys we manage.
+            keys_to_clear = list(initial_values_defaults.keys()) # Make a copy
+            # Exclude persistent keys like lang_select and app_initialized_flag
+            keys_to_clear.remove('lang_select')
+            keys_to_clear.remove('app_initialized_flag')
+            # 'last_saved_time_persistent' is managed separately by setting to None
 
-            # Remove the draft file after successful submission
+            for key in keys_to_clear:
+                if key in st.session_state:
+                    del st.session_state[key]
+            
+            st.session_state.last_saved_time_persistent = None # Clear auto-save message
+
+            # Important: Remove the draft file after successful submission
             draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
             if os.path.exists(draft_filename):
                 os.remove(draft_filename)
-                st.session_state.last_saved_time_persistent = None # Clear auto-save message
 
             st.rerun() # Rerun to clear the form fields and update display
         except Exception as e:
