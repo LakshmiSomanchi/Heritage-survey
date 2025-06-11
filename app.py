@@ -449,18 +449,26 @@ with st.form("survey_form"):
         key="types"
     )
 
-    # Add 'Others' to FARMER_NAMES options
+   # Add 'Others' to FARMER_NAMES options
     farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
 
     # Dropdown for Farmer Name
     farmer_name_default_idx = 0
-    # Ensure the selected value from session state is valid for the current options
-    if farmer_names_with_others and st.session_state.farmer_name_selected in farmer_names_with_others:
-        farmer_name_default_idx = farmer_names_with_others.index(st.session_state.farmer_name_selected)
-    elif farmer_names_with_others: # If farmer_names_with_others is not empty, default to first
-        st.session_state.farmer_name_selected = farmer_names_with_others[0]
+
+    # Retrieve the current value from session state, with a safe fallback
+    current_farmer_name_selection = st.session_state.get('farmer_name_selected')
+
+    if farmer_names_with_others: # Ensure there are options to choose from
+        if current_farmer_name_selection in farmer_names_with_others:
+            farmer_name_default_idx = farmer_names_with_others.index(current_farmer_name_selection)
+        elif 'Others' in farmer_names_with_others: # Fallback to 'Others' if default not found
+            farmer_name_default_idx = farmer_names_with_others.index(labels['Others'])
+        else: # Fallback to the first available option if 'Others' isn't available or relevant
+            farmer_name_default_idx = 0
+            st.session_state.farmer_name_selected = farmer_names_with_others[0] # Ensure session state is updated
     else:
-        st.session_state.farmer_name_selected = None # Or a suitable empty state if no options
+        st.session_state.farmer_name_selected = None # No options available
+        farmer_name_default_idx = 0 # Default index for empty list is 0, but it won't be used if disabled
 
     farmer_name_selected = st.selectbox(
         labels['Farmer Name'], options=farmer_names_with_others,
@@ -728,6 +736,13 @@ with st.form("survey_form"):
         # Define filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
+
+            # --- Submit Button ---
+    submitted = st.form_submit_button(labels['Submit'])
+
+    if submitted:
+        # ... logic to process and save data ...
+        st.rerun() # To clear the form
 
         # Save to CSV
         try:
