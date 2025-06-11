@@ -239,6 +239,9 @@ FARMER_DATA = {
     "0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
     "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
 }
+# Add "Other (Specify)" to FARMER_NAMES for the dropdown
+FARMER_NAMES_WITH_OTHER = sorted(list(FARMER_DATA.values()) + ["Other (Specify)"])
+FARMER_CODES = sorted(list(FARMER_DATA.keys()))
 
 FARMER_DATA = {
     "0008": "D.PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
