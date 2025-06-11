@@ -3,6 +3,7 @@ import pandas as pd
 import datetime
 import os
 import json
+import base64 # Import base64 for image handling
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
@@ -11,6 +12,10 @@ os.makedirs(SAVE_DIR, exist_ok=True)
 # Define a directory for auto-saved drafts
 DRAFT_DIR = os.path.join(SAVE_DIR, 'drafts')
 os.makedirs(DRAFT_DIR, exist_ok=True)
+
+# Define a directory for uploaded images
+IMAGE_DIR = os.path.join(SAVE_DIR, 'images')
+os.makedirs(IMAGE_DIR, exist_ok=True)
 
 # Streamlit Page Config - THIS MUST BE THE FIRST STREAMLIT COMMAND
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
@@ -42,6 +47,11 @@ dict_translations = {
         'Auto-saved!': 'Auto-saved! You can resume filling the form even if you refresh or lose internet temporarily.',
         'Others': 'Others',
         'Specify Farmer Name': 'Specify Farmer Name (if Others selected)',
+        'Upload Photos': 'Upload Photos (Max 3)',
+        'Photo uploaded successfully!': 'Photo uploaded successfully!',
+        'No photo uploaded.': 'No photo uploaded.',
+        'Error uploading photo:': 'Error uploading photo:',
+        'Please upload up to 3 photos.': 'Please upload up to 3 photos.'
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -68,6 +78,11 @@ dict_translations = {
         'Auto-saved!': 'स्वतः सहेजा गया! आप फ़ॉर्म भरना जारी रख सकते हैं, भले ही आप ताज़ा करें या अस्थायी रूप से इंटरनेट खो दें!',
         'Others': 'अन्य',
         'Specify Farmer Name': 'किसान का नाम निर्दिष्ट करें (यदि अन्य चुना गया हो)',
+        'Upload Photos': 'फ़ोटो अपलोड करें (अधिकतम 3)',
+        'Photo uploaded successfully!': 'फ़ोटो सफलतापूर्वक अपलोड हुई!',
+        'No photo uploaded.': 'कोई फ़ोटो अपलोड नहीं हुई।',
+        'Error uploading photo:': 'फ़ोटो अपलोड करने में त्रुटि:',
+        'Please upload up to 3 photos.': 'कृपया अधिकतम 3 फ़ोटो अपलोड करें।'
     },
     'Marathi': {
         "Language": "भाषा",
@@ -116,6 +131,11 @@ dict_translations = {
         "Auto-saved!": "स्वयं-जतन केले! आपण रिफ्रेश केले किंवा तात्पुरते इंटरनेट गमावले तरीही आपण फॉर्म भरणे सुरू ठेवू शकता.",
         'Others': 'इतर',
         'Specify Farmer Name': 'शेतकऱ्याचे नाव नमूद करा (इतर निवडल्यास)',
+        'Upload Photos': 'फोटो अपलोड करा (जास्तीत जास्त 3)',
+        'Photo uploaded successfully!': 'फोटो यशस्वीरित्या अपलोड झाला!',
+        'No photo uploaded.': 'कोणताही फोटो अपलोड केला नाही.',
+        'Error uploading photo:': 'फोटो अपलोड करताना त्रुटी:',
+        'Please upload up to 3 photos.': 'कृपया 3 पर्यंत फोटो अपलोड करा.'
     }
 }
 
@@ -314,7 +334,8 @@ initial_values_defaults = {
     'silage_qty': 0.0,
     'water_sources': [],
     'surveyor_name': SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None,
-    'visit_date': datetime.date.today()
+    'visit_date': datetime.date.today(),
+    'uploaded_photo_paths': [] # To store paths of uploaded photos
 }
 
 # Function to save current form data to a draft file
@@ -347,7 +368,7 @@ def load_draft():
                         st.session_state[key] = datetime.date.fromisoformat(value)
                     except ValueError:
                         st.session_state[key] = initial_values_defaults.get(key, datetime.date.today())
-                elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources']:
+                elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_photo_paths']:
                     st.session_state[key] = list(value) if isinstance(value, list) else []
                 else:
                     st.session_state[key] = value
@@ -693,6 +714,59 @@ with st.form("survey_form"):
         key="water_sources"
     )
 
+    # --- Photo Upload Snippet ---
+    st.header(labels['Upload Photos'])
+    uploaded_files = st.file_uploader(
+        labels['Upload Photos'],
+        type=["jpg", "jpeg", "png"],
+        accept_multiple_files=True,
+        key="image_uploader"
+    )
+
+    # Display existing photos in the draft if any
+    if st.session_state.uploaded_photo_paths:
+        st.subheader("Currently uploaded photos (Draft):")
+        cols = st.columns(3)
+        for i, photo_path in enumerate(st.session_state.uploaded_photo_paths):
+            if os.path.exists(photo_path):
+                try:
+                    with open(photo_path, "rb") as f:
+                        encoded_string = base64.b64encode(f.read()).decode()
+                        cols[i % 3].image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
+                        cols[i % 3].caption(os.path.basename(photo_path))
+                except Exception as e:
+                    cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
+            else:
+                st.warning(f"Draft photo path not found: {photo_path}. It might have been moved or deleted.")
+
+    # Process new uploads
+    if uploaded_files:
+        # Limit to 3 files if more are uploaded
+        if len(uploaded_files) > 3:
+            st.warning(labels['Please upload up to 3 photos.'])
+            uploaded_files = uploaded_files[:3] # Take only the first 3
+
+        # Clear existing paths and save new ones
+        st.session_state.uploaded_photo_paths = []
+        for uploaded_file in uploaded_files:
+            try:
+                # Create a unique filename for the uploaded image
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                file_extension = uploaded_file.name.split('.')[-1]
+                unique_filename = f"{timestamp}_{uploaded_file.name.replace(' ', '_')}"
+                photo_path = os.path.join(IMAGE_DIR, unique_filename)
+
+                with open(photo_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                st.session_state.uploaded_photo_paths.append(photo_path)
+                st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+            except Exception as e:
+                st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
+    else:
+        if not st.session_state.uploaded_photo_paths:
+            st.info(labels['No photo uploaded.'])
+
+
     st.header("Survey Details")
     surveyor_name_default_idx = 0
     if st.session_state.surveyor_name in SURVEYOR_NAMES:
@@ -753,7 +827,8 @@ with st.form("survey_form"):
             "Quantity of Silage (Kg/day)": silage_qty if silage == labels['Yes'] else 0.0,
             "Source of Water": ", ".join(water_sources),
             "Name of Surveyor": surveyor_name,
-            "Date of Visit": visit_date.isoformat() # ISO format for consistent saving
+            "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
+            "Photo Paths": ", ".join(st.session_state.uploaded_photo_paths) # Save photo paths
         }
 
         # Convert to DataFrame and save
@@ -786,6 +861,8 @@ with st.form("survey_form"):
                     st.session_state[key] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
                 elif key == 'surveyor_name':
                     st.session_state[key] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
+                elif key == 'uploaded_photo_paths':
+                    st.session_state[key] = [] # Clear uploaded photo paths
                 elif key not in ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']:
                     st.session_state[key] = default_value
 
