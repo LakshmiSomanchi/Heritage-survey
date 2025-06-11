@@ -321,40 +321,6 @@ FARMER_DATA = {
     "0490":"MATAMPALLE", "0551":"TALUPULA", "0512":"BONAMVARIPALLE",
     "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
 }
-# --- BEGIN SNIPPET ---
-
-    # Dropdown for Farmer Name (with "Other (Specify)" option)
-    farmer_name_default_idx = 0
-    # Determine the correct default index for the selectbox
-    if st.session_state.farmer_name in FARMER_NAMES_WITH_OTHER:
-        farmer_name_default_idx = FARMER_NAMES_WITH_OTHER.index(st.session_state.farmer_name)
-    elif FARMER_NAMES_WITH_OTHER: # If the list is not empty, set default to the first option if current value is invalid
-        st.session_state.farmer_name = FARMER_NAMES_WITH_OTHER[0]
-    else: # If FARMER_NAMES_WITH_OTHER is empty, set to None
-        st.session_state.farmer_name = None
-
-    farmer_name = st.selectbox(
-        labels['Farmer Name'], options=FARMER_NAMES_WITH_OTHER,
-        index=farmer_name_default_idx,
-        key="farmer_name",
-        disabled=(not FARMER_NAMES_WITH_OTHER) # Disable the selectbox if there are no options
-    )
-
-    # Conditional text input for "Other Farmer Name"
-    # This input only appears if "Other (Specify)" is chosen in the farmer_name selectbox
-    if farmer_name == labels['Other (Specify)']:
-        other_farmer_name_specify = st.text_input(
-            labels['Other Farmer Name'], # Label from your dict_translations
-            value=st.session_state.other_farmer_name_specify,
-            key="other_farmer_name_specify" # Unique key for this widget
-        )
-    else:
-        # If "Other (Specify)" is NOT selected, ensure the 'other_farmer_name_specify'
-        # in session state is cleared. This is important so that if a user
-        # selects "Other", types a name, then changes back to a regular name,
-        # the "Other" name isn't accidentally saved.
-        if 'other_farmer_name_specify' in st.session_state:
-            st.session_state.other_farmer_name_specify = ''
 
 # Create lists for dropdowns
 FARMER_CODES = sorted(list(FARMER_DATA.keys()))
