@@ -277,7 +277,8 @@ initial_values_defaults = {
     'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None, # Handle empty list
     'hpc_code': '',
     'types': "HPC",
-    'farmer_name_selected': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else None, # Use a new key for the selected dropdown value
+    # Ensure a valid default for farmer_name_selected, even if FARMER_NAMES_ORIGINAL is empty initially
+    'farmer_name_selected': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others',
     'farmer_name_other': '', # New field for "Others" farmer name
     'farmer_code': FARMER_CODES[0] if FARMER_CODES else None, # Handle empty list
     'gender': "Male",
@@ -420,7 +421,7 @@ with st.form("survey_form"):
 
     # VLCC Name
     vlcc_name_default_idx = 0
-    if st.session_state.vlcc_name in VLCC_NAMES:
+    if VLCC_NAMES and st.session_state.vlcc_name in VLCC_NAMES: # Ensure VLCC_NAMES is not empty before checking index
         vlcc_name_default_idx = VLCC_NAMES.index(st.session_state.vlcc_name)
     elif VLCC_NAMES: # If VLCC_NAMES is not empty, default to first
         st.session_state.vlcc_name = VLCC_NAMES[0] # Ensure session state has a valid default
@@ -455,12 +456,13 @@ with st.form("survey_form"):
 
     # Dropdown for Farmer Name
     farmer_name_default_idx = 0
-    if st.session_state.farmer_name_selected in farmer_names_with_others:
+    # Ensure the selected value from session state is valid for the current options
+    if farmer_names_with_others and st.session_state.farmer_name_selected in farmer_names_with_others:
         farmer_name_default_idx = farmer_names_with_others.index(st.session_state.farmer_name_selected)
-    elif farmer_names_with_others:
+    elif farmer_names_with_others: # If farmer_names_with_others is not empty, default to first
         st.session_state.farmer_name_selected = farmer_names_with_others[0]
     else:
-        st.session_state.farmer_name_selected = None
+        st.session_state.farmer_name_selected = None # Or a suitable empty state if no options
 
     farmer_name_selected = st.selectbox(
         labels['Farmer Name'], options=farmer_names_with_others,
@@ -482,7 +484,7 @@ with st.form("survey_form"):
 
     # Dropdown for Farmer Code
     farmer_code_default_idx = 0
-    if st.session_state.farmer_code in FARMER_CODES:
+    if FARMER_CODES and st.session_state.farmer_code in FARMER_CODES:
         farmer_code_default_idx = FARMER_CODES.index(st.session_state.farmer_code)
     elif FARMER_CODES:
         st.session_state.farmer_code = FARMER_CODES[0]
@@ -512,3 +514,290 @@ with st.form("survey_form"):
         value=int(st.session_state.cows), # Cast to int for number_input
         key="cows"
     )
+
+    # Add the missing fields after the existing ones in the form
+    cattle_in_milk = st.number_input(
+        labels['No. of Cattle in Milk'], min_value=0,
+        value=int(st.session_state.cattle_in_milk),
+        key="cattle_in_milk"
+    )
+    calves = st.number_input(
+        labels['No. of Calves/Heifers'], min_value=0,
+        value=int(st.session_state.calves),
+        key="calves"
+    )
+    desi_cows = st.number_input(
+        labels['No. of Desi cows'], min_value=0,
+        value=int(st.session_state.desi_cows),
+        key="desi_cows"
+    )
+    crossbreed_cows = st.number_input(
+        labels['No. of Cross breed cows'], min_value=0,
+        value=int(st.session_state.crossbreed_cows),
+        key="crossbreed_cows"
+    )
+    buffalo = st.number_input(
+        labels['No. of Buffalo'], min_value=0,
+        value=int(st.session_state.buffalo),
+        key="buffalo"
+    )
+    milk_production = st.number_input(
+        labels['Milk Production'], min_value=0.0, format="%.2f",
+        value=float(st.session_state.milk_production),
+        key="milk_production"
+    )
+
+    st.header(labels['Specific Questions'])
+    green_fodder_options = (labels['Yes'], labels['No'])
+    green_fodder_default_idx = green_fodder_options.index(st.session_state.green_fodder) if st.session_state.green_fodder in green_fodder_options else 0
+    green_fodder = st.radio(
+        labels['Green Fodder'], green_fodder_options,
+        index=green_fodder_default_idx,
+        key="green_fodder"
+    )
+    if green_fodder == labels['Yes']:
+        green_fodder_types = st.multiselect(
+            labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
+            default=st.session_state.green_fodder_types,
+            key="green_fodder_types"
+        )
+        green_fodder_qty = st.number_input(
+            labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
+            value=float(st.session_state.green_fodder_qty),
+            key="green_fodder_qty"
+        )
+    else:
+        st.session_state.green_fodder_types = []
+        st.session_state.green_fodder_qty = 0.0
+
+    dry_fodder_options = (labels['Yes'], labels['No'])
+    dry_fodder_default_idx = dry_fodder_options.index(st.session_state.dry_fodder) if st.session_state.dry_fodder in dry_fodder_options else 0
+    dry_fodder = st.radio(
+        labels['Dry Fodder'], dry_fodder_options,
+        index=dry_fodder_default_idx,
+        key="dry_fodder"
+    )
+    if dry_fodder == labels['Yes']:
+        dry_fodder_types = st.multiselect(
+            labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
+            default=st.session_state.dry_fodder_types,
+            key="dry_fodder_types"
+        )
+        dry_fodder_qty = st.number_input(
+            labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
+            value=float(st.session_state.dry_fodder_qty),
+            key="dry_fodder_qty"
+        )
+    else:
+        st.session_state.dry_fodder_types = []
+        st.session_state.dry_fodder_qty = 0.0
+
+    pellet_feed_options = (labels['Yes'], labels['No'])
+    pellet_feed_default_idx = pellet_feed_options.index(st.session_state.pellet_feed) if st.session_state.pellet_feed in pellet_feed_options else 0
+    pellet_feed = st.radio(
+        labels['Pellet Feed'], pellet_feed_options,
+        index=pellet_feed_default_idx,
+        key="pellet_feed"
+    )
+    if pellet_feed == labels['Yes']:
+        pellet_feed_brands = st.multiselect(
+            labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
+            default=st.session_state.pellet_feed_brands,
+            key="pellet_feed_brands"
+        )
+        pellet_feed_qty = st.number_input(
+            labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
+            value=float(st.session_state.pellet_feed_qty),
+            key="pellet_feed_qty"
+        )
+    else:
+        st.session_state.pellet_feed_brands = []
+        st.session_state.pellet_feed_qty = 0.0
+
+    mineral_mixture_options = (labels['Yes'], labels['No'])
+    mineral_mixture_default_idx = mineral_mixture_options.index(st.session_state.mineral_mixture) if st.session_state.mineral_mixture in mineral_mixture_options else 0
+    mineral_mixture = st.radio(
+        labels['Mineral Mixture'], mineral_mixture_options,
+        index=mineral_mixture_default_idx,
+        key="mineral_mixture"
+    )
+    if mineral_mixture == labels['Yes']:
+        mineral_brand_default_idx = 0
+        if st.session_state.mineral_brand in MINERAL_MIXTURE_BRANDS:
+            mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.mineral_brand)
+        mineral_brand = st.selectbox(
+            labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
+            index=mineral_brand_default_idx,
+            key="mineral_brand"
+        )
+        mineral_qty = st.number_input(
+            labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
+            value=float(st.session_state.mineral_qty),
+            key="mineral_qty"
+        )
+    else:
+        st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
+        st.session_state.mineral_qty = 0.0
+
+    silage_options = (labels['Yes'], labels['No'])
+    silage_default_idx = silage_options.index(st.session_state.silage) if st.session_state.silage in silage_options else 0
+    silage = st.radio(
+        labels['Silage'], silage_options,
+        index=silage_default_idx,
+        key="silage"
+    )
+    if silage == labels['Yes']:
+        silage_source = st.text_input(
+            labels['Source and Price of Silage'],
+            value=st.session_state.silage_source,
+            key="silage_source"
+        )
+        silage_qty = st.number_input(
+            labels['Quantity of Silage'], min_value=0.0, format="%.2f",
+            value=float(st.session_state.silage_qty),
+            key="silage_qty"
+        )
+    else:
+        st.session_state.silage_source = ""
+        st.session_state.silage_qty = 0.0
+
+    water_sources = st.multiselect(
+        labels['Source of Water'], WATER_SOURCE_OPTIONS,
+        default=st.session_state.water_sources,
+        key="water_sources"
+    )
+
+    st.header("Survey Details")
+    surveyor_name_default_idx = 0
+    if st.session_state.surveyor_name in SURVEYOR_NAMES:
+        surveyor_name_default_idx = SURVEYOR_NAMES.index(st.session_state.surveyor_name)
+    surveyor_name = st.selectbox(
+        labels['Name'], SURVEYOR_NAMES,
+        index=surveyor_name_default_idx,
+        key="surveyor_name"
+    )
+    visit_date = st.date_input(
+        labels['Date of Visit'],
+        value=st.session_state.visit_date,
+        key="visit_date"
+    )
+
+    # --- Submit Button ---
+    submitted = st.form_submit_button(labels['Submit'])
+
+    if submitted:
+        # Determine the final farmer name based on selection
+        final_farmer_name = farmer_name_other if farmer_name_selected == labels['Others'] else farmer_name_selected
+
+        # Collect all data for submission
+        data = {
+            "Language": lang,
+            "VLCC Name": vlcc_name,
+            "HPC/MCC Code": hpc_code,
+            "Type": types,
+            "Farmer Name": final_farmer_name,
+            "Farmer Code / Pourer ID": farmer_code,
+            "Gender": gender,
+            "Number of Cows": cows,
+            "No. of Cattle in Milk": cattle_in_milk,
+            "No. of Calves/Heifers": calves,
+            "No. of Desi cows": desi_cows,
+            "No. of Cross breed cows": crossbreed_cows,
+            "No. of Buffalo": buffalo,
+            "Milk Production (liters/day)": milk_production,
+            "Green Fodder Provided": green_fodder,
+            "Type of Green Fodder": ", ".join(green_fodder_types) if green_fodder == labels['Yes'] else "",
+            "Quantity of Green Fodder (Kg/day)": green_fodder_qty if green_fodder == labels['Yes'] else 0.0,
+            "Dry Fodder Provided": dry_fodder,
+            "Type of Dry Fodder": ", ".join(dry_fodder_types) if dry_fodder == labels['Yes'] else "",
+            "Quantity of Dry Fodder (Kg/day)": dry_fodder_qty if dry_fodder == labels['Yes'] else 0.0,
+            "Pellet Feed Provided": pellet_feed,
+            "Pellet Feed Brand": ", ".join(pellet_feed_brands) if pellet_feed == labels['Yes'] else "",
+            "Quantity of Pellet Feed (Kg/day)": pellet_feed_qty if pellet_feed == labels['Yes'] else 0.0,
+            "Mineral Mixture Provided": mineral_mixture,
+            "Mineral Mixture Brand": mineral_brand if mineral_mixture == labels['Yes'] else "",
+            "Quantity of Mineral Mixture (gm/day)": mineral_qty if mineral_mixture == labels['Yes'] else 0.0,
+            "Silage Provided": silage,
+            "Source and Price of Silage": silage_source if silage == labels['Yes'] else "",
+            "Quantity of Silage (Kg/day)": silage_qty if silage == labels['Yes'] else 0.0,
+            "Source of Water": ", ".join(water_sources),
+            "Name of Surveyor": surveyor_name,
+            "Date of Visit": visit_date.isoformat() # ISO format for consistent saving
+        }
+
+        # Convert to DataFrame and save
+        df = pd.DataFrame([data])
+
+        # Define filename
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
+
+        # Save to CSV
+        try:
+            # Check if file exists to decide whether to write header
+            if not os.path.exists(file_path):
+                df.to_csv(file_path, index=False)
+            else:
+                df.to_csv(file_path, mode='a', header=False, index=False)
+            st.success("Survey data submitted successfully!")
+
+            # Clear current form values by re-initializing session state for form-related keys
+            for key, default_value in initial_values_defaults.items():
+                # Only reset fields that are part of the form, not app-wide settings like 'lang_select'
+                if key not in ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']:
+                    st.session_state[key] = default_value
+
+            # Remove the draft file after successful submission
+            draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+            if os.path.exists(draft_filename):
+                os.remove(draft_filename)
+                st.session_state.last_saved_time_persistent = None # Clear auto-save message
+
+            st.rerun() # Rerun to clear the form fields and update display
+        except Exception as e:
+            st.error(f"Error saving data: {e}")
+
+# Function to load all saved CSVs and display them
+def load_all_survey_data():
+    all_files = [os.path.join(SAVE_DIR, f) for f in os.listdir(SAVE_DIR) if f.endswith('.csv')]
+    if not all_files:
+        return pd.DataFrame()
+    
+    # Filter out draft files if any CSVs named like drafts exist in SAVE_DIR
+    survey_files = [f for f in all_files if not "draft" in f]
+
+    if not survey_files:
+        return pd.DataFrame()
+
+    list_df = []
+    for file in survey_files:
+        try:
+            df = pd.read_csv(file)
+            list_df.append(df)
+        except pd.errors.EmptyDataError:
+            st.warning(f"Skipping empty file: {file}")
+            continue
+        except Exception as e:
+            st.error(f"Error reading {file}: {e}")
+            continue
+
+    if list_df:
+        return pd.concat(list_df, ignore_index=True)
+    return pd.DataFrame()
+
+# Download Button for all collected data
+st.markdown("---")
+if st.button(labels['Download CSV']):
+    all_data_df = load_all_survey_data()
+    if not all_data_df.empty:
+        # Use a BytesIO object to create a CSV in memory for download
+        csv_buffer = all_data_df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="Click to Download Data",
+            data=csv_buffer,
+            file_name="all_dairy_survey_data.csv",
+            mime="text/csv",
+            key="download_all_csv"
+        )
+    else:
+        st.info("No survey data collected yet to download.")
