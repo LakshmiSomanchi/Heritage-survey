@@ -867,7 +867,7 @@ with st.form("survey_form"):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
 
-        # Save to CSV
+# Save to CSV
         try:
             # Append to file if it exists, otherwise create it
             if not os.path.exists(file_path):
@@ -876,16 +876,19 @@ with st.form("survey_form"):
                 df.to_csv(file_path, mode='a', header=False, index=False)
             st.success("Survey data submitted successfully!")
 
+            # --- CORRECTED RESET LOGIC ---
             # Clear relevant keys from session_state for a fresh form on next rerun.
-            keys_to_clear = list(initial_values_defaults.keys()) # Make a copy
-            # Exclude persistent keys like lang_select and app_initialized_flag
-            keys_to_clear.remove('lang_select')
-            keys_to_clear.remove('app_initialized_flag')
-            # 'last_saved_time_persistent' is managed separately by setting to None
+            
+            # Define keys to *always keep* (not clear)
+            persistent_keys = ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']
 
-            for key in keys_to_clear:
-                if key in st.session_state:
-                    del st.session_state[key]
+            # Iterate through all session state keys and delete those not in persistent_keys
+            # This is safer than modifying a list while iterating or trying to remove elements
+            # that might not be there.
+            keys_to_delete = [key for key in st.session_state.keys() if key not in persistent_keys]
+
+            for key in keys_to_delete:
+                del st.session_state[key]
             
             st.session_state.last_saved_time_persistent = None # Clear auto-save message
 
