@@ -161,7 +161,7 @@ VLCC_NAMES = ["3025-K.V.PALLE","3026-KOTHA PALLE","3028-BONAMVARIPALLE","3029-BO
 # Extracted Farmer Names and Member Codes from the image
 FARMER_DATA = {
     "0008": "D.PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
-    "0006":"G.Ratnamma", "0012":"V.Devaki",
+    "0006":"G.Ratnamma", "0012":"V.Devaki", "0006":"G.Ratnamma", "0008": "D.PRASAD REDDY",
     "0007": "INDRAVATHI RAMADEVI", "0013": "M.GANGULU", "0014": "K VARADHA NAIDU",
     "0017": "B SAMPURNA", "0015": "J.GANGULU", "0002": "KRISHNAMA NAIDU",
     "0021": "M.S.CHOWDARY", "0029": "DASARI VENKATAIAH", "0030": "K.M.KANTHAMMA",
@@ -240,12 +240,9 @@ FARMER_DATA = {
     "0473":"KURAVAPALLE", "0477":"VARANASIVARIPALLE"
 }
 
-
-# Extracted Farmer Names and Member Codes from the image
-# Double-checked commas and list structure here as well.
 FARMER_DATA = {
-    "0008": "DURAJ PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
-    "0006":"G.Ratnamma", "0012":"VDevaki",
+    "0008": "D.PRASAD REDDY", "0005": "GUBBALA ANAMMA", "0003": "G.REDDY SEKHAR",
+    "0006":"G.Ratnamma", "0012":"V.Devaki", "0006":"G.Ratnamma", "0008": "D.PRASAD REDDY",
     "0007": "INDRAVATHI RAMADEVI", "0013": "M.GANGULU", "0014": "K VARADHA NAIDU",
     "0017": "B SAMPURNA", "0015": "J.GANGULU", "0002": "KRISHNAMA NAIDU",
     "0021": "M.S.CHOWDARY", "0029": "DASARI VENKATAIAH", "0030": "K.M.KANTHAMMA",
