@@ -82,7 +82,7 @@ dict_translations = {
         'Photo uploaded successfully!': 'फ़ोटो सफलतापूर्वक अपलोड हुई!',
         'No photo uploaded.': 'कोई फ़ोटो अपलोड नहीं हुई।',
         'Error uploading photo:': 'फ़ोटो अपलोड करने में त्रुटि:',
-        'Please upload up to 3 photos.': 'कृपया अधिकतम 3 फ़ोटो अपलोड करें।'
+        'Please upload up to 3 photos.': 'कृपया अधिकतम 3 फ़ोटो अपलोड करें!'
     },
     'Marathi': {
         "Language": "भाषा",
@@ -400,7 +400,7 @@ def load_draft():
             
             # For farmer_name_selected, ensure it's a valid option or "Others"
             if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in (FARMER_NAMES_ORIGINAL + [current_labels['Others']]):
-                 st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
+                   st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
 
             # For farmer_code, ensure it's a valid option
             if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES:
@@ -413,6 +413,10 @@ def load_draft():
             # For surveyor_name, ensure it's a valid option
             if 'surveyor_name' in st.session_state and st.session_state['surveyor_name'] not in SURVEYOR_NAMES:
                 st.session_state['surveyor_name'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
+
+            # Explicitly ensure uploaded_photo_paths is a list after loading
+            if 'uploaded_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_photo_paths, list):
+                st.session_state.uploaded_photo_paths = []
 
             st.toast("Draft loaded successfully!")
             return True
@@ -517,7 +521,7 @@ with st.form("survey_form"):
     else:
         # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
         if st.session_state.get('farmer_name_selected') != labels['Others'] and 'farmer_name_other' in st.session_state:
-             del st.session_state['farmer_name_other']
+            del st.session_state['farmer_name_other']
         farmer_name_other = ""
 
     current_farmer_code = st.session_state.get('farmer_code', FARMER_CODES[0] if FARMER_CODES else None) # Safely get
@@ -748,8 +752,8 @@ with st.form("survey_form"):
                 try:
                     with open(photo_path, "rb") as f:
                         encoded_string = base64.b64encode(f.read()).decode()
-                        cols[i % 3].image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
-                        cols[i % 3].caption(os.path.basename(photo_path))
+                    cols[i % 3].image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
+                    cols[i % 3].caption(os.path.basename(photo_path))
                 except Exception as e:
                     cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
             else:
@@ -757,6 +761,10 @@ with st.form("survey_form"):
 
     # Process new uploads
     if uploaded_files:
+        # Ensure uploaded_photo_paths is a list before using it
+        if 'uploaded_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_photo_paths, list):
+            st.session_state.uploaded_photo_paths = []
+
         if len(uploaded_files) > 3:
             st.warning(labels['Please upload up to 3 photos.'])
             uploaded_files = uploaded_files[:3]
@@ -788,7 +796,9 @@ with st.form("survey_form"):
             except Exception as e:
                 st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
     else:
-        if not st.session_state.get('uploaded_photo_paths'): # Use .get() for safety
+        if not st.session_state.get('uploaded_photo_paths') or not isinstance(st.session_state.uploaded_photo_paths, list):
+            st.session_state.uploaded_photo_paths = [] # Ensure it's a list even if no photos were uploaded
+        if not st.session_state.uploaded_photo_paths: # Use the now-guaranteed-to-be-list
             st.info(labels['No photo uploaded.'])
 
 
@@ -822,6 +832,12 @@ with st.form("survey_form"):
     if submitted:
         # Determine the final farmer name based on selection
         final_farmer_name = farmer_name_other if farmer_name_selected == labels['Others'] else farmer_name_selected
+
+        # Safely get uploaded_photo_paths, ensuring it's a list for joining
+        photo_paths_for_saving = st.session_state.get('uploaded_photo_paths', [])
+        if not isinstance(photo_paths_for_saving, list):
+            # If for some reason it's not a list, default to an empty one
+            photo_paths_for_saving = []
 
         # Collect all data for submission
         data = {
@@ -857,7 +873,7 @@ with st.form("survey_form"):
             "Source of Water": ", ".join(water_sources),
             "Name of Surveyor": surveyor_name,
             "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
-            "Photo Paths": ", ".join(st.session_state.uploaded_photo_paths) # Save photo paths
+            "Photo Paths": ", ".join(photo_paths_for_saving) # Save photo paths
         }
 
         # Convert to DataFrame and save
