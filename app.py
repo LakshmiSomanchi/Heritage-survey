@@ -3,8 +3,8 @@ import pandas as pd
 import datetime
 import os
 import json
-import base64 # Import base64 for image handling
-import shutil # Import shutil for moving files
+import base64  # Import base64 for image handling
+import shutil  # Import shutil for moving files
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
@@ -61,7 +61,8 @@ dict_translations = {
         'Confirm and Submit': 'Confirm and Submit',
         'Edit Form': 'Edit Form',
         'Successfully Submitted!': 'Form Successfully Submitted!',
-        'Review Your Submission': 'Review Your Submission'
+        'Review Your Submission': 'Review Your Submission',
+        'Fill Another Form': 'Fill Another Form'
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -97,7 +98,8 @@ dict_translations = {
         'Confirm and Submit': 'पुष्टि करें और जमा करें',
         'Edit Form': 'फ़ॉर्म संपादित करें',
         'Successfully Submitted!': 'फॉर्म सफलतापूर्वक जमा किया गया!',
-        'Review Your Submission': 'अपनी सबमिशन की समीक्षा करें'
+        'Review Your Submission': 'अपनी सबमिशन की समीक्षा करें',
+        'Fill Another Form': 'एक और फॉर्म भरें'
     },
     'Marathi': {
         "Language": "भाषा",
@@ -155,7 +157,8 @@ dict_translations = {
         'Confirm and Submit': 'पुष्टी करा आणि सबमिट करा',
         'Edit Form': 'फॉर्म संपादित करा',
         'Successfully Submitted!': 'फॉर्म यशस्वीरित्या सबमिट केला!',
-        'Review Your Submission': 'आपल्या सबमिशनचे पुनरावलोकन करा'
+        'Review Your Submission': 'आपल्या सबमिशनचे पुनरावलोकन करा',
+        'Fill Another Form': 'दुसरा फॉर्म भरा'
     }
 }
 
@@ -219,15 +222,15 @@ FARMER_DATA = {
     "0005": "KATTARI VASANTA KUMARI",
     "0006": "GUDISI NARAYANAMMA",
     "0007": "P SUREKHA",
-    "0008_a": "VAGUMALLU SUDHAKARREDDY", # Renamed to ensure uniqueness if codes are non-unique
+    "0008": "VAGUMALLU SUDHAKARREDDY",
     "0015": "VANGUNALLI REDDY SEKHAR REDDY",
-    "0017_a": "Y REDDEMMA",
-    "0003_a": "INDIRAVATHI MARRIPATTI",
-    "0008_b": "CHIKATIPALLI VASANTHA", # Renamed
+    "0017": "Y REDDEMMA",
+    "0003": "INDIRAVATHI MARRIPATTI",
+    "0008": "CHIKATIPALLI VASANTHA",
     "0011": "BIRE LAKSHMI DEVI",
     "0013": "B SAMPURNA",
     "0016": "R PADMA",
-    "0017": "KRISHTNAMMA KOTAKONDA", # Renamed
+    "0017": "KRISHTNAMMA KOTAKONDA",
     "0018": "A LAKSHMAIAH",
     "0021": "CANDRAKALA GURRAMKONDA",
     "0025": "P JYOTHI",
@@ -236,9 +239,9 @@ FARMER_DATA = {
     "0036": "C SURYA PRAKASH",
     "0001": "P SHANKARAMMA",
     "0012": "V PRAMEELA",
-    "0003": "RAJINI KUMAR REDDY M", # Renamed
+    "0003": "RAJINI KUMAR REDDY M",
     "0002": "D GOPAL NAIDU",
-    "0003": "D PRASAD REDDY", # Renamed
+    "0003": "D PRASAD REDDY",
     "0006": "G RATHNAMMA",
     "0009": "M NARAYANAMMA",
     "0012": "V DEVAKI",
@@ -355,9 +358,9 @@ initial_values_defaults = {
     'water_sources': [],
     'surveyor_name': SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None,
     'visit_date': datetime.date.today(),
-    'uploaded_temp_photo_paths': [], # To store paths of temporarily uploaded photos
-    'final_submitted_data': None, # To store data ready for review/submission
-    'current_step': 'form_entry' # 'form_entry', 'review', 'submitted'
+    'uploaded_temp_photo_paths': [],  # To store paths of temporarily uploaded photos
+    'final_submitted_data': None,  # To store data ready for review/submission
+    'current_step': 'form_entry'  # 'form_entry', 'review', 'submitted'
 }
 
 # Function to save current form data to a draft file
@@ -585,9 +588,11 @@ if st.session_state.current_step == 'form_entry':
             )
         else:
             # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
+            # This logic needs to be careful with reruns. A simpler way is to just let it be if not 'Others'.
+            # Or, explicitly set it to "" if the selection changes away from 'Others'.
             if st.session_state.get('farmer_name_selected_prev') == labels['Others'] and 'farmer_name_other' in st.session_state:
-                del st.session_state['farmer_name_other']
-            farmer_name_other = ""
+                st.session_state['farmer_name_other'] = "" # Reset when 'Others' is deselected
+            farmer_name_other = "" # Ensure local variable is also empty
         st.session_state.farmer_name_selected_prev = farmer_name_selected # Store previous selection for clearing logic
 
 
@@ -665,10 +670,10 @@ if st.session_state.current_step == 'form_entry':
 
         st.header(labels['Specific Questions'])
         green_fodder_options = (labels['Yes'], labels['No'])
-        current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0]) # Corrected variable name here
+        current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0])
         green_fodder_default_idx = 0
-        if current_green_fodder in green_fodder_options: # Corrected variable name here
-            green_fodder_default_idx = green_fodder_options.index(current_green_fodder) # Corrected variable name here
+        if current_green_fodder in green_fodder_options:
+            green_fodder_default_idx = green_fodder_options.index(current_green_fodder)
         green_fodder = st.radio(
             labels['Green Fodder'], green_fodder_options,
             index=green_fodder_default_idx,
@@ -845,20 +850,21 @@ if st.session_state.current_step == 'form_entry':
             key="image_uploader" # Unique key for file uploader
         )
 
-        # Handle new uploads and add to temporary paths
+        # Process newly uploaded files
         if uploaded_files:
             for uploaded_file in uploaded_files:
+                # Create a unique filename for the temporary image
                 unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
                 temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
 
-                # Check if this specific file (by content) has already been processed and saved temporarily
-                # This is a simple check based on filename, could be improved with file hashing for robustness
+                # Check if this exact file content (or a file with the same name) has already been uploaded in this session
+                # For robust check, you'd hash file content, but for this context, checking existing paths and name is simpler.
                 is_duplicate = False
                 for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
-                    if os.path.basename(temp_photo_path) == os.path.basename(existing_path):
+                    if os.path.basename(temp_photo_path) == os.path.basename(existing_path) and os.path.exists(existing_path):
                         is_duplicate = True
                         break
-
+                
                 if not is_duplicate:
                     if len(st.session_state.get('uploaded_temp_photo_paths', [])) < 3:
                         try:
@@ -872,27 +878,39 @@ if st.session_state.current_step == 'form_entry':
                     else:
                         st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
         
-        # Display existing temporary photos
+        # Display existing temporary photos and provide a remove option
         if st.session_state.get('uploaded_temp_photo_paths'):
             st.subheader("Currently uploaded photos:")
-            cols = st.columns(3)
-            for i, photo_path in enumerate(st.session_state.uploaded_temp_photo_paths):
+            # Use a copy of the list for iteration to avoid issues when modifying during iteration
+            for i, photo_path in enumerate(list(st.session_state.uploaded_temp_photo_paths)):
                 if os.path.exists(photo_path):
                     try:
                         with open(photo_path, "rb") as f:
                             encoded_string = base64.b64encode(f.read()).decode()
-                        with cols[i % 3]:
-                            st.image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
-                            st.caption(os.path.basename(photo_path))
-                            if st.button(f"Remove {i+1}", key=f"remove_photo_{i}"):
+                        
+                        col1, col2 = st.columns([0.7, 0.3])
+                        with col1:
+                            st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
+                        with col2:
+                            if st.button(f"Remove", key=f"remove_photo_{i}_{photo_path}"): # Unique key per path
                                 os.remove(photo_path)
-                                st.session_state.uploaded_temp_photo_paths.pop(i)
+                                st.session_state.uploaded_temp_photo_paths.remove(photo_path) # Remove by value
                                 save_draft()
                                 st.rerun() # Rerun to update the display after removal
                     except Exception as e:
-                        cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
+                        st.error(f"Could not load image {os.path.basename(photo_path)}: {e}")
+                        # If file cannot be loaded, consider removing it from the list to avoid future errors
+                        if photo_path in st.session_state.uploaded_temp_photo_paths:
+                            st.session_state.uploaded_temp_photo_paths.remove(photo_path)
+                            save_draft()
+                            st.rerun()
                 else:
-                    st.warning(f"Temporary photo path not found: {photo_path}. It might have been moved or deleted.")
+                    st.warning(f"Temporary photo path not found: {os.path.basename(photo_path)}. It might have been moved or deleted.")
+                    # Clean up broken paths from session state
+                    if photo_path in st.session_state.uploaded_temp_photo_paths:
+                        st.session_state.uploaded_temp_photo_paths.remove(photo_path)
+                        save_draft()
+                        st.rerun()
         else:
             st.info(labels['No photo uploaded.'])
 
@@ -947,21 +965,21 @@ if st.session_state.current_step == 'form_entry':
                 "No. of Buffalo": buffalo,
                 "Milk Production (liters/day)": milk_production,
                 "Green Fodder Provided": green_fodder,
-                "Type of Green Fodder": ", ".join(green_fodder_types) if green_fodder == labels['Yes'] else "",
+                "Type of Green Fodder": ", ".join(green_fodder_types) if green_fodder == labels['Yes'] else "N/A",
                 "Quantity of Green Fodder (Kg/day)": green_fodder_qty if green_fodder == labels['Yes'] else 0.0,
                 "Dry Fodder Provided": dry_fodder,
-                "Type of Dry Fodder": ", ".join(dry_fodder_types) if dry_fodder == labels['Yes'] else "",
+                "Type of Dry Fodder": ", ".join(dry_fodder_types) if dry_fodder == labels['Yes'] else "N/A",
                 "Quantity of Dry Fodder (Kg/day)": dry_fodder_qty if dry_fodder == labels['Yes'] else 0.0,
                 "Pellet Feed Provided": pellet_feed,
-                "Pellet Feed Brand": ", ".join(pellet_feed_brands) if pellet_feed == labels['Yes'] else "",
+                "Pellet Feed Brand": ", ".join(pellet_feed_brands) if pellet_feed == labels['Yes'] else "N/A",
                 "Quantity of Pellet Feed (Kg/day)": pellet_feed_qty if pellet_feed == labels['Yes'] else 0.0,
                 "Mineral Mixture Provided": mineral_mixture,
-                "Mineral Mixture Brand": mineral_brand if mineral_mixture == labels['Yes'] else "",
+                "Mineral Mixture Brand": mineral_brand if mineral_mixture == labels['Yes'] else "N/A",
                 "Quantity of Mineral Mixture (gm/day)": mineral_qty if mineral_mixture == labels['Yes'] else 0.0,
                 "Silage Provided": silage,
-                "Source and Price of Silage": silage_source if silage == labels['Yes'] else "",
+                "Source and Price of Silage": silage_source if silage == labels['Yes'] else "N/A",
                 "Quantity of Silage (Kg/day)": silage_qty if silage == labels['Yes'] else 0.0,
-                "Source of Water": ", ".join(water_sources),
+                "Source of Water": ", ".join(water_sources) if water_sources else "N/A",
                 "Name of Surveyor": surveyor_name,
                 "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
                 "Photo Paths": st.session_state.uploaded_temp_photo_paths # Store temp paths for review
@@ -977,27 +995,74 @@ elif st.session_state.current_step == 'review':
     data_to_review = st.session_state.final_submitted_data
 
     if data_to_review:
-        # Display all collected data
-        for key, value in data_to_review.items():
-            if key == "Photo Paths":
-                st.subheader(labels['Upload Photos'])
-                if value:
-                    cols = st.columns(3)
-                    for i, photo_path in enumerate(value):
-                        if os.path.exists(photo_path):
-                            try:
-                                with open(photo_path, "rb") as f:
-                                    encoded_string = base64.b64encode(f.read()).decode()
-                                cols[i % 3].image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
-                                cols[i % 3].caption(os.path.basename(photo_path))
-                            except Exception as e:
-                                cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
-                        else:
-                            st.warning(f"Image not found for review: {photo_path}")
+        # Display all collected data in a more structured way
+        st.subheader("Farmer Profile")
+        st.write(f"**{labels['Language']}:** {data_to_review['Language']}")
+        st.write(f"**{labels['VLCC Name']}:** {data_to_review['VLCC Name']}")
+        st.write(f"**{labels['HPC/MCC Code']}:** {data_to_review['HPC/MCC Code']}")
+        st.write(f"**{labels['Types']}:** {data_to_review['Type']}")
+        st.write(f"**{labels['Farmer Name']}:** {data_to_review['Farmer Name']}")
+        st.write(f"**{labels['Farmer Code']}:** {data_to_review['Farmer Code / Pourer ID']}")
+        st.write(f"**{labels['Gender']}:** {data_to_review['Gender']}")
+
+        st.subheader("Farm Details")
+        st.write(f"**{labels['Number of Cows']}:** {data_to_review['Number of Cows']}")
+        st.write(f"**{labels['No. of Cattle in Milk']}:** {data_to_review['No. of Cattle in Milk']}")
+        st.write(f"**{labels['No. of Calves/Heifers']}:** {data_to_review['No. of Calves/Heifers']}")
+        st.write(f"**{labels['No. of Desi cows']}:** {data_to_review['No. of Desi cows']}")
+        st.write(f"**{labels['No. of Cross breed cows']}:** {data_to_review['No. of Cross breed cows']}")
+        st.write(f"**{labels['No. of Buffalo']}:** {data_to_review['No. of Buffalo']}")
+        st.write(f"**{labels['Milk Production']}:** {data_to_review['Milk Production (liters/day)']}")
+
+        st.subheader("Specific Questions")
+        st.write(f"**{labels['Green Fodder']}:** {data_to_review['Green Fodder Provided']}")
+        if data_to_review['Green Fodder Provided'] == labels['Yes']:
+            st.write(f"**{labels['Type of Green Fodder']}:** {data_to_review['Type of Green Fodder']}")
+            st.write(f"**{labels['Quantity of Green Fodder']}:** {data_to_review['Quantity of Green Fodder (Kg/day)']}")
+
+        st.write(f"**{labels['Dry Fodder']}:** {data_to_review['Dry Fodder Provided']}")
+        if data_to_review['Dry Fodder Provided'] == labels['Yes']:
+            st.write(f"**{labels['Type of Dry Fodder']}:** {data_to_review['Type of Dry Fodder']}")
+            st.write(f"**{labels['Quantity of Dry Fodder']}:** {data_to_review['Quantity of Dry Fodder (Kg/day)']}")
+
+        st.write(f"**{labels['Pellet Feed']}:** {data_to_review['Pellet Feed Provided']}")
+        if data_to_review['Pellet Feed Provided'] == labels['Yes']:
+            st.write(f"**{labels['Pellet Feed Brand']}:** {data_to_review['Pellet Feed Brand']}")
+            st.write(f"**{labels['Quantity of Pellet Feed']}:** {data_to_review['Quantity of Pellet Feed (Kg/day)']}")
+
+        st.write(f"**{labels['Mineral Mixture']}:** {data_to_review['Mineral Mixture Provided']}")
+        if data_to_review['Mineral Mixture Provided'] == labels['Yes']:
+            st.write(f"**{labels['Mineral Mixture Brand']}:** {data_to_review['Mineral Mixture Brand']}")
+            st.write(f"**{labels['Quantity of Mineral Mixture']}:** {data_to_review['Quantity of Mineral Mixture (gm/day)']}")
+
+        st.write(f"**{labels['Silage']}:** {data_to_review['Silage Provided']}")
+        if data_to_review['Silage Provided'] == labels['Yes']:
+            st.write(f"**{labels['Source and Price of Silage']}:** {data_to_review['Source and Price of Silage']}")
+            st.write(f"**{labels['Quantity of Silage']}:** {data_to_review['Quantity of Silage (Kg/day)']}")
+
+        st.write(f"**{labels['Source of Water']}:** {data_to_review['Source of Water']}")
+        
+        st.subheader("Survey Details")
+        st.write(f"**{labels['Name']}:** {data_to_review['Name of Surveyor']}")
+        st.write(f"**{labels['Date of Visit']}:** {data_to_review['Date of Visit']}")
+
+        st.subheader(labels['Upload Photos'])
+        if data_to_review['Photo Paths']:
+            cols = st.columns(3)
+            for i, photo_path in enumerate(data_to_review['Photo Paths']):
+                if os.path.exists(photo_path):
+                    try:
+                        with open(photo_path, "rb") as f:
+                            encoded_string = base64.b64encode(f.read()).decode()
+                        with cols[i % 3]:
+                            st.image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
+                            st.caption(os.path.basename(photo_path))
+                    except Exception as e:
+                        cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
                 else:
-                    st.info(labels['No photo uploaded.'])
-            else:
-                st.write(f"**{key}:** {value}")
+                    st.warning(f"Image not found for review: {os.path.basename(photo_path)}")
+        else:
+            st.info(labels['No photo uploaded.'])
         
         col1, col2 = st.columns(2)
         with col1:
@@ -1014,12 +1079,12 @@ elif st.session_state.current_step == 'review':
                             final_photo_paths.append(final_path)
                         except Exception as e:
                             st.error(f"Error moving photo {os.path.basename(temp_path)}: {e}")
-                            # Keep the temporary path in case of move failure, or handle as per logic
-                            final_photo_paths.append(temp_path) # Fallback to temp path if move fails
+                            # If move fails, keep the original temp path as a fallback for the CSV record
+                            final_photo_paths.append(temp_path)
                     else:
                         st.warning(f"Temporary photo {os.path.basename(temp_path)} not found during final submission.")
                 
-                # Update the photo paths in the data to be saved to CSV
+                # Update the photo paths in the data to be saved to CSV (joining paths with comma)
                 data_to_review["Photo Paths"] = ", ".join(final_photo_paths)
 
                 # Convert to DataFrame and save
@@ -1039,9 +1104,10 @@ elif st.session_state.current_step == 'review':
                     
                     st.session_state.current_step = 'submitted'
                     st.session_state.last_saved_time_persistent = None # Clear auto-save message
-                    st.toast(labels['Successfully Submitted!'])
                     
                     # Clear temporary image directory after successful submission
+                    # Ensure we only remove files that were successfully moved to FINAL_IMAGE_DIR
+                    # Or, simply remove all from TEMP_IMAGE_DIR as they are either moved or an error occurred.
                     for f in os.listdir(TEMP_IMAGE_DIR):
                         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
                     st.session_state.uploaded_temp_photo_paths = [] # Clear the list in session state
@@ -1068,5 +1134,5 @@ elif st.session_state.current_step == 'submitted':
     st.balloons()
     st.success(labels['Successfully Submitted!'])
     st.write("Thank you for your submission!")
-    if st.button("Fill Another Form"):
+    if st.button(labels['Fill Another Form']):
         clear_form_fields() # This function will reset state and rerun
