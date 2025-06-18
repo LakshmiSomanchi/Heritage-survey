@@ -4,6 +4,7 @@ import datetime
 import os
 import json
 import base64 # Import base64 for image handling
+import shutil # Import shutil for moving files
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
@@ -13,9 +14,13 @@ os.makedirs(SAVE_DIR, exist_ok=True)
 DRAFT_DIR = os.path.join(SAVE_DIR, 'drafts')
 os.makedirs(DRAFT_DIR, exist_ok=True)
 
-# Define a directory for uploaded images
-IMAGE_DIR = os.path.join(SAVE_DIR, 'images')
-os.makedirs(IMAGE_DIR, exist_ok=True)
+# Define a temporary directory for uploaded images before final submission
+TEMP_IMAGE_DIR = os.path.join(SAVE_DIR, 'temp_images')
+os.makedirs(TEMP_IMAGE_DIR, exist_ok=True)
+
+# Define a directory for final submitted images
+FINAL_IMAGE_DIR = os.path.join(SAVE_DIR, 'final_images')
+os.makedirs(FINAL_IMAGE_DIR, exist_ok=True)
 
 # Streamlit Page Config - THIS MUST BE THE FIRST STREAMLIT COMMAND
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
@@ -51,7 +56,12 @@ dict_translations = {
         'Photo uploaded successfully!': 'Photo uploaded successfully!',
         'No photo uploaded.': 'No photo uploaded.',
         'Error uploading photo:': 'Error uploading photo:',
-        'Please upload up to 3 photos.': 'Please upload up to 3 photos.'
+        'Please upload up to 3 photos.': 'Please upload up to 3 photos.',
+        'Review and Confirm': 'Review and Confirm',
+        'Confirm and Submit': 'Confirm and Submit',
+        'Edit Form': 'Edit Form',
+        'Successfully Submitted!': 'Form Successfully Submitted!',
+        'Review Your Submission': 'Review Your Submission'
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -82,7 +92,12 @@ dict_translations = {
         'Photo uploaded successfully!': 'फ़ोटो सफलतापूर्वक अपलोड हुई!',
         'No photo uploaded.': 'कोई फ़ोटो अपलोड नहीं हुई।',
         'Error uploading photo:': 'फ़ोटो अपलोड करने में त्रुटि:',
-        'Please upload up to 3 photos.': 'कृपया अधिकतम 3 फ़ोटो अपलोड करें!'
+        'Please upload up to 3 photos.': 'कृपया अधिकतम 3 फ़ोटो अपलोड करें!',
+        'Review and Confirm': 'समीक्षा करें और पुष्टि करें',
+        'Confirm and Submit': 'पुष्टि करें और जमा करें',
+        'Edit Form': 'फ़ॉर्म संपादित करें',
+        'Successfully Submitted!': 'फॉर्म सफलतापूर्वक जमा किया गया!',
+        'Review Your Submission': 'अपनी सबमिशन की समीक्षा करें'
     },
     'Marathi': {
         "Language": "भाषा",
@@ -135,7 +150,12 @@ dict_translations = {
         'Photo uploaded successfully!': 'फोटो यशस्वीरित्या अपलोड झाला!',
         'No photo uploaded.': 'कोणताही फोटो अपलोड केला नाही.',
         'Error uploading photo:': 'फोटो अपलोड करताना त्रुटी:',
-        'Please upload up to 3 photos.': 'कृपया 3 पर्यंत फोटो अपलोड करा!'
+        'Please upload up to 3 photos.': 'कृपया 3 पर्यंत फोटो अपलोड करा!',
+        'Review and Confirm': 'पुनरावलोकन करा आणि पुष्टी करा',
+        'Confirm and Submit': 'पुष्टी करा आणि सबमिट करा',
+        'Edit Form': 'फॉर्म संपादित करा',
+        'Successfully Submitted!': 'फॉर्म यशस्वीरित्या सबमिट केला!',
+        'Review Your Submission': 'आपल्या सबमिशनचे पुनरावलोकन करा'
     }
 }
 
@@ -199,11 +219,11 @@ FARMER_DATA = {
     "0005": "KATTARI VASANTA KUMARI",
     "0006": "GUDISI NARAYANAMMA",
     "0007": "P SUREKHA",
-    "0008": "VAGUMALLU SUDHAKARREDDY", # Renamed to ensure uniqueness if codes are non-unique
+    "0008_a": "VAGUMALLU SUDHAKARREDDY", # Renamed to ensure uniqueness if codes are non-unique
     "0015": "VANGUNALLI REDDY SEKHAR REDDY",
-    "0017": "Y REDDEMMA",
-    "0003": "INDIRAVATHI MARRIPATTI",
-    "0008": "CHIKATIPALLI VASANTHA", # Renamed
+    "0017_a": "Y REDDEMMA",
+    "0003_a": "INDIRAVATHI MARRIPATTI",
+    "0008_b": "CHIKATIPALLI VASANTHA", # Renamed
     "0011": "BIRE LAKSHMI DEVI",
     "0013": "B SAMPURNA",
     "0016": "R PADMA",
@@ -335,7 +355,9 @@ initial_values_defaults = {
     'water_sources': [],
     'surveyor_name': SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None,
     'visit_date': datetime.date.today(),
-    'uploaded_photo_paths': [] # To store paths of uploaded photos
+    'uploaded_temp_photo_paths': [], # To store paths of temporarily uploaded photos
+    'final_submitted_data': None, # To store data ready for review/submission
+    'current_step': 'form_entry' # 'form_entry', 'review', 'submitted'
 }
 
 # Function to save current form data to a draft file
@@ -369,7 +391,7 @@ def load_draft():
                         st.session_state[key] = datetime.date.fromisoformat(value)
                     except ValueError:
                         st.session_state[key] = initial_values_defaults.get(key, datetime.date.today())
-                elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_photo_paths']:
+                elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_temp_photo_paths']:
                     # Ensure multiselect defaults are lists
                     st.session_state[key] = list(value) if isinstance(value, list) else []
                 else:
@@ -400,7 +422,7 @@ def load_draft():
             
             # For farmer_name_selected, ensure it's a valid option or "Others"
             if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in (FARMER_NAMES_ORIGINAL + [current_labels['Others']]):
-                   st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
+                st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
 
             # For farmer_code, ensure it's a valid option
             if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES:
@@ -414,9 +436,9 @@ def load_draft():
             if 'surveyor_name' in st.session_state and st.session_state['surveyor_name'] not in SURVEYOR_NAMES:
                 st.session_state['surveyor_name'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
 
-            # Explicitly ensure uploaded_photo_paths is a list after loading
-            if 'uploaded_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_photo_paths, list):
-                st.session_state.uploaded_photo_paths = []
+            # Explicitly ensure uploaded_temp_photo_paths is a list after loading
+            if 'uploaded_temp_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_temp_photo_paths, list):
+                st.session_state.uploaded_temp_photo_paths = []
 
             st.toast("Draft loaded successfully!")
             return True
@@ -425,11 +447,45 @@ def load_draft():
             return False
     return False
 
+# Function to clear form fields (reset session state for form entry)
+def clear_form_fields():
+    # Define keys to *always keep* (not clear)
+    persistent_keys = ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent', 'current_step']
+
+    # Iterate through all session state keys and delete those not in persistent_keys
+    keys_to_delete = [key for key in st.session_state.keys() if key not in persistent_keys]
+
+    for key in keys_to_delete:
+        del st.session_state[key]
+    
+    # Reset specific keys to their defaults for a fresh form
+    for key, default_value in initial_values_defaults.items():
+        if key not in st.session_state: # Only set if it was deleted
+            st.session_state[key] = default_value
+    
+    # Ensure current_step is back to form_entry
+    st.session_state.current_step = 'form_entry'
+    st.session_state.last_saved_time_persistent = None # Clear auto-save message
+    
+    # Clear temporary images
+    for f in os.listdir(TEMP_IMAGE_DIR):
+        os.remove(os.path.join(TEMP_IMAGE_DIR, f))
+    st.session_state.uploaded_temp_photo_paths = [] # Also clear paths in session state
+
+    # Important: Remove the draft file after successful submission
+    draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+    if os.path.exists(draft_filename):
+        os.remove(draft_filename)
+
+    st.rerun() # Rerun to clear the form fields and update display
+
 # Initialize session state for the first time or load draft
 if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
     st.session_state.last_saved_time_persistent = None
-    
+    st.session_state.current_step = 'form_entry' # Initialize current_step
+    st.session_state.final_submitted_data = None # Initialize to None
+
     # Initialize all defaults first
     for key, default_value in initial_values_defaults.items():
         if key not in st.session_state:
@@ -449,515 +505,568 @@ lang = st.selectbox(
     initial_lang_options,
     index=initial_lang_index,
     key="lang_select",
+    on_change=save_draft # Save draft when language changes
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
-# Title
-st.title(labels['Farmer Profile'])
-
 # Display auto-save status
-if st.session_state.last_saved_time_persistent:
+if st.session_state.last_saved_time_persistent and st.session_state.current_step == 'form_entry':
     st.info(f"{labels['Auto-saved!']} Last saved: {st.session_state.last_saved_time_persistent}")
 else:
-    st.info("No auto-saved draft found, or draft cleared. Start filling the form!")
+    if st.session_state.current_step == 'form_entry':
+        st.info("No auto-saved draft found, or draft cleared. Start filling the form!")
 
-# Form Start
-with st.form("survey_form"):
-    st.header(labels['Farmer Profile'])
+# --- Main Application Logic based on current_step ---
+if st.session_state.current_step == 'form_entry':
+    st.title(labels['Farmer Profile'])
 
-    # Safely get vlcc_name from session state for default index
-    current_vlcc_name = st.session_state.get('vlcc_name', VLCC_NAMES[0] if VLCC_NAMES else None)
-    vlcc_name_default_idx = 0
-    if current_vlcc_name in VLCC_NAMES:
-        vlcc_name_default_idx = VLCC_NAMES.index(current_vlcc_name)
-    elif VLCC_NAMES:
+    # Form Start
+    with st.form("survey_form"):
+        st.header(labels['Farmer Profile'])
+
+        # Safely get vlcc_name from session state for default index
+        current_vlcc_name = st.session_state.get('vlcc_name', VLCC_NAMES[0] if VLCC_NAMES else None)
         vlcc_name_default_idx = 0
+        if current_vlcc_name in VLCC_NAMES:
+            vlcc_name_default_idx = VLCC_NAMES.index(current_vlcc_name)
+        elif VLCC_NAMES:
+            vlcc_name_default_idx = 0
 
-    vlcc_name = st.selectbox(
-        labels['VLCC Name'], VLCC_NAMES,
-        index=vlcc_name_default_idx,
-        key="vlcc_name",
-        disabled=(not VLCC_NAMES)
-    )
+        vlcc_name = st.selectbox(
+            labels['VLCC Name'], VLCC_NAMES,
+            index=vlcc_name_default_idx,
+            key="vlcc_name",
+            disabled=(not VLCC_NAMES),
+            on_change=save_draft
+        )
 
-    hpc_code = st.text_input(
-        labels['HPC/MCC Code'],
-        value=st.session_state.get('hpc_code', ''), # Safely get
-        key="hpc_code"
-    )
+        hpc_code = st.text_input(
+            labels['HPC/MCC Code'],
+            value=st.session_state.get('hpc_code', ''), # Safely get
+            key="hpc_code",
+            on_change=save_draft
+        )
 
-    types_options = (labels['HPC'], labels['MCC'])
-    current_types = st.session_state.get('types', types_options[0]) # Safely get
-    types_default_idx = 0
-    if current_types in types_options:
-        types_default_idx = types_options.index(current_types)
-    types = st.selectbox(
-        labels['Types'], types_options,
-        index=types_default_idx,
-        key="types"
-    )
+        types_options = (labels['HPC'], labels['MCC'])
+        current_types = st.session_state.get('types', types_options[0]) # Safely get
+        types_default_idx = 0
+        if current_types in types_options:
+            types_default_idx = types_options.index(current_types)
+        types = st.selectbox(
+            labels['Types'], types_options,
+            index=types_default_idx,
+            key="types",
+            on_change=save_draft
+        )
 
-    farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
-    current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_with_others[0] if farmer_names_with_others else labels['Others'])
-    farmer_name_default_idx = 0
-    if current_farmer_name_selected in farmer_names_with_others:
-        farmer_name_default_idx = farmer_names_with_others.index(current_farmer_name_selected)
-    elif farmer_names_with_others:
+        farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
+        current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_with_others[0] if farmer_names_with_others else labels['Others'])
         farmer_name_default_idx = 0
+        if current_farmer_name_selected in farmer_names_with_others:
+            farmer_name_default_idx = farmer_names_with_others.index(current_farmer_name_selected)
+        elif farmer_names_with_others:
+            farmer_name_default_idx = 0
 
-    farmer_name_selected = st.selectbox(
-        labels['Farmer Name'], options=farmer_names_with_others,
-        index=farmer_name_default_idx,
-        key="farmer_name_selected",
-        disabled=(not farmer_names_with_others)
-    )
-
-    if farmer_name_selected == labels['Others']:
-        farmer_name_other = st.text_input(
-            labels['Specify Farmer Name'],
-            value=st.session_state.get('farmer_name_other', ''), # Safely get
-            key="farmer_name_other"
+        farmer_name_selected = st.selectbox(
+            labels['Farmer Name'], options=farmer_names_with_others,
+            index=farmer_name_default_idx,
+            key="farmer_name_selected",
+            disabled=(not farmer_names_with_others),
+            on_change=save_draft
         )
-    else:
-        # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
-        if st.session_state.get('farmer_name_selected') != labels['Others'] and 'farmer_name_other' in st.session_state:
-            del st.session_state['farmer_name_other']
-        farmer_name_other = ""
 
-    current_farmer_code = st.session_state.get('farmer_code', FARMER_CODES[0] if FARMER_CODES else None) # Safely get
-    farmer_code_default_idx = 0
-    if current_farmer_code in FARMER_CODES:
-        farmer_code_default_idx = FARMER_CODES.index(current_farmer_code)
-    elif FARMER_CODES:
+        farmer_name_other = st.session_state.get('farmer_name_other', '')
+        if farmer_name_selected == labels['Others']:
+            farmer_name_other = st.text_input(
+                labels['Specify Farmer Name'],
+                value=farmer_name_other, # Safely get
+                key="farmer_name_other",
+                on_change=save_draft
+            )
+        else:
+            # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
+            if st.session_state.get('farmer_name_selected_prev') == labels['Others'] and 'farmer_name_other' in st.session_state:
+                del st.session_state['farmer_name_other']
+            farmer_name_other = ""
+        st.session_state.farmer_name_selected_prev = farmer_name_selected # Store previous selection for clearing logic
+
+
+        current_farmer_code = st.session_state.get('farmer_code', FARMER_CODES[0] if FARMER_CODES else None) # Safely get
         farmer_code_default_idx = 0
+        if current_farmer_code in FARMER_CODES:
+            farmer_code_default_idx = FARMER_CODES.index(current_farmer_code)
+        elif FARMER_CODES:
+            farmer_code_default_idx = 0
 
-    farmer_code = st.selectbox(
-        labels['Farmer Code'], options=FARMER_CODES,
-        index=farmer_code_default_idx,
-        key="farmer_code",
-        disabled=(not FARMER_CODES)
-    )
-
-    gender_options = (labels['Male'], labels['Female'])
-    current_gender = st.session_state.get('gender', gender_options[0]) # Safely get
-    gender_default_idx = 0
-    if current_gender in gender_options:
-        gender_default_idx = gender_options.index(current_gender)
-    gender = st.selectbox(
-        labels['Gender'], gender_options,
-        index=gender_default_idx,
-        key="gender"
-    )
-
-    st.header(labels['Farm Details'])
-    cows = st.number_input(
-        labels['Number of Cows'], min_value=0,
-        value=int(st.session_state.get('cows', 0)), # Safely get
-        key="cows"
-    )
-
-    cattle_in_milk = st.number_input(
-        labels['No. of Cattle in Milk'], min_value=0,
-        value=int(st.session_state.get('cattle_in_milk', 0)),
-        key="cattle_in_milk"
-    )
-    calves = st.number_input(
-        labels['No. of Calves/Heifers'], min_value=0,
-        value=int(st.session_state.get('calves', 0)),
-        key="calves"
-    )
-    desi_cows = st.number_input(
-        labels['No. of Desi cows'], min_value=0,
-        value=int(st.session_state.get('desi_cows', 0)),
-        key="desi_cows"
-    )
-    crossbreed_cows = st.number_input(
-        labels['No. of Cross breed cows'], min_value=0,
-        value=int(st.session_state.get('crossbreed_cows', 0)),
-        key="crossbreed_cows"
-    )
-    buffalo = st.number_input(
-        labels['No. of Buffalo'], min_value=0,
-        value=int(st.session_state.get('buffalo', 0)),
-        key="buffalo"
-    )
-    milk_production = st.number_input(
-        labels['Milk Production'], min_value=0.0, format="%.2f",
-        value=float(st.session_state.get('milk_production', 0.0)),
-        key="milk_production"
-    )
-
-    st.header(labels['Specific Questions'])
-    green_fodder_options = (labels['Yes'], labels['No'])
-    current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0]) # Corrected variable name here
-    green_fodder_default_idx = 0
-    if current_green_fodder in green_fodder_options: # Corrected variable name here
-        green_fodder_default_idx = green_fodder_options.index(current_green_fodder) # Corrected variable name here
-    green_fodder = st.radio(
-        labels['Green Fodder'], green_fodder_options,
-        index=green_fodder_default_idx,
-        key="green_fodder"
-    )
-    if green_fodder == labels['Yes']:
-        green_fodder_types = st.multiselect(
-            labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
-            default=st.session_state.get('green_fodder_types', []), # Safely get
-            key="green_fodder_types"
+        farmer_code = st.selectbox(
+            labels['Farmer Code'], options=FARMER_CODES,
+            index=farmer_code_default_idx,
+            key="farmer_code",
+            disabled=(not FARMER_CODES),
+            on_change=save_draft
         )
-        green_fodder_qty = st.number_input(
-            labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.get('green_fodder_qty', 0.0)),
-            key="green_fodder_qty"
+
+        gender_options = (labels['Male'], labels['Female'])
+        current_gender = st.session_state.get('gender', gender_options[0]) # Safely get
+        gender_default_idx = 0
+        if current_gender in gender_options:
+            gender_default_idx = gender_options.index(current_gender)
+        gender = st.selectbox(
+            labels['Gender'], gender_options,
+            index=gender_default_idx,
+            key="gender",
+            on_change=save_draft
         )
-    else:
-        # Clear associated session state values when "No" is selected
-        if 'green_fodder_types' in st.session_state: del st.session_state['green_fodder_types']
-        if 'green_fodder_qty' in st.session_state: del st.session_state['green_fodder_qty']
-        green_fodder_types = []
-        green_fodder_qty = 0.0
 
-    dry_fodder_options = (labels['Yes'], labels['No'])
-    current_dry_fodder = st.session_state.get('dry_fodder', dry_fodder_options[0])
-    dry_fodder_default_idx = 0
-    if current_dry_fodder in dry_fodder_options:
-        dry_fodder_default_idx = dry_fodder_options.index(current_dry_fodder)
-    dry_fodder = st.radio(
-        labels['Dry Fodder'], dry_fodder_options,
-        index=dry_fodder_default_idx,
-        key="dry_fodder"
-    )
-    if dry_fodder == labels['Yes']:
-        dry_fodder_types = st.multiselect(
-            labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
-            default=st.session_state.get('dry_fodder_types', []),
-            key="dry_fodder_types"
+        st.header(labels['Farm Details'])
+        cows = st.number_input(
+            labels['Number of Cows'], min_value=0,
+            value=int(st.session_state.get('cows', 0)), # Safely get
+            key="cows",
+            on_change=save_draft
         )
-        dry_fodder_qty = st.number_input(
-            labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.get('dry_fodder_qty', 0.0)),
-            key="dry_fodder_qty"
+
+        cattle_in_milk = st.number_input(
+            labels['No. of Cattle in Milk'], min_value=0,
+            value=int(st.session_state.get('cattle_in_milk', 0)),
+            key="cattle_in_milk",
+            on_change=save_draft
         )
-    else:
-        if 'dry_fodder_types' in st.session_state: del st.session_state['dry_fodder_types']
-        if 'dry_fodder_qty' in st.session_state: del st.session_state['dry_fodder_qty']
-        dry_fodder_types = []
-        dry_fodder_qty = 0.0
-
-    pellet_feed_options = (labels['Yes'], labels['No'])
-    current_pellet_feed = st.session_state.get('pellet_feed', pellet_feed_options[0])
-    pellet_feed_default_idx = 0
-    if current_pellet_feed in pellet_feed_options:
-        pellet_feed_default_idx = pellet_feed_options.index(current_pellet_feed)
-    pellet_feed = st.radio(
-        labels['Pellet Feed'], pellet_feed_options,
-        index=pellet_feed_default_idx,
-        key="pellet_feed"
-    )
-    if pellet_feed == labels['Yes']:
-        pellet_feed_brands = st.multiselect(
-            labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
-            default=st.session_state.get('pellet_feed_brands', []),
-            key="pellet_feed_brands"
+        calves = st.number_input(
+            labels['No. of Calves/Heifers'], min_value=0,
+            value=int(st.session_state.get('calves', 0)),
+            key="calves",
+            on_change=save_draft
         )
-        pellet_feed_qty = st.number_input(
-            labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.get('pellet_feed_qty', 0.0)),
-            key="pellet_feed_qty"
+        desi_cows = st.number_input(
+            labels['No. of Desi cows'], min_value=0,
+            value=int(st.session_state.get('desi_cows', 0)),
+            key="desi_cows",
+            on_change=save_draft
         )
-    else:
-        if 'pellet_feed_brands' in st.session_state: del st.session_state['pellet_feed_brands']
-        if 'pellet_feed_qty' in st.session_state: del st.session_state['pellet_feed_qty']
-        pellet_feed_brands = []
-        pellet_feed_qty = 0.0
-
-    mineral_mixture_options = (labels['Yes'], labels['No'])
-    current_mineral_mixture = st.session_state.get('mineral_mixture', mineral_mixture_options[0])
-    mineral_mixture_default_idx = 0
-    if current_mineral_mixture in mineral_mixture_options:
-        mineral_mixture_default_idx = mineral_mixture_options.index(current_mineral_mixture)
-    mineral_mixture = st.radio(
-        labels['Mineral Mixture'], mineral_mixture_options,
-        index=mineral_mixture_default_idx,
-        key="mineral_mixture"
-    )
-    if mineral_mixture == labels['Yes']:
-        current_mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
-        mineral_brand_default_idx = 0
-        if current_mineral_brand in MINERAL_MIXTURE_BRANDS:
-            mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(current_mineral_brand)
-        mineral_brand = st.selectbox(
-            labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
-            index=mineral_brand_default_idx,
-            key="mineral_brand"
+        crossbreed_cows = st.number_input(
+            labels['No. of Cross breed cows'], min_value=0,
+            value=int(st.session_state.get('crossbreed_cows', 0)),
+            key="crossbreed_cows",
+            on_change=save_draft
         )
-        mineral_qty = st.number_input(
-            labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.get('mineral_qty', 0.0)),
-            key="mineral_qty"
+        buffalo = st.number_input(
+            labels['No. of Buffalo'], min_value=0,
+            value=int(st.session_state.get('buffalo', 0)),
+            key="buffalo",
+            on_change=save_draft
         )
-    else:
-        if 'mineral_brand' in st.session_state: del st.session_state['mineral_brand']
-        if 'mineral_qty' in st.session_state: del st.session_state['mineral_qty']
-        mineral_brand = ""
-        mineral_qty = 0.0
-
-    silage_options = (labels['Yes'], labels['No'])
-    current_silage = st.session_state.get('silage', silage_options[0])
-    silage_default_idx = 0
-    if current_silage in silage_options:
-        silage_default_idx = silage_options.index(current_silage)
-    silage = st.radio(
-        labels['Silage'], silage_options,
-        index=silage_default_idx,
-        key="silage"
-    )
-    if silage == labels['Yes']:
-        silage_source = st.text_input(
-            labels['Source and Price of Silage'],
-            value=st.session_state.get('silage_source', ''),
-            key="silage_source"
+        milk_production = st.number_input(
+            labels['Milk Production'], min_value=0.0, format="%.2f",
+            value=float(st.session_state.get('milk_production', 0.0)),
+            key="milk_production",
+            on_change=save_draft
         )
-        silage_qty = st.number_input(
-            labels['Quantity of Silage'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.get('silage_qty', 0.0)),
-            key="silage_qty"
+
+        st.header(labels['Specific Questions'])
+        green_fodder_options = (labels['Yes'], labels['No'])
+        current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0]) # Corrected variable name here
+        green_fodder_default_idx = 0
+        if current_green_fodder in green_fodder_options: # Corrected variable name here
+            green_fodder_default_idx = green_fodder_options.index(current_green_fodder) # Corrected variable name here
+        green_fodder = st.radio(
+            labels['Green Fodder'], green_fodder_options,
+            index=green_fodder_default_idx,
+            key="green_fodder",
+            on_change=save_draft
         )
-    else:
-        if 'silage_source' in st.session_state: del st.session_state['silage_source']
-        if 'silage_qty' in st.session_state: del st.session_state['silage_qty']
-        silage_source = ""
-        silage_qty = 0.0
+        green_fodder_types = st.session_state.get('green_fodder_types', [])
+        green_fodder_qty = st.session_state.get('green_fodder_qty', 0.0)
+        if green_fodder == labels['Yes']:
+            green_fodder_types = st.multiselect(
+                labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
+                default=green_fodder_types, # Safely get
+                key="green_fodder_types",
+                on_change=save_draft
+            )
+            green_fodder_qty = st.number_input(
+                labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
+                value=float(green_fodder_qty),
+                key="green_fodder_qty",
+                on_change=save_draft
+            )
+        else:
+            # Clear associated session state values when "No" is selected
+            if 'green_fodder_types' in st.session_state: del st.session_state['green_fodder_types']
+            if 'green_fodder_qty' in st.session_state: del st.session_state['green_fodder_qty']
+            green_fodder_types = []
+            green_fodder_qty = 0.0
 
-    water_sources = st.multiselect(
-        labels['Source of Water'], WATER_SOURCE_OPTIONS,
-        default=st.session_state.get('water_sources', []),
-        key="water_sources"
-    )
+        dry_fodder_options = (labels['Yes'], labels['No'])
+        current_dry_fodder = st.session_state.get('dry_fodder', dry_fodder_options[0])
+        dry_fodder_default_idx = 0
+        if current_dry_fodder in dry_fodder_options:
+            dry_fodder_default_idx = dry_fodder_options.index(current_dry_fodder)
+        dry_fodder = st.radio(
+            labels['Dry Fodder'], dry_fodder_options,
+            index=dry_fodder_default_idx,
+            key="dry_fodder",
+            on_change=save_draft
+        )
+        dry_fodder_types = st.session_state.get('dry_fodder_types', [])
+        dry_fodder_qty = st.session_state.get('dry_fodder_qty', 0.0)
+        if dry_fodder == labels['Yes']:
+            dry_fodder_types = st.multiselect(
+                labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
+                default=dry_fodder_types,
+                key="dry_fodder_types",
+                on_change=save_draft
+            )
+            dry_fodder_qty = st.number_input(
+                labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
+                value=float(dry_fodder_qty),
+                key="dry_fodder_qty",
+                on_change=save_draft
+            )
+        else:
+            if 'dry_fodder_types' in st.session_state: del st.session_state['dry_fodder_types']
+            if 'dry_fodder_qty' in st.session_state: del st.session_state['dry_fodder_qty']
+            dry_fodder_types = []
+            dry_fodder_qty = 0.0
 
-    # --- Photo Upload Snippet ---
-    st.header(labels['Upload Photos'])
-    uploaded_files = st.file_uploader(
-        labels['Upload Photos'],
-        type=["jpg", "jpeg", "png"],
-        accept_multiple_files=True,
-        key="image_uploader"
-    )
+        pellet_feed_options = (labels['Yes'], labels['No'])
+        current_pellet_feed = st.session_state.get('pellet_feed', pellet_feed_options[0])
+        pellet_feed_default_idx = 0
+        if current_pellet_feed in pellet_feed_options:
+            pellet_feed_default_idx = pellet_feed_options.index(current_pellet_feed)
+        pellet_feed = st.radio(
+            labels['Pellet Feed'], pellet_feed_options,
+            index=pellet_feed_default_idx,
+            key="pellet_feed",
+            on_change=save_draft
+        )
+        pellet_feed_brands = st.session_state.get('pellet_feed_brands', [])
+        pellet_feed_qty = st.session_state.get('pellet_feed_qty', 0.0)
+        if pellet_feed == labels['Yes']:
+            pellet_feed_brands = st.multiselect(
+                labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
+                default=pellet_feed_brands,
+                key="pellet_feed_brands",
+                on_change=save_draft
+            )
+            pellet_feed_qty = st.number_input(
+                labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
+                value=float(pellet_feed_qty),
+                key="pellet_feed_qty",
+                on_change=save_draft
+            )
+        else:
+            if 'pellet_feed_brands' in st.session_state: del st.session_state['pellet_feed_brands']
+            if 'pellet_feed_qty' in st.session_state: del st.session_state['pellet_feed_qty']
+            pellet_feed_brands = []
+            pellet_feed_qty = 0.0
 
-    # Display existing photos in the draft if any
-    if st.session_state.get('uploaded_photo_paths'):
-        st.subheader("Currently uploaded photos (Draft):")
-        cols = st.columns(3)
-        for i, photo_path in enumerate(st.session_state.uploaded_photo_paths):
-            if os.path.exists(photo_path):
-                try:
-                    with open(photo_path, "rb") as f:
-                        encoded_string = base64.b64encode(f.read()).decode()
-                    cols[i % 3].image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
-                    cols[i % 3].caption(os.path.basename(photo_path))
-                except Exception as e:
-                    cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
-            else:
-                st.warning(f"Draft photo path not found: {photo_path}. It might have been moved or deleted.")
+        mineral_mixture_options = (labels['Yes'], labels['No'])
+        current_mineral_mixture = st.session_state.get('mineral_mixture', mineral_mixture_options[0])
+        mineral_mixture_default_idx = 0
+        if current_mineral_mixture in mineral_mixture_options:
+            mineral_mixture_default_idx = mineral_mixture_options.index(current_mineral_mixture)
+        mineral_mixture = st.radio(
+            labels['Mineral Mixture'], mineral_mixture_options,
+            index=mineral_mixture_default_idx,
+            key="mineral_mixture",
+            on_change=save_draft
+        )
+        mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
+        mineral_qty = st.session_state.get('mineral_qty', 0.0)
+        if mineral_mixture == labels['Yes']:
+            current_mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
+            mineral_brand_default_idx = 0
+            if current_mineral_brand in MINERAL_MIXTURE_BRANDS:
+                mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(current_mineral_brand)
+            mineral_brand = st.selectbox(
+                labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
+                index=mineral_brand_default_idx,
+                key="mineral_brand",
+                on_change=save_draft
+            )
+            mineral_qty = st.number_input(
+                labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
+                value=float(mineral_qty),
+                key="mineral_qty",
+                on_change=save_draft
+            )
+        else:
+            if 'mineral_brand' in st.session_state: del st.session_state['mineral_brand']
+            if 'mineral_qty' in st.session_state: del st.session_state['mineral_qty']
+            mineral_brand = ""
+            mineral_qty = 0.0
 
-    # Process new uploads
-    if uploaded_files:
-        # Ensure uploaded_photo_paths is a list before using it
-        if 'uploaded_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_photo_paths, list):
-            st.session_state.uploaded_photo_paths = []
+        silage_options = (labels['Yes'], labels['No'])
+        current_silage = st.session_state.get('silage', silage_options[0])
+        silage_default_idx = 0
+        if current_silage in silage_options:
+            silage_default_idx = silage_options.index(current_silage)
+        silage = st.radio(
+            labels['Silage'], silage_options,
+            index=silage_default_idx,
+            key="silage",
+            on_change=save_draft
+        )
+        silage_source = st.session_state.get('silage_source', '')
+        silage_qty = st.session_state.get('silage_qty', 0.0)
+        if silage == labels['Yes']:
+            silage_source = st.text_input(
+                labels['Source and Price of Silage'],
+                value=silage_source,
+                key="silage_source",
+                on_change=save_draft
+            )
+            silage_qty = st.number_input(
+                labels['Quantity of Silage'], min_value=0.0, format="%.2f",
+                value=float(silage_qty),
+                key="silage_qty",
+                on_change=save_draft
+            )
+        else:
+            if 'silage_source' in st.session_state: del st.session_state['silage_source']
+            if 'silage_qty' in st.session_state: del st.session_state['silage_qty']
+            silage_source = ""
+            silage_qty = 0.0
 
-        if len(uploaded_files) > 3:
-            st.warning(labels['Please upload up to 3 photos.'])
-            uploaded_files = uploaded_files[:3]
+        water_sources = st.multiselect(
+            labels['Source of Water'], WATER_SOURCE_OPTIONS,
+            default=st.session_state.get('water_sources', []),
+            key="water_sources",
+            on_change=save_draft
+        )
 
-        for uploaded_file in uploaded_files:
-            is_already_in_state = False
-            for existing_path in st.session_state.uploaded_photo_paths:
-                # Check for filename match (simplified, can be more robust with hashing)
-                if os.path.basename(uploaded_file.name).replace(" ", "_") in os.path.basename(existing_path):
-                    is_already_in_state = True
-                    break
-            
-            if is_already_in_state:
-                continue # Skip if already processed
+        # --- Photo Upload Snippet ---
+        st.header(labels['Upload Photos'])
+        uploaded_files = st.file_uploader(
+            labels['Upload Photos'],
+            type=["jpg", "jpeg", "png"],
+            accept_multiple_files=True,
+            key="image_uploader" # Unique key for file uploader
+        )
 
-            try:
-                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-                file_extension = uploaded_file.name.split('.')[-1]
-                unique_filename = f"{timestamp}_{uploaded_file.name.replace(' ', '_')}"
-                photo_path = os.path.join(IMAGE_DIR, unique_filename)
+        # Handle new uploads and add to temporary paths
+        if uploaded_files:
+            for uploaded_file in uploaded_files:
+                unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
+                temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
 
-                if len(st.session_state.uploaded_photo_paths) < 3:
-                    with open(photo_path, "wb") as f:
-                        f.write(uploaded_file.getbuffer())
-                    st.session_state.uploaded_photo_paths.append(photo_path)
-                    st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+                # Check if this specific file (by content) has already been processed and saved temporarily
+                # This is a simple check based on filename, could be improved with file hashing for robustness
+                is_duplicate = False
+                for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
+                    if os.path.basename(temp_photo_path) == os.path.basename(existing_path):
+                        is_duplicate = True
+                        break
+
+                if not is_duplicate:
+                    if len(st.session_state.get('uploaded_temp_photo_paths', [])) < 3:
+                        try:
+                            with open(temp_photo_path, "wb") as f:
+                                f.write(uploaded_file.getbuffer())
+                            st.session_state.uploaded_temp_photo_paths.append(temp_photo_path)
+                            st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+                            save_draft() # Save draft immediately after photo upload
+                        except Exception as e:
+                            st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
+                    else:
+                        st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
+        
+        # Display existing temporary photos
+        if st.session_state.get('uploaded_temp_photo_paths'):
+            st.subheader("Currently uploaded photos:")
+            cols = st.columns(3)
+            for i, photo_path in enumerate(st.session_state.uploaded_temp_photo_paths):
+                if os.path.exists(photo_path):
+                    try:
+                        with open(photo_path, "rb") as f:
+                            encoded_string = base64.b64encode(f.read()).decode()
+                        with cols[i % 3]:
+                            st.image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
+                            st.caption(os.path.basename(photo_path))
+                            if st.button(f"Remove {i+1}", key=f"remove_photo_{i}"):
+                                os.remove(photo_path)
+                                st.session_state.uploaded_temp_photo_paths.pop(i)
+                                save_draft()
+                                st.rerun() # Rerun to update the display after removal
+                    except Exception as e:
+                        cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
                 else:
-                    st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
-            except Exception as e:
-                st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
-    else:
-        if not st.session_state.get('uploaded_photo_paths') or not isinstance(st.session_state.uploaded_photo_paths, list):
-            st.session_state.uploaded_photo_paths = [] # Ensure it's a list even if no photos were uploaded
-        if not st.session_state.uploaded_photo_paths: # Use the now-guaranteed-to-be-list
+                    st.warning(f"Temporary photo path not found: {photo_path}. It might have been moved or deleted.")
+        else:
             st.info(labels['No photo uploaded.'])
 
 
-    st.header("Survey Details")
-    current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None) # Safely get
-    surveyor_name_default_idx = 0
-    if current_surveyor_name in SURVEYOR_NAMES:
-        surveyor_name_default_idx = SURVEYOR_NAMES.index(current_surveyor_name)
-    surveyor_name = st.selectbox(
-        labels['Name'], SURVEYOR_NAMES,
-        index=surveyor_name_default_idx,
-        key="surveyor_name"
-    )
-    
-    current_visit_date = st.session_state.get('visit_date', datetime.date.today())
-    if not isinstance(current_visit_date, datetime.date):
-        try:
-            current_visit_date = datetime.date.fromisoformat(current_visit_date)
-        except (TypeError, ValueError):
-            current_visit_date = datetime.date.today()
-
-    visit_date = st.date_input(
-        labels['Date of Visit'],
-        value=current_visit_date,
-        key="visit_date"
-    )
-
-    # --- Submit Button (MUST BE INSIDE THE FORM) ---
-    submitted = st.form_submit_button(labels['Submit'])
-
-    if submitted:
-        # Determine the final farmer name based on selection
-        final_farmer_name = farmer_name_other if farmer_name_selected == labels['Others'] else farmer_name_selected
-
-        # Safely get uploaded_photo_paths, ensuring it's a list for joining
-        photo_paths_for_saving = st.session_state.get('uploaded_photo_paths', [])
-        if not isinstance(photo_paths_for_saving, list):
-            # If for some reason it's not a list, default to an empty one
-            photo_paths_for_saving = []
-
-        # Collect all data for submission
-        data = {
-            "Language": lang,
-            "VLCC Name": vlcc_name,
-            "HPC/MCC Code": hpc_code,
-            "Type": types,
-            "Farmer Name": final_farmer_name,
-            "Farmer Code / Pourer ID": farmer_code,
-            "Gender": gender,
-            "Number of Cows": cows,
-            "No. of Cattle in Milk": cattle_in_milk,
-            "No. of Calves/Heifers": calves,
-            "No. of Desi cows": desi_cows,
-            "No. of Cross breed cows": crossbreed_cows,
-            "No. of Buffalo": buffalo,
-            "Milk Production (liters/day)": milk_production,
-            "Green Fodder Provided": green_fodder,
-            "Type of Green Fodder": ", ".join(green_fodder_types) if green_fodder == labels['Yes'] else "",
-            "Quantity of Green Fodder (Kg/day)": green_fodder_qty if green_fodder == labels['Yes'] else 0.0,
-            "Dry Fodder Provided": dry_fodder,
-            "Type of Dry Fodder": ", ".join(dry_fodder_types) if dry_fodder == labels['Yes'] else "",
-            "Quantity of Dry Fodder (Kg/day)": dry_fodder_qty if dry_fodder == labels['Yes'] else 0.0,
-            "Pellet Feed Provided": pellet_feed,
-            "Pellet Feed Brand": ", ".join(pellet_feed_brands) if pellet_feed == labels['Yes'] else "",
-            "Quantity of Pellet Feed (Kg/day)": pellet_feed_qty if pellet_feed == labels['Yes'] else 0.0,
-            "Mineral Mixture Provided": mineral_mixture,
-            "Mineral Mixture Brand": mineral_brand if mineral_mixture == labels['Yes'] else "",
-            "Quantity of Mineral Mixture (gm/day)": mineral_qty if mineral_mixture == labels['Yes'] else 0.0,
-            "Silage Provided": silage,
-            "Source and Price of Silage": silage_source if silage == labels['Yes'] else "",
-            "Quantity of Silage (Kg/day)": silage_qty if silage == labels['Yes'] else 0.0,
-            "Source of Water": ", ".join(water_sources),
-            "Name of Surveyor": surveyor_name,
-            "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
-            "Photo Paths": ", ".join(photo_paths_for_saving) # Save photo paths
-        }
-
-        # Convert to DataFrame and save
-        df = pd.DataFrame([data])
-
-        # Define filename
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
-
-# Save to CSV
-        try:
-            # Append to file if it exists, otherwise create it
-            if not os.path.exists(file_path):
-                df.to_csv(file_path, index=False)
-            else:
-                df.to_csv(file_path, mode='a', header=False, index=False)
-            st.success("Survey data submitted successfully!")
-
-            # --- CORRECTED RESET LOGIC ---
-            # Clear relevant keys from session_state for a fresh form on next rerun.
-            
-            # Define keys to *always keep* (not clear)
-            persistent_keys = ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent']
-
-            # Iterate through all session state keys and delete those not in persistent_keys
-            # This is safer than modifying a list while iterating or trying to remove elements
-            # that might not be there.
-            keys_to_delete = [key for key in st.session_state.keys() if key not in persistent_keys]
-
-            for key in keys_to_delete:
-                del st.session_state[key]
-            
-            st.session_state.last_saved_time_persistent = None # Clear auto-save message
-
-            # Important: Remove the draft file after successful submission
-            draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
-            if os.path.exists(draft_filename):
-                os.remove(draft_filename)
-
-            st.rerun() # Rerun to clear the form fields and update display
-        except Exception as e:
-            st.error(f"Error saving data: {e}")
-
-# Function to load all saved CSVs and display them
-def load_all_survey_data():
-    all_files = [os.path.join(SAVE_DIR, f) for f in os.listdir(SAVE_DIR) if f.endswith('.csv')]
-    if not all_files:
-        return pd.DataFrame()
-    
-    # Filter out draft files if any CSVs named like drafts exist in SAVE_DIR
-    survey_files = [f for f in all_files if not "draft" in f]
-
-    if not survey_files:
-        return pd.DataFrame()
-
-    list_df = []
-    for file in survey_files:
-        try:
-            df = pd.read_csv(file)
-            list_df.append(df)
-        except pd.errors.EmptyDataError:
-            st.warning(f"Skipping empty file: {file}")
-            continue
-        except Exception as e:
-            st.error(f"Error reading {file}: {e}")
-            continue
-
-    if list_df:
-        return pd.concat(list_df, ignore_index=True)
-    return pd.DataFrame()
-
-# Download Button for all collected data (outside the form)
-st.markdown("---")
-if st.button(labels['Download CSV']):
-    all_data_df = load_all_survey_data()
-    if not all_data_df.empty:
-        # Use a BytesIO object to create a CSV in memory for download
-        csv_buffer = all_data_df.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="Click to Download Data",
-            data=csv_buffer,
-            file_name="all_dairy_survey_data.csv",
-            mime="text/csv",
-            key="download_all_csv"
+        st.header("Survey Details")
+        current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None) # Safely get
+        surveyor_name_default_idx = 0
+        if current_surveyor_name in SURVEYOR_NAMES:
+            surveyor_name_default_idx = SURVEYOR_NAMES.index(current_surveyor_name)
+        surveyor_name = st.selectbox(
+            labels['Name'], SURVEYOR_NAMES,
+            index=surveyor_name_default_idx,
+            key="surveyor_name",
+            on_change=save_draft
         )
+        
+        current_visit_date = st.session_state.get('visit_date', datetime.date.today())
+        if not isinstance(current_visit_date, datetime.date):
+            try:
+                current_visit_date = datetime.date.fromisoformat(current_visit_date)
+            except (TypeError, ValueError):
+                current_visit_date = datetime.date.today()
+
+        visit_date = st.date_input(
+            labels['Date of Visit'],
+            value=current_visit_date,
+            key="visit_date",
+            on_change=save_draft
+        )
+
+        # --- Submit Button (MUST BE INSIDE THE FORM) ---
+        submit_for_review = st.form_submit_button(labels['Submit'])
+
+        if submit_for_review:
+            # Determine the final farmer name based on selection
+            final_farmer_name = farmer_name_other if farmer_name_selected == labels['Others'] else farmer_name_selected
+
+            # Collect all data for review
+            data_for_review = {
+                "Language": lang,
+                "VLCC Name": vlcc_name,
+                "HPC/MCC Code": hpc_code,
+                "Type": types,
+                "Farmer Name": final_farmer_name,
+                "Farmer Code / Pourer ID": farmer_code,
+                "Gender": gender,
+                "Number of Cows": cows,
+                "No. of Cattle in Milk": cattle_in_milk,
+                "No. of Calves/Heifers": calves,
+                "No. of Desi cows": desi_cows,
+                "No. of Cross breed cows": crossbreed_cows,
+                "No. of Buffalo": buffalo,
+                "Milk Production (liters/day)": milk_production,
+                "Green Fodder Provided": green_fodder,
+                "Type of Green Fodder": ", ".join(green_fodder_types) if green_fodder == labels['Yes'] else "",
+                "Quantity of Green Fodder (Kg/day)": green_fodder_qty if green_fodder == labels['Yes'] else 0.0,
+                "Dry Fodder Provided": dry_fodder,
+                "Type of Dry Fodder": ", ".join(dry_fodder_types) if dry_fodder == labels['Yes'] else "",
+                "Quantity of Dry Fodder (Kg/day)": dry_fodder_qty if dry_fodder == labels['Yes'] else 0.0,
+                "Pellet Feed Provided": pellet_feed,
+                "Pellet Feed Brand": ", ".join(pellet_feed_brands) if pellet_feed == labels['Yes'] else "",
+                "Quantity of Pellet Feed (Kg/day)": pellet_feed_qty if pellet_feed == labels['Yes'] else 0.0,
+                "Mineral Mixture Provided": mineral_mixture,
+                "Mineral Mixture Brand": mineral_brand if mineral_mixture == labels['Yes'] else "",
+                "Quantity of Mineral Mixture (gm/day)": mineral_qty if mineral_mixture == labels['Yes'] else 0.0,
+                "Silage Provided": silage,
+                "Source and Price of Silage": silage_source if silage == labels['Yes'] else "",
+                "Quantity of Silage (Kg/day)": silage_qty if silage == labels['Yes'] else 0.0,
+                "Source of Water": ", ".join(water_sources),
+                "Name of Surveyor": surveyor_name,
+                "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
+                "Photo Paths": st.session_state.uploaded_temp_photo_paths # Store temp paths for review
+            }
+            st.session_state.final_submitted_data = data_for_review
+            st.session_state.current_step = 'review'
+            st.rerun()
+
+elif st.session_state.current_step == 'review':
+    st.title(labels['Review Your Submission'])
+    st.write("Please review the information below before final submission.")
+
+    data_to_review = st.session_state.final_submitted_data
+
+    if data_to_review:
+        # Display all collected data
+        for key, value in data_to_review.items():
+            if key == "Photo Paths":
+                st.subheader(labels['Upload Photos'])
+                if value:
+                    cols = st.columns(3)
+                    for i, photo_path in enumerate(value):
+                        if os.path.exists(photo_path):
+                            try:
+                                with open(photo_path, "rb") as f:
+                                    encoded_string = base64.b64encode(f.read()).decode()
+                                cols[i % 3].image(f"data:image/png;base64,{encoded_string}", use_column_width=True)
+                                cols[i % 3].caption(os.path.basename(photo_path))
+                            except Exception as e:
+                                cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
+                        else:
+                            st.warning(f"Image not found for review: {photo_path}")
+                else:
+                    st.info(labels['No photo uploaded.'])
+            else:
+                st.write(f"**{key}:** {value}")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(labels['Confirm and Submit'], key="confirm_submit_button"):
+                # Move photos from temp to final directory
+                final_photo_paths = []
+                for temp_path in st.session_state.uploaded_temp_photo_paths:
+                    if os.path.exists(temp_path):
+                        # Create a unique filename for the final image to avoid conflicts
+                        final_image_name = os.path.basename(temp_path)
+                        final_path = os.path.join(FINAL_IMAGE_DIR, final_image_name)
+                        try:
+                            shutil.move(temp_path, final_path)
+                            final_photo_paths.append(final_path)
+                        except Exception as e:
+                            st.error(f"Error moving photo {os.path.basename(temp_path)}: {e}")
+                            # Keep the temporary path in case of move failure, or handle as per logic
+                            final_photo_paths.append(temp_path) # Fallback to temp path if move fails
+                    else:
+                        st.warning(f"Temporary photo {os.path.basename(temp_path)} not found during final submission.")
+                
+                # Update the photo paths in the data to be saved to CSV
+                data_to_review["Photo Paths"] = ", ".join(final_photo_paths)
+
+                # Convert to DataFrame and save
+                df = pd.DataFrame([data_to_review])
+
+                # Define filename
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
+
+                # Save to CSV
+                try:
+                    # Append to file if it exists, otherwise create it
+                    if not os.path.exists(file_path):
+                        df.to_csv(file_path, index=False)
+                    else:
+                        df.to_csv(file_path, mode='a', header=False, index=False)
+                    
+                    st.session_state.current_step = 'submitted'
+                    st.session_state.last_saved_time_persistent = None # Clear auto-save message
+                    st.toast(labels['Successfully Submitted!'])
+                    
+                    # Clear temporary image directory after successful submission
+                    for f in os.listdir(TEMP_IMAGE_DIR):
+                        os.remove(os.path.join(TEMP_IMAGE_DIR, f))
+                    st.session_state.uploaded_temp_photo_paths = [] # Clear the list in session state
+
+                    # Important: Remove the draft file after successful submission
+                    draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
+                    if os.path.exists(draft_filename):
+                        os.remove(draft_filename)
+
+                    st.rerun() # Rerun to show success message
+                except Exception as e:
+                    st.error(f"Error saving data: {e}")
+        with col2:
+            if st.button(labels['Edit Form'], key="edit_form_button"):
+                st.session_state.current_step = 'form_entry'
+                st.rerun()
     else:
-        st.info("No survey data collected yet to download.")
+        st.warning("No data found to review. Please go back and fill the form.")
+        if st.button(labels['Edit Form']):
+            st.session_state.current_step = 'form_entry'
+            st.rerun()
+
+elif st.session_state.current_step == 'submitted':
+    st.balloons()
+    st.success(labels['Successfully Submitted!'])
+    st.write("Thank you for your submission!")
+    if st.button("Fill Another Form"):
+        clear_form_fields() # This function will reset state and rerun
