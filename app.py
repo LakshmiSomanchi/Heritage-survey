@@ -199,11 +199,11 @@ FARMER_DATA = {
     "0005": "KATTARI VASANTA KUMARI",
     "0006": "GUDISI NARAYANAMMA",
     "0007": "P SUREKHA",
-    "0008_a": "VAGUMALLU SUDHAKARREDDY", # Renamed to ensure uniqueness if codes are non-unique
+    "0008": "VAGUMALLU SUDHAKARREDDY", # Renamed to ensure uniqueness if codes are non-unique
     "0015": "VANGUNALLI REDDY SEKHAR REDDY",
-    "0017_a": "Y REDDEMMA",
-    "0003_a": "INDIRAVATHI MARRIPATTI",
-    "0008_b": "CHIKATIPALLI VASANTHA", # Renamed
+    "0017": "Y REDDEMMA",
+    "0003": "INDIRAVATHI MARRIPATTI",
+    "0008": "CHIKATIPALLI VASANTHA", # Renamed
     "0011": "BIRE LAKSHMI DEVI",
     "0013": "B SAMPURNA",
     "0016": "R PADMA",
