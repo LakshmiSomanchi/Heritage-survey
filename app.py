@@ -508,7 +508,7 @@ lang = st.selectbox(
     initial_lang_options,
     index=initial_lang_index,
     key="lang_select",
-    on_change=save_draft # Save draft when language changes
+    on_change=save_draft # Save draft when language changes (this is outside the form, so it's fine)
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
@@ -539,15 +539,15 @@ if st.session_state.current_step == 'form_entry':
             labels['VLCC Name'], VLCC_NAMES,
             index=vlcc_name_default_idx,
             key="vlcc_name",
-            disabled=(not VLCC_NAMES),
-            on_change=save_draft
+            disabled=(not VLCC_NAMES)
+            # Removed on_change=save_draft
         )
 
         hpc_code = st.text_input(
             labels['HPC/MCC Code'],
             value=st.session_state.get('hpc_code', ''), # Safely get
-            key="hpc_code",
-            on_change=save_draft
+            key="hpc_code"
+            # Removed on_change=save_draft
         )
 
         types_options = (labels['HPC'], labels['MCC'])
@@ -558,8 +558,8 @@ if st.session_state.current_step == 'form_entry':
         types = st.selectbox(
             labels['Types'], types_options,
             index=types_default_idx,
-            key="types",
-            on_change=save_draft
+            key="types"
+            # Removed on_change=save_draft
         )
 
         farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
@@ -574,8 +574,8 @@ if st.session_state.current_step == 'form_entry':
             labels['Farmer Name'], options=farmer_names_with_others,
             index=farmer_name_default_idx,
             key="farmer_name_selected",
-            disabled=(not farmer_names_with_others),
-            on_change=save_draft
+            disabled=(not farmer_names_with_others)
+            # Removed on_change=save_draft
         )
 
         farmer_name_other = st.session_state.get('farmer_name_other', '')
@@ -583,13 +583,11 @@ if st.session_state.current_step == 'form_entry':
             farmer_name_other = st.text_input(
                 labels['Specify Farmer Name'],
                 value=farmer_name_other, # Safely get
-                key="farmer_name_other",
-                on_change=save_draft
+                key="farmer_name_other"
+                # Removed on_change=save_draft
             )
         else:
             # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
-            # This logic needs to be careful with reruns. A simpler way is to just let it be if not 'Others'.
-            # Or, explicitly set it to "" if the selection changes away from 'Others'.
             if st.session_state.get('farmer_name_selected_prev') == labels['Others'] and 'farmer_name_other' in st.session_state:
                 st.session_state['farmer_name_other'] = "" # Reset when 'Others' is deselected
             farmer_name_other = "" # Ensure local variable is also empty
@@ -607,8 +605,8 @@ if st.session_state.current_step == 'form_entry':
             labels['Farmer Code'], options=FARMER_CODES,
             index=farmer_code_default_idx,
             key="farmer_code",
-            disabled=(not FARMER_CODES),
-            on_change=save_draft
+            disabled=(not FARMER_CODES)
+            # Removed on_change=save_draft
         )
 
         gender_options = (labels['Male'], labels['Female'])
@@ -619,53 +617,53 @@ if st.session_state.current_step == 'form_entry':
         gender = st.selectbox(
             labels['Gender'], gender_options,
             index=gender_default_idx,
-            key="gender",
-            on_change=save_draft
+            key="gender"
+            # Removed on_change=save_draft
         )
 
         st.header(labels['Farm Details'])
         cows = st.number_input(
             labels['Number of Cows'], min_value=0,
             value=int(st.session_state.get('cows', 0)), # Safely get
-            key="cows",
-            on_change=save_draft
+            key="cows"
+            # Removed on_change=save_draft
         )
 
         cattle_in_milk = st.number_input(
             labels['No. of Cattle in Milk'], min_value=0,
             value=int(st.session_state.get('cattle_in_milk', 0)),
-            key="cattle_in_milk",
-            on_change=save_draft
+            key="cattle_in_milk"
+            # Removed on_change=save_draft
         )
         calves = st.number_input(
             labels['No. of Calves/Heifers'], min_value=0,
             value=int(st.session_state.get('calves', 0)),
-            key="calves",
-            on_change=save_draft
+            key="calves"
+            # Removed on_change=save_draft
         )
         desi_cows = st.number_input(
             labels['No. of Desi cows'], min_value=0,
             value=int(st.session_state.get('desi_cows', 0)),
-            key="desi_cows",
-            on_change=save_draft
+            key="desi_cows"
+            # Removed on_change=save_draft
         )
         crossbreed_cows = st.number_input(
             labels['No. of Cross breed cows'], min_value=0,
             value=int(st.session_state.get('crossbreed_cows', 0)),
-            key="crossbreed_cows",
-            on_change=save_draft
+            key="crossbreed_cows"
+            # Removed on_change=save_draft
         )
         buffalo = st.number_input(
             labels['No. of Buffalo'], min_value=0,
             value=int(st.session_state.get('buffalo', 0)),
-            key="buffalo",
-            on_change=save_draft
+            key="buffalo"
+            # Removed on_change=save_draft
         )
         milk_production = st.number_input(
             labels['Milk Production'], min_value=0.0, format="%.2f",
             value=float(st.session_state.get('milk_production', 0.0)),
-            key="milk_production",
-            on_change=save_draft
+            key="milk_production"
+            # Removed on_change=save_draft
         )
 
         st.header(labels['Specific Questions'])
@@ -677,8 +675,8 @@ if st.session_state.current_step == 'form_entry':
         green_fodder = st.radio(
             labels['Green Fodder'], green_fodder_options,
             index=green_fodder_default_idx,
-            key="green_fodder",
-            on_change=save_draft
+            key="green_fodder"
+            # Removed on_change=save_draft
         )
         green_fodder_types = st.session_state.get('green_fodder_types', [])
         green_fodder_qty = st.session_state.get('green_fodder_qty', 0.0)
@@ -686,14 +684,14 @@ if st.session_state.current_step == 'form_entry':
             green_fodder_types = st.multiselect(
                 labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
                 default=green_fodder_types, # Safely get
-                key="green_fodder_types",
-                on_change=save_draft
+                key="green_fodder_types"
+                # Removed on_change=save_draft
             )
             green_fodder_qty = st.number_input(
                 labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
                 value=float(green_fodder_qty),
-                key="green_fodder_qty",
-                on_change=save_draft
+                key="green_fodder_qty"
+                # Removed on_change=save_draft
             )
         else:
             # Clear associated session state values when "No" is selected
@@ -710,8 +708,8 @@ if st.session_state.current_step == 'form_entry':
         dry_fodder = st.radio(
             labels['Dry Fodder'], dry_fodder_options,
             index=dry_fodder_default_idx,
-            key="dry_fodder",
-            on_change=save_draft
+            key="dry_fodder"
+            # Removed on_change=save_draft
         )
         dry_fodder_types = st.session_state.get('dry_fodder_types', [])
         dry_fodder_qty = st.session_state.get('dry_fodder_qty', 0.0)
@@ -719,14 +717,14 @@ if st.session_state.current_step == 'form_entry':
             dry_fodder_types = st.multiselect(
                 labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
                 default=dry_fodder_types,
-                key="dry_fodder_types",
-                on_change=save_draft
+                key="dry_fodder_types"
+                # Removed on_change=save_draft
             )
             dry_fodder_qty = st.number_input(
                 labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
                 value=float(dry_fodder_qty),
-                key="dry_fodder_qty",
-                on_change=save_draft
+                key="dry_fodder_qty"
+                # Removed on_change=save_draft
             )
         else:
             if 'dry_fodder_types' in st.session_state: del st.session_state['dry_fodder_types']
@@ -742,8 +740,8 @@ if st.session_state.current_step == 'form_entry':
         pellet_feed = st.radio(
             labels['Pellet Feed'], pellet_feed_options,
             index=pellet_feed_default_idx,
-            key="pellet_feed",
-            on_change=save_draft
+            key="pellet_feed"
+            # Removed on_change=save_draft
         )
         pellet_feed_brands = st.session_state.get('pellet_feed_brands', [])
         pellet_feed_qty = st.session_state.get('pellet_feed_qty', 0.0)
@@ -751,14 +749,14 @@ if st.session_state.current_step == 'form_entry':
             pellet_feed_brands = st.multiselect(
                 labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
                 default=pellet_feed_brands,
-                key="pellet_feed_brands",
-                on_change=save_draft
+                key="pellet_feed_brands"
+                # Removed on_change=save_draft
             )
             pellet_feed_qty = st.number_input(
                 labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
                 value=float(pellet_feed_qty),
-                key="pellet_feed_qty",
-                on_change=save_draft
+                key="pellet_feed_qty"
+                # Removed on_change=save_draft
             )
         else:
             if 'pellet_feed_brands' in st.session_state: del st.session_state['pellet_feed_brands']
@@ -774,8 +772,8 @@ if st.session_state.current_step == 'form_entry':
         mineral_mixture = st.radio(
             labels['Mineral Mixture'], mineral_mixture_options,
             index=mineral_mixture_default_idx,
-            key="mineral_mixture",
-            on_change=save_draft
+            key="mineral_mixture"
+            # Removed on_change=save_draft
         )
         mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
         mineral_qty = st.session_state.get('mineral_qty', 0.0)
@@ -787,14 +785,14 @@ if st.session_state.current_step == 'form_entry':
             mineral_brand = st.selectbox(
                 labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
                 index=mineral_brand_default_idx,
-                key="mineral_brand",
-                on_change=save_draft
+                key="mineral_brand"
+                # Removed on_change=save_draft
             )
             mineral_qty = st.number_input(
                 labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
                 value=float(mineral_qty),
-                key="mineral_qty",
-                on_change=save_draft
+                key="mineral_qty"
+                # Removed on_change=save_draft
             )
         else:
             if 'mineral_brand' in st.session_state: del st.session_state['mineral_brand']
@@ -810,8 +808,8 @@ if st.session_state.current_step == 'form_entry':
         silage = st.radio(
             labels['Silage'], silage_options,
             index=silage_default_idx,
-            key="silage",
-            on_change=save_draft
+            key="silage"
+            # Removed on_change=save_draft
         )
         silage_source = st.session_state.get('silage_source', '')
         silage_qty = st.session_state.get('silage_qty', 0.0)
@@ -819,14 +817,14 @@ if st.session_state.current_step == 'form_entry':
             silage_source = st.text_input(
                 labels['Source and Price of Silage'],
                 value=silage_source,
-                key="silage_source",
-                on_change=save_draft
+                key="silage_source"
+                # Removed on_change=save_draft
             )
             silage_qty = st.number_input(
                 labels['Quantity of Silage'], min_value=0.0, format="%.2f",
                 value=float(silage_qty),
-                key="silage_qty",
-                on_change=save_draft
+                key="silage_qty"
+                # Removed on_change=save_draft
             )
         else:
             if 'silage_source' in st.session_state: del st.session_state['silage_source']
@@ -837,8 +835,8 @@ if st.session_state.current_step == 'form_entry':
         water_sources = st.multiselect(
             labels['Source of Water'], WATER_SOURCE_OPTIONS,
             default=st.session_state.get('water_sources', []),
-            key="water_sources",
-            on_change=save_draft
+            key="water_sources"
+            # Removed on_change=save_draft
         )
 
         # --- Photo Upload Snippet ---
@@ -848,6 +846,7 @@ if st.session_state.current_step == 'form_entry':
             type=["jpg", "jpeg", "png"],
             accept_multiple_files=True,
             key="image_uploader" # Unique key for file uploader
+            # Removed on_change=save_draft (not applicable for file_uploader in a form context this way)
         )
 
         # Process newly uploaded files
@@ -872,7 +871,8 @@ if st.session_state.current_step == 'form_entry':
                                 f.write(uploaded_file.getbuffer())
                             st.session_state.uploaded_temp_photo_paths.append(temp_photo_path)
                             st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
-                            save_draft() # Save draft immediately after photo upload
+                            # No explicit save_draft() here, as form submission will capture it.
+                            # If you want real-time saving of photos, this would need to be outside the form.
                         except Exception as e:
                             st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
                     else:
@@ -892,24 +892,23 @@ if st.session_state.current_step == 'form_entry':
                         with col1:
                             st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
                         with col2:
-                            if st.button(f"Remove", key=f"remove_photo_{i}_{photo_path}"): # Unique key per path
+                            # Button inside a column, unique key per photo
+                            if st.button(f"Remove", key=f"remove_photo_{i}_{photo_path.replace('.', '_').replace('/', '_').replace('\\', '_')}"):
                                 os.remove(photo_path)
-                                st.session_state.uploaded_temp_photo_paths.remove(photo_path) # Remove by value
-                                save_draft()
+                                # Remove the path from the session state list
+                                st.session_state.uploaded_temp_photo_paths.remove(photo_path) 
                                 st.rerun() # Rerun to update the display after removal
                     except Exception as e:
                         st.error(f"Could not load image {os.path.basename(photo_path)}: {e}")
                         # If file cannot be loaded, consider removing it from the list to avoid future errors
                         if photo_path in st.session_state.uploaded_temp_photo_paths:
                             st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                            save_draft()
                             st.rerun()
                 else:
                     st.warning(f"Temporary photo path not found: {os.path.basename(photo_path)}. It might have been moved or deleted.")
                     # Clean up broken paths from session state
                     if photo_path in st.session_state.uploaded_temp_photo_paths:
                         st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                        save_draft()
                         st.rerun()
         else:
             st.info(labels['No photo uploaded.'])
@@ -923,8 +922,8 @@ if st.session_state.current_step == 'form_entry':
         surveyor_name = st.selectbox(
             labels['Name'], SURVEYOR_NAMES,
             index=surveyor_name_default_idx,
-            key="surveyor_name",
-            on_change=save_draft
+            key="surveyor_name"
+            # Removed on_change=save_draft
         )
         
         current_visit_date = st.session_state.get('visit_date', datetime.date.today())
@@ -937,8 +936,8 @@ if st.session_state.current_step == 'form_entry':
         visit_date = st.date_input(
             labels['Date of Visit'],
             value=current_visit_date,
-            key="visit_date",
-            on_change=save_draft
+            key="visit_date"
+            # Removed on_change=save_draft
         )
 
         # --- Submit Button (MUST BE INSIDE THE FORM) ---
@@ -948,7 +947,7 @@ if st.session_state.current_step == 'form_entry':
             # Determine the final farmer name based on selection
             final_farmer_name = farmer_name_other if farmer_name_selected == labels['Others'] else farmer_name_selected
 
-            # Collect all data for review
+            # Collect all data for review from session state
             data_for_review = {
                 "Language": lang,
                 "VLCC Name": vlcc_name,
@@ -986,6 +985,7 @@ if st.session_state.current_step == 'form_entry':
             }
             st.session_state.final_submitted_data = data_for_review
             st.session_state.current_step = 'review'
+            save_draft() # Save draft here, after data is collected and state updated
             st.rerun()
 
 elif st.session_state.current_step == 'review':
@@ -1106,8 +1106,6 @@ elif st.session_state.current_step == 'review':
                     st.session_state.last_saved_time_persistent = None # Clear auto-save message
                     
                     # Clear temporary image directory after successful submission
-                    # Ensure we only remove files that were successfully moved to FINAL_IMAGE_DIR
-                    # Or, simply remove all from TEMP_IMAGE_DIR as they are either moved or an error occurred.
                     for f in os.listdir(TEMP_IMAGE_DIR):
                         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
                     st.session_state.uploaded_temp_photo_paths = [] # Clear the list in session state
