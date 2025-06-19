@@ -615,7 +615,7 @@ if 'app_initialized_flag' not in st.session_state:
     load_draft()
 
 # Language Selection
-initial_lang_options = ("English", "Hindi", "Marathi", "Telugu")
+initial_lang_options = ("English", "Hindi", "Marathi", "Telugu") # Telugu added here
 # Ensure st.session_state.lang_select is initialized before using it for index
 if 'lang_select' not in st.session_state or st.session_state.lang_select not in initial_lang_options:
     st.session_state.lang_select = "English"
