@@ -1196,17 +1196,23 @@ if not all_responses_df.empty:
     )
 
     # Download All Responses (Excel)
-    excel_buffer = io.BytesIO()
-    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
-        all_responses_df.to_excel(writer, index=False, sheet_name='SurveyResponses')
-    excel_buffer.seek(0)
-    st.sidebar.download_button(
-        label=labels['Download All Responses (Excel)'],
-        data=excel_buffer.getvalue(),
-        file_name="all_survey_responses.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        key="download_all_excel"
-    )
+    try:
+        excel_buffer = io.BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+            all_responses_df.to_excel(writer, index=False, sheet_name='SurveyResponses')
+        excel_buffer.seek(0)
+        st.sidebar.download_button(
+            label=labels['Download All Responses (Excel)'],
+            data=excel_buffer.getvalue(),
+            file_name="all_survey_responses.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            key="download_all_excel"
+        )
+    except ImportError:
+        st.sidebar.warning("`xlsxwriter` is not installed. Cannot download as Excel. Install it using `pip install xlsxwriter`.")
+    except Exception as e:
+        st.sidebar.error(f"Error creating Excel file: {e}")
+
 else:
     st.sidebar.info("No survey responses available for download (CSV/Excel).")
 
