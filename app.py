@@ -5,6 +5,8 @@ import os
 import json
 import base64  # Import base64 for image handling
 import shutil  # Import shutil for moving files
+import zipfile # Import zipfile for creating zip archives
+import io # Import io for in-memory file operations
 
 # Ensure save folder exists
 SAVE_DIR = 'survey_responses'
@@ -62,7 +64,10 @@ dict_translations = {
         'Edit Form': 'Edit Form',
         'Successfully Submitted!': 'Form Successfully Submitted!',
         'Review Your Submission': 'Review Your Submission',
-        'Fill Another Form': 'Fill Another Form'
+        'Fill Another Form': 'Fill Another Form',
+        'Download All Responses (CSV)': 'Download All Responses (CSV)', # New translation
+        'Download All Responses (Excel)': 'Download All Responses (Excel)', # New translation
+        'Download All Photos (ZIP)': 'Download All Photos (ZIP)' # New translation
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -99,7 +104,10 @@ dict_translations = {
         'Edit Form': 'फ़ॉर्म संपादित करें',
         'Successfully Submitted!': 'फॉर्म सफलतापूर्वक जमा किया गया!',
         'Review Your Submission': 'अपनी सबमिशन की समीक्षा करें',
-        'Fill Another Form': 'एक और फॉर्म भरें'
+        'Fill Another Form': 'एक और फॉर्म भरें',
+        'Download All Responses (CSV)': 'सभी प्रतिक्रियाएँ डाउनलोड करें (CSV)',
+        'Download All Responses (Excel)': 'सभी प्रतिक्रियाएँ डाउनलोड करें (Excel)',
+        'Download All Photos (ZIP)': 'सभी फ़ोटो डाउनलोड करें (ZIP)'
     },
     'Marathi': {
         "Language": "भाषा",
@@ -158,7 +166,10 @@ dict_translations = {
         'Edit Form': 'फॉर्म संपादित करा',
         'Successfully Submitted!': 'फॉर्म यशस्वीरित्या सबमिट केला!',
         'Review Your Submission': 'आपल्या सबमिशनचे पुनरावलोकन करा',
-        'Fill Another Form': 'दुसरा फॉर्म भरा'
+        'Fill Another Form': 'दुसरा फॉर्म भरें',
+        'Download All Responses (CSV)': 'सर्व प्रतिसाद डाउनलोड करा (CSV)',
+        'Download All Responses (Excel)': 'सर्व प्रतिसाद डाउनलोड करा (Excel)',
+        'Download All Photos (ZIP)': 'सर्व फोटो डाउनलोड करा (ZIP)'
     }
 }
 
@@ -482,6 +493,39 @@ def clear_form_fields():
 
     st.rerun() # Rerun to clear the form fields and update display
 
+# Function to create a ZIP file of all images
+def create_zip_file():
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for root, _, files in os.walk(FINAL_IMAGE_DIR):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zip_file.write(file_path, os.path.relpath(file_path, FINAL_IMAGE_DIR))
+    zip_buffer.seek(0)
+    return zip_buffer
+
+# Function to get all survey responses as a DataFrame
+def get_all_responses_df():
+    all_files = [os.path.join(SAVE_DIR, f) for f in os.listdir(SAVE_DIR) if f.endswith('.csv') and f.startswith('survey_response_')]
+    
+    if not all_files:
+        return pd.DataFrame() # Return empty DataFrame if no files
+
+    # Read each CSV file and concatenate them
+    df_list = []
+    for file in all_files:
+        try:
+            df_list.append(pd.read_csv(file))
+        except Exception as e:
+            st.warning(f"Could not read {file}: {e}")
+            continue
+    
+    if df_list:
+        return pd.concat(df_list, ignore_index=True)
+    else:
+        return pd.DataFrame()
+
+
 # Initialize session state for the first time or load draft
 if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
@@ -503,7 +547,7 @@ if st.session_state.lang_select not in initial_lang_options:
     st.session_state.lang_select = "English"
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select)
 
-lang = st.selectbox(
+lang = st.sidebar.selectbox( # Moved to sidebar
     "Language / भाषा / भाषा",
     initial_lang_options,
     index=initial_lang_index,
@@ -1134,3 +1178,47 @@ elif st.session_state.current_step == 'submitted':
     st.write("Thank you for your submission!")
     if st.button(labels['Fill Another Form']):
         clear_form_fields() # This function will reset state and rerun
+
+# --- Sidebar for Download Options ---
+st.sidebar.markdown("---")
+st.sidebar.header("Download Options")
+
+# Download All Responses (CSV)
+all_responses_df = get_all_responses_df()
+if not all_responses_df.empty:
+    csv_data = all_responses_df.to_csv(index=False).encode('utf-8')
+    st.sidebar.download_button(
+        label=labels['Download All Responses (CSV)'],
+        data=csv_data,
+        file_name="all_survey_responses.csv",
+        mime="text/csv",
+        key="download_all_csv"
+    )
+
+    # Download All Responses (Excel)
+    excel_buffer = io.BytesIO()
+    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+        all_responses_df.to_excel(writer, index=False, sheet_name='SurveyResponses')
+    excel_buffer.seek(0)
+    st.sidebar.download_button(
+        label=labels['Download All Responses (Excel)'],
+        data=excel_buffer.getvalue(),
+        file_name="all_survey_responses.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key="download_all_excel"
+    )
+else:
+    st.sidebar.info("No survey responses available for download (CSV/Excel).")
+
+# Download All Photos (ZIP)
+if os.listdir(FINAL_IMAGE_DIR):
+    zip_buffer = create_zip_file()
+    st.sidebar.download_button(
+        label=labels['Download All Photos (ZIP)'],
+        data=zip_buffer,
+        file_name="all_survey_photos.zip",
+        mime="application/zip",
+        key="download_all_photos_zip"
+    )
+else:
+    st.sidebar.info("No photos available for download (ZIP).")
