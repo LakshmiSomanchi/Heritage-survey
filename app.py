@@ -983,6 +983,52 @@ if st.session_state.current_step == 'form_entry':
             key="visit_date"
             # Removed on_change=save_draft
         )
+# Add this at the end of `if st.session_state.current_step == 'form_entry':`
+
+st.markdown("---")
+st.header("📊 View & Download Survey Data")
+
+# View all responses DataFrame
+responses_df = get_all_responses_df()
+if not responses_df.empty:
+    with st.expander("🔍 View All Responses"):
+        st.dataframe(responses_df)
+
+    # Download CSV
+    csv_buffer = io.StringIO()
+    responses_df.to_csv(csv_buffer, index=False)
+    st.download_button(
+        label=labels['Download All Responses (CSV)'],
+        data=csv_buffer.getvalue(),
+        file_name="all_survey_responses.csv",
+        mime="text/csv",
+        key="download_csv_button"
+    )
+
+    # Download Excel
+    excel_buffer = io.BytesIO()
+    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+        responses_df.to_excel(writer, index=False, sheet_name='Survey Data')
+    st.download_button(
+        label=labels['Download All Responses (Excel)'],
+        data=excel_buffer.getvalue(),
+        file_name="all_survey_responses.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key="download_excel_button"
+    )
+else:
+    st.info("No survey responses found yet.")
+
+# Download all photos (ZIP)
+photo_zip = create_zip_file()
+st.download_button(
+    label=labels['Download All Photos (ZIP)'],
+    data=photo_zip,
+    file_name="all_photos.zip",
+    mime="application/zip",
+    key="download_photos_button"
+)
+
 
         # --- Submit Button (MUST BE INSIDE THE FORM) ---
         submit_for_review = st.form_submit_button(labels['Submit'])
