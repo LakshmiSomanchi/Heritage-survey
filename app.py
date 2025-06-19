@@ -65,9 +65,9 @@ dict_translations = {
         'Successfully Submitted!': 'Form Successfully Submitted!',
         'Review Your Submission': 'Review Your Submission',
         'Fill Another Form': 'Fill Another Form',
-        'Download All Responses (CSV)': 'Download All Responses (CSV)', # New translation
-        'Download All Responses (Excel)': 'Download All Responses (Excel)', # New translation
-        'Download All Photos (ZIP)': 'Download All Photos (ZIP)' # New translation
+        'Download All Responses (CSV)': 'Download All Responses (CSV)',
+        'Download All Responses (Excel)': 'Download All Responses (Excel)',
+        'Download All Photos (ZIP)': 'Download All Photos (ZIP)'
     },
     'Hindi': {
         'Language': 'भाषा', 'Farmer Profile': 'किसान प्रोफ़ाइल', 'VLCC Name': 'वीएलसीसी नाम',
@@ -170,6 +170,68 @@ dict_translations = {
         'Download All Responses (CSV)': 'सर्व प्रतिसाद डाउनलोड करा (CSV)',
         'Download All Responses (Excel)': 'सर्व प्रतिसाद डाउनलोड करा (Excel)',
         'Download All Photos (ZIP)': 'सर्व फोटो डाउनलोड करा (ZIP)'
+    },
+    'Telugu': {
+        'Language': 'భాష',
+        'Farmer Profile': 'రైతు ప్రొఫైల్',
+        'VLCC Name': 'VLCC పేరు',
+        'HPC/MCC Code': 'HPC/MCC కోడ్',
+        'Types': 'రకం',
+        'HPC': 'HPC',
+        'MCC': 'MCC',
+        'Farmer Name': 'రైతు పేరు',
+        'Farmer Code': 'రైతు కోడ్ / పోరర్ ఐడి',
+        'Gender': 'లింగం',
+        'Male': 'పురుషుడు',
+        'Female': 'స్త్రీ',
+        'Farm Details': 'ఫారం వివరాలు',
+        'Number of Cows': 'ఆవుల సంఖ్య',
+        'No. of Cattle in Milk': 'పాలు ఇచ్చే పశువుల సంఖ్య',
+        'No. of Calves/Heifers': 'దూడలు/పెయ్యల సంఖ్య',
+        'No. of Desi cows': 'దేశీ ఆవుల సంఖ్య',
+        'No. of Cross breed cows': 'క్రాస్‌బ్రీడ్ ఆవుల సంఖ్య',
+        'No. of Buffalo': 'గేదెల సంఖ్య',
+        'Milk Production': 'పాల ఉత్పత్తి (లీటర్లు/రోజు)',
+        'Specific Questions': 'నిర్దిష్ట ప్రశ్నలు',
+        'Green Fodder': 'పచ్చి మేత',
+        'Type of Green Fodder': 'పచ్చి మేత రకం (బహుళ ఎంపిక)',
+        'Quantity of Green Fodder': 'పచ్చి మేత పరిమాణం (కిలోలు/రోజు)',
+        'Dry Fodder': 'ఎండు మేత',
+        'Type of Dry Fodder': 'ఎండు మేత రకం (బహుళ ఎంపిక)',
+        'Quantity of Dry Fodder': 'ఎండు మేత పరిమాణం (కిలోలు/రోజు)',
+        'Pellet Feed': 'పెల్లెట్ ఫీడ్',
+        'Pellet Feed Brand': 'పెల్లెట్ ఫీడ్ బ్రాండ్ (బహుళ ఎంపిక)',
+        'Quantity of Pellet Feed': 'పెల్లెట్ ఫీడ్ పరిమాణం (కిలోలు/రోజు)',
+        'Mineral Mixture': 'మినరల్ మిశ్రమం',
+        'Mineral Mixture Brand': 'మినరల్ మిశ్రమం బ్రాండ్',
+        'Quantity of Mineral Mixture': 'మినరల్ మిశ్రమం పరిమాణం (గ్రాములు/రోజు)',
+        'Silage': 'సైలేజ్',
+        'Source and Price of Silage': 'సైలేజ్ మూలం మరియు ధర',
+        'Quantity of Silage': 'సైలేజ్ పరిమాణం (కిలోలు/రోజు)',
+        'Source of Water': 'నీటి మూలం (బహుళ ఎంపిక)',
+        'Name': 'సర్వేయర్ పేరు',
+        'Date of Visit': 'సందర్శన తేదీ',
+        'Submit': 'సమర్పించు',
+        'Yes': 'అవును',
+        'No': 'కాదు',
+        'Download CSV': 'CSV డౌన్‌లోడ్ చేయండి',
+        'Auto-saved!': 'ఆటో-సేవ్ చేయబడింది! మీరు రీఫ్రెష్ చేసినా లేదా తాత్కాలికంగా ఇంటర్నెట్ కోల్పోయినా ఫారమ్‌ను పూరించడం కొనసాగించవచ్చు.',
+        'Others': 'ఇతరులు',
+        'Specify Farmer Name': 'రైతు పేరును పేర్కొనండి (ఇతరులు ఎంచుకుంటే)',
+        'Upload Photos': 'ఫోటోలను అప్‌లోడ్ చేయండి (గరిష్టంగా 3)',
+        'Photo uploaded successfully!': 'ఫోటో విజయవంతంగా అప్‌లోడ్ చేయబడింది!',
+        'No photo uploaded.': 'ఏ ఫోటో అప్‌లోడ్ చేయబడలేదు.',
+        'Error uploading photo:': 'ఫోటో అప్‌లోడ్ చేయడంలో లోపం:',
+        'Please upload up to 3 photos.': 'దయచేసి గరిష్టంగా 3 ఫోటోలను అప్‌లోడ్ చేయండి.',
+        'Review and Confirm': 'సమీక్షించి నిర్ధారించండి',
+        'Confirm and Submit': 'నిర్ధారించి సమర్పించు',
+        'Edit Form': 'ఫారమ్‌ను సవరించండి',
+        'Successfully Submitted!': 'ఫారమ్ విజయవంతంగా సమర్పించబడింది!',
+        'Review Your Submission': 'మీ సమర్పణను సమీక్షించండి',
+        'Fill Another Form': 'మరొక ఫారమ్ పూరించండి',
+        'Download All Responses (CSV)': 'అన్ని ప్రతిస్పందనలను డౌన్‌లోడ్ చేయండి (CSV)',
+        'Download All Responses (Excel)': 'అన్ని ప్రతిస్పందనలను డౌన్‌లోడ్ చేయండి (Excel)',
+        'Download All Photos (ZIP)': 'అన్ని ఫోటోలను డౌన్‌లోడ్ చేయండి (ZIP)'
     }
 }
 
@@ -445,7 +507,8 @@ def load_draft():
                 st.session_state['silage'] = current_labels['Yes']
             
             # For farmer_name_selected, ensure it's a valid option or "Others"
-            if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in (FARMER_NAMES_ORIGINAL + [current_labels['Others']]):
+            farmer_names_with_others_for_load = FARMER_NAMES_ORIGINAL + [current_labels['Others']]
+            if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in farmer_names_with_others_for_load:
                 st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
 
             # For farmer_code, ensure it's a valid option
@@ -552,7 +615,7 @@ if 'app_initialized_flag' not in st.session_state:
     load_draft()
 
 # Language Selection
-initial_lang_options = ("English", "Hindi", "Marathi")
+initial_lang_options = ("English", "Hindi", "Marathi", "Telugu")
 # Ensure st.session_state.lang_select is initialized before using it for index
 if 'lang_select' not in st.session_state or st.session_state.lang_select not in initial_lang_options:
     st.session_state.lang_select = "English"
@@ -560,7 +623,7 @@ if 'lang_select' not in st.session_state or st.session_state.lang_select not in 
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select)
 
 lang = st.sidebar.selectbox( # Moved to sidebar
-    "Language / भाषा / भाषा",
+    "Language / भाषा / भाषा / భాష", # Updated display text for sidebar
     initial_lang_options,
     index=initial_lang_index,
     key="lang_select",
