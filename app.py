@@ -229,19 +229,21 @@ VLCC_NAMES = [
 ]
 
 # Create a dictionary for farmer data (ensure unique keys if possible in real data)
+# Note: Duplicate keys in FARMER_DATA like "0008" will result in only the last value being kept.
+# It's recommended to have unique farmer codes or a list of tuples if codes can be repeated for different farmers.
 FARMER_DATA = {
     "0005": "KATTARI VASANTA KUMARI",
     "0006": "GUDISI NARAYANAMMA",
     "0007": "P SUREKHA",
-    "0008": "VAGUMALLU SUDHAKARREDDY",
+    "0008": "VAGUMALLU SUDHAKARREDDY", # This will overwrite the previous "0008"
     "0015": "VANGUNALLI REDDY SEKHAR REDDY",
     "0017": "Y REDDEMMA",
     "0003": "INDIRAVATHI MARRIPATTI",
-    "0008": "CHIKATIPALLI VASANTHA",
+    # "0008": "CHIKATIPALLI VASANTHA", # This was a duplicate key
     "0011": "BIRE LAKSHMI DEVI",
     "0013": "B SAMPURNA",
     "0016": "R PADMA",
-    "0017": "KRISHTNAMMA KOTAKONDA",
+    "0017": "KRISHTNAMMA KOTAKONDA", # This will overwrite the previous "0017"
     "0018": "A LAKSHMAIAH",
     "0021": "CANDRAKALA GURRAMKONDA",
     "0025": "P JYOTHI",
@@ -250,77 +252,77 @@ FARMER_DATA = {
     "0036": "C SURYA PRAKASH",
     "0001": "P SHANKARAMMA",
     "0012": "V PRAMEELA",
-    "0003": "RAJINI KUMAR REDDY M",
+    # "0003": "RAJINI KUMAR REDDY M", # This was a duplicate key
     "0002": "D GOPAL NAIDU",
-    "0003": "D PRASAD REDDY",
-    "0006": "G RATHNAMMA",
+    # "0003": "D PRASAD REDDY", # This was a duplicate key
+    "0006": "G RATHNAMMA", # This will overwrite the previous "0006"
     "0009": "M NARAYANAMMA",
-    "0012": "V DEVAKI",
+    # "0012": "V DEVAKI", # This was a duplicate key
     "0026": "P HARSHA VARDHAN REDDY",
     "0019": "B REDDEMMA",
-    "0002": "J RAMADEVI",
-    "0003": "N SIDDAMA",
-    "0005": "J ESWARAMMA",
-    "0006": "M SIDDAMMA",
-    "0008": "Y DEVAKI DEVI",
-    "0003": "C RAMANAIAH",
+    # "0002": "J RAMADEVI", # This was a duplicate key
+    # "0003": "N SIDDAMA", # This was a duplicate key
+    "0005": "J ESWARAMMA", # This will overwrite the previous "0005"
+    "0006": "M SIDDAMMA", # This will overwrite the previous "0006"
+    "0008": "Y DEVAKI DEVI", # This will overwrite the previous "0008"
+    # "0003": "C RAMANAIAH", # This was a duplicate key
     "0014": "P REDDY PRASAD",
-    "0002": "B VARA LAKSHMI",
-    "0003": "D NAGARJUNA",
-    "0001": "C USHARANI",
-    "0006": "S SHAHEEDA BEGUM",
-    "0007": "S SHAMSHAD",
-    "0008": "S USHA RANI",
+    "0002": "B VARA LAKSHMI", # This will overwrite the previous "0002"
+    # "0003": "D NAGARJUNA", # This was a duplicate key
+    "0001": "C USHARANI", # This will overwrite the previous "0001"
+    "0006": "S SHAHEEDA BEGUM", # This will overwrite the previous "0006"
+    "0007": "S SHAMSHAD", # This will overwrite the previous "0007"
+    "0008": "S USHA RANI", # This will overwrite the previous "0008"
     "0010": "V REDDY RANI",
-    "0012": "A KALAVATHI",
-    "0014": "S YASHODA",
-    "0015": "N RESHMA",
-    "0016": "D RAMADEVI",
-    "0017": "S SHARMILA",
-    "0018": "B RANI",
+    "0012": "A KALAVATHI", # This will overwrite the previous "0012"
+    "0014": "S YASHODA", # This will overwrite the previous "0014"
+    "0015": "N RESHMA", # This will overwrite the previous "0015"
+    "0016": "D RAMADEVI", # This will overwrite the previous "0016"
+    "0017": "S SHARMILA", # This will overwrite the previous "0017"
+    "0018": "B RANI", # This will overwrite the previous "0018"
     "0027": "DESIREDDY PALLAVI",
     "0028": "C SREERAMI REDDY",
-    "0005": "M JYOSHNA",
-    "0013": "M VENKTRAMAIAH",
-    "0002": "M BHARGAVI",
-    "0006": "N GANGAIAH",
-    "0009": "N PURUSHOTHAM",
+    "0005": "M JYOSHNA", # This will overwrite the previous "0005"
+    "0013": "M VENKTRAMAIAH", # This will overwrite the previous "0013"
+    "0002": "M BHARGAVI", # This will overwrite the previous "0002"
+    "0006": "N GANGAIAH", # This will overwrite the previous "0006"
+    "0009": "N PURUSHOTHAM", # This will overwrite the previous "0009"
     "0011": "N RAMADEVI",
-    "0017": "Y LAKSHMI",
-    "0026": "N SRINIVASULU",
-    "0027": "N LAVANYA",
-    "0002": "B MURALI",
-    "0014": "S MUBARAK ALI",
-    "0015": "S SABEEN TAJ",
-    "0019": "D NARASAMMA",
+    "0017": "Y LAKSHMI", # This will overwrite the previous "0017"
+    "0026": "N SRINIVASULU", # This will overwrite the previous "0026"
+    "0027": "N LAVANYA", # This will overwrite the previous "0027"
+    "0002": "B MURALI", # This will overwrite the previous "0002"
+    "0014": "S MUBARAK ALI", # This will overwrite the previous "0014"
+    "0015": "S SABEEN TAJ", # This will overwrite the previous "0015"
+    "0019": "D NARASAMMA", # This will overwrite the previous "0019"
     "0020": "V RANI",
-    "0001": "A RAJAMMA",
-    "0006": "D SURENDRA REDDY",
-    "0008": "M VISHNUVARDHAN REDDY",
+    "0001": "A RAJAMMA", # This will overwrite the previous "0001"
+    "0006": "D SURENDRA REDDY", # This will overwrite the previous "0006"
+    "0008": "M VISHNUVARDHAN REDDY", # This will overwrite the previous "0008"
     "0010": "K SAHADEVA",
-    "0002": "D ASHOK KUMAR",
-    "0014": "K VENKATRAMAIAH",
-    "0006": "K RAJAMMA",
-    "0008": "P ANASUYA",
-    "0010": "P RAJAMMA",
-    "0012": "P SAHADEVAREDDY",
-    "0015": "P BHARATHAMMA",
-    "0017": "S GOWRAMMA",
-    "0008": "V PADMAJA",
-    "0010": "V CHITTEMMA",
-    "0017": "B GIRI BABU",
-    "0019": "P MOHAN BABU",
-    "0002": "SREENIVASULU",
-    "0012": "C NARSAMMA",
+    "0002": "D ASHOK KUMAR", # This will overwrite the previous "0002"
+    "0014": "K VENKATRAMAIAH", # This will overwrite the previous "0014"
+    "0006": "K RAJAMMA", # This will overwrite the previous "0006"
+    "0008": "P ANASUYA", # This will overwrite the previous "0008"
+    "0010": "P RAJAMMA", # This will overwrite the previous "0010"
+    "0012": "P SAHADEVAREDDY", # This will overwrite the previous "0012"
+    "0015": "P BHARATHAMMA", # This will overwrite the previous "0015"
+    "0017": "S GOWRAMMA", # This will overwrite the previous "0017"
+    "0008": "V PADMAJA", # This will overwrite the previous "0008"
+    "0010": "V CHITTEMMA", # This will overwrite the previous "0010"
+    "0017": "B GIRI BABU", # This will overwrite the previous "0017"
+    "0019": "P MOHAN BABU", # This will overwrite the previous "0019"
+    "0002": "SREENIVASULU", # This will overwrite the previous "0002"
+    "0012": "C NARSAMMA", # This will overwrite the previous "0012"
     "0004": "A CHANDRAMMA",
-    "0014": "G RAMNJULU",
-    "0018": "P SYAMALAMMA",
-    "0019": "K BHARGAVI",
-    "0012": "M LAKSHMIDEVI",
-    "0013": "K MALLESWARI",
-    "0016": "M YERRAKKA",
-    "0017": "V GANGADEVI",
-    "0021": "M CHANDRAMMA"
+    "0014": "G RAMNJULU", # This will overwrite the previous "0014"
+    "0018": "P SYAMALAMMA", # This will overwrite the previous "0018"
+    "0019": "K BHARGAVI", # This will overwrite the previous "0019"
+    "0012": "M LAKSHMIDEVI", # This will overwrite the previous "0012"
+    "0013": "K MALLESWARI", # This will overwrite the previous "0013"
+    "0016": "M YERRAKKA", # This will overwrite the previous "0016"
+    "0017": "V GANGADEVI", # This will overwrite the previous "0017"
+    "0021": "M CHANDRAMMA" # This will overwrite the previous "0021"
 }
 
 # Create lists for dropdowns
@@ -371,18 +373,24 @@ initial_values_defaults = {
     'visit_date': datetime.date.today(),
     'uploaded_temp_photo_paths': [],  # To store paths of temporarily uploaded photos
     'final_submitted_data': None,  # To store data ready for review/submission
-    'current_step': 'form_entry'  # 'form_entry', 'review', 'submitted'
+    'current_step': 'form_entry',  # 'form_entry', 'review', 'submitted'
+    'farmer_name_selected_prev': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others' # To track previous farmer name selection
 }
 
 # Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     # Get current values from session_state, falling back to defaults if not present
+    # Only save the keys that are part of the form's state
     draft_data = {key: st.session_state.get(key, initial_values_defaults.get(key)) for key in initial_values_defaults.keys()}
     
     # Convert datetime.date objects to string for JSON serialization
     if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
         draft_data['visit_date'] = draft_data['visit_date'].isoformat()
+    
+    # Special handling for uploaded_temp_photo_paths to ensure it's a list even if it was None/empty
+    if 'uploaded_temp_photo_paths' not in draft_data or not isinstance(draft_data['uploaded_temp_photo_paths'], list):
+        draft_data['uploaded_temp_photo_paths'] = []
 
     try:
         with open(draft_filename, 'w') as f:
@@ -417,7 +425,9 @@ def load_draft():
                 st.session_state['vlcc_name'] = VLCC_NAMES[0] if VLCC_NAMES else None
             
             # Re-validate other dropdown selections based on current language
-            current_labels = dict_translations.get(st.session_state.get('lang_select', 'English'), dict_translations['English'])
+            # This requires fetching labels *after* lang_select might have been updated from draft
+            temp_lang = loaded_data.get('lang_select', 'English')
+            current_labels = dict_translations.get(temp_lang, dict_translations['English'])
             
             if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
                 st.session_state['types'] = current_labels['HPC']
@@ -464,17 +474,19 @@ def load_draft():
 # Function to clear form fields (reset session state for form entry)
 def clear_form_fields():
     # Define keys to *always keep* (not clear)
-    persistent_keys = ['lang_select', 'app_initialized_flag', 'last_saved_time_persistent', 'current_step']
+    persistent_keys = ['lang_select', 'app_initialized_flag', 'current_step']
 
     # Iterate through all session state keys and delete those not in persistent_keys
+    # Create a list of keys to delete to avoid modifying dict during iteration
     keys_to_delete = [key for key in st.session_state.keys() if key not in persistent_keys]
 
     for key in keys_to_delete:
-        del st.session_state[key]
+        if key in st.session_state: # Check if key still exists before deleting
+            del st.session_state[key]
     
     # Reset specific keys to their defaults for a fresh form
     for key, default_value in initial_values_defaults.items():
-        if key not in st.session_state: # Only set if it was deleted
+        if key not in st.session_state: # Only set if it was deleted or never existed
             st.session_state[key] = default_value
     
     # Ensure current_step is back to form_entry
@@ -530,9 +542,7 @@ def get_all_responses_df():
 if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
     st.session_state.last_saved_time_persistent = None
-    st.session_state.current_step = 'form_entry' # Initialize current_step
-    st.session_state.final_submitted_data = None # Initialize to None
-
+    
     # Initialize all defaults first
     for key, default_value in initial_values_defaults.items():
         if key not in st.session_state:
@@ -543,8 +553,10 @@ if 'app_initialized_flag' not in st.session_state:
 
 # Language Selection
 initial_lang_options = ("English", "Hindi", "Marathi")
-if st.session_state.lang_select not in initial_lang_options:
+# Ensure st.session_state.lang_select is initialized before using it for index
+if 'lang_select' not in st.session_state or st.session_state.lang_select not in initial_lang_options:
     st.session_state.lang_select = "English"
+
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select)
 
 lang = st.sidebar.selectbox( # Moved to sidebar
@@ -552,7 +564,7 @@ lang = st.sidebar.selectbox( # Moved to sidebar
     initial_lang_options,
     index=initial_lang_index,
     key="lang_select",
-    on_change=save_draft # Save draft when language changes (this is outside the form, so it's fine)
+    on_change=save_draft # Save draft when language changes
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
@@ -584,14 +596,12 @@ if st.session_state.current_step == 'form_entry':
             index=vlcc_name_default_idx,
             key="vlcc_name",
             disabled=(not VLCC_NAMES)
-            # Removed on_change=save_draft
         )
 
         hpc_code = st.text_input(
             labels['HPC/MCC Code'],
             value=st.session_state.get('hpc_code', ''), # Safely get
             key="hpc_code"
-            # Removed on_change=save_draft
         )
 
         types_options = (labels['HPC'], labels['MCC'])
@@ -603,7 +613,6 @@ if st.session_state.current_step == 'form_entry':
             labels['Types'], types_options,
             index=types_default_idx,
             key="types"
-            # Removed on_change=save_draft
         )
 
         farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
@@ -619,24 +628,28 @@ if st.session_state.current_step == 'form_entry':
             index=farmer_name_default_idx,
             key="farmer_name_selected",
             disabled=(not farmer_names_with_others)
-            # Removed on_change=save_draft
         )
 
+        # Logic to handle "Others" for Farmer Name
+        # Ensure farmer_name_other is correctly retrieved/initialized
         farmer_name_other = st.session_state.get('farmer_name_other', '')
+        
+        # Store the current selection to compare in the next run
+        # This needs to be outside the if block so it's always updated
+        # It's better to manage this logic after the form submission or with explicit callbacks
+        # For now, relying on Streamlit's reruns for visibility
         if farmer_name_selected == labels['Others']:
             farmer_name_other = st.text_input(
                 labels['Specify Farmer Name'],
-                value=farmer_name_other, # Safely get
+                value=farmer_name_other,
                 key="farmer_name_other"
-                # Removed on_change=save_draft
             )
         else:
-            # Only clear 'farmer_name_other' in session_state if it was 'Others' previously and now it's not
-            if st.session_state.get('farmer_name_selected_prev') == labels['Others'] and 'farmer_name_other' in st.session_state:
-                st.session_state['farmer_name_other'] = "" # Reset when 'Others' is deselected
+            # If "Others" is not selected, ensure the 'farmer_name_other' in session state is cleared
+            # This is crucial for data integrity, as form submission only captures current state.
+            if 'farmer_name_other' in st.session_state:
+                st.session_state['farmer_name_other'] = ""
             farmer_name_other = "" # Ensure local variable is also empty
-        st.session_state.farmer_name_selected_prev = farmer_name_selected # Store previous selection for clearing logic
-
 
         current_farmer_code = st.session_state.get('farmer_code', FARMER_CODES[0] if FARMER_CODES else None) # Safely get
         farmer_code_default_idx = 0
@@ -650,7 +663,6 @@ if st.session_state.current_step == 'form_entry':
             index=farmer_code_default_idx,
             key="farmer_code",
             disabled=(not FARMER_CODES)
-            # Removed on_change=save_draft
         )
 
         gender_options = (labels['Male'], labels['Female'])
@@ -662,7 +674,6 @@ if st.session_state.current_step == 'form_entry':
             labels['Gender'], gender_options,
             index=gender_default_idx,
             key="gender"
-            # Removed on_change=save_draft
         )
 
         st.header(labels['Farm Details'])
@@ -670,44 +681,37 @@ if st.session_state.current_step == 'form_entry':
             labels['Number of Cows'], min_value=0,
             value=int(st.session_state.get('cows', 0)), # Safely get
             key="cows"
-            # Removed on_change=save_draft
         )
 
         cattle_in_milk = st.number_input(
             labels['No. of Cattle in Milk'], min_value=0,
             value=int(st.session_state.get('cattle_in_milk', 0)),
             key="cattle_in_milk"
-            # Removed on_change=save_draft
         )
         calves = st.number_input(
             labels['No. of Calves/Heifers'], min_value=0,
             value=int(st.session_state.get('calves', 0)),
             key="calves"
-            # Removed on_change=save_draft
         )
         desi_cows = st.number_input(
             labels['No. of Desi cows'], min_value=0,
             value=int(st.session_state.get('desi_cows', 0)),
             key="desi_cows"
-            # Removed on_change=save_draft
         )
         crossbreed_cows = st.number_input(
             labels['No. of Cross breed cows'], min_value=0,
             value=int(st.session_state.get('crossbreed_cows', 0)),
             key="crossbreed_cows"
-            # Removed on_change=save_draft
         )
         buffalo = st.number_input(
             labels['No. of Buffalo'], min_value=0,
             value=int(st.session_state.get('buffalo', 0)),
             key="buffalo"
-            # Removed on_change=save_draft
         )
         milk_production = st.number_input(
             labels['Milk Production'], min_value=0.0, format="%.2f",
             value=float(st.session_state.get('milk_production', 0.0)),
             key="milk_production"
-            # Removed on_change=save_draft
         )
 
         st.header(labels['Specific Questions'])
@@ -720,28 +724,28 @@ if st.session_state.current_step == 'form_entry':
             labels['Green Fodder'], green_fodder_options,
             index=green_fodder_default_idx,
             key="green_fodder"
-            # Removed on_change=save_draft
         )
-        green_fodder_types = st.session_state.get('green_fodder_types', [])
-        green_fodder_qty = st.session_state.get('green_fodder_qty', 0.0)
+        
+        # Initialize with current session state values, or empty list/0.0
+        green_fodder_types_current = st.session_state.get('green_fodder_types', [])
+        green_fodder_qty_current = st.session_state.get('green_fodder_qty', 0.0)
+
         if green_fodder == labels['Yes']:
             green_fodder_types = st.multiselect(
                 labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
-                default=green_fodder_types, # Safely get
+                default=green_fodder_types_current,
                 key="green_fodder_types"
-                # Removed on_change=save_draft
             )
             green_fodder_qty = st.number_input(
                 labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
-                value=float(green_fodder_qty),
+                value=float(green_fodder_qty_current),
                 key="green_fodder_qty"
-                # Removed on_change=save_draft
             )
         else:
             # Clear associated session state values when "No" is selected
             if 'green_fodder_types' in st.session_state: del st.session_state['green_fodder_types']
             if 'green_fodder_qty' in st.session_state: del st.session_state['green_fodder_qty']
-            green_fodder_types = []
+            green_fodder_types = [] # Ensure local variables are also reset
             green_fodder_qty = 0.0
 
         dry_fodder_options = (labels['Yes'], labels['No'])
@@ -753,22 +757,20 @@ if st.session_state.current_step == 'form_entry':
             labels['Dry Fodder'], dry_fodder_options,
             index=dry_fodder_default_idx,
             key="dry_fodder"
-            # Removed on_change=save_draft
         )
-        dry_fodder_types = st.session_state.get('dry_fodder_types', [])
-        dry_fodder_qty = st.session_state.get('dry_fodder_qty', 0.0)
+        
+        dry_fodder_types_current = st.session_state.get('dry_fodder_types', [])
+        dry_fodder_qty_current = st.session_state.get('dry_fodder_qty', 0.0)
         if dry_fodder == labels['Yes']:
             dry_fodder_types = st.multiselect(
                 labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
-                default=dry_fodder_types,
+                default=dry_fodder_types_current,
                 key="dry_fodder_types"
-                # Removed on_change=save_draft
             )
             dry_fodder_qty = st.number_input(
                 labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
-                value=float(dry_fodder_qty),
+                value=float(dry_fodder_qty_current),
                 key="dry_fodder_qty"
-                # Removed on_change=save_draft
             )
         else:
             if 'dry_fodder_types' in st.session_state: del st.session_state['dry_fodder_types']
@@ -785,22 +787,20 @@ if st.session_state.current_step == 'form_entry':
             labels['Pellet Feed'], pellet_feed_options,
             index=pellet_feed_default_idx,
             key="pellet_feed"
-            # Removed on_change=save_draft
         )
-        pellet_feed_brands = st.session_state.get('pellet_feed_brands', [])
-        pellet_feed_qty = st.session_state.get('pellet_feed_qty', 0.0)
+        
+        pellet_feed_brands_current = st.session_state.get('pellet_feed_brands', [])
+        pellet_feed_qty_current = st.session_state.get('pellet_feed_qty', 0.0)
         if pellet_feed == labels['Yes']:
             pellet_feed_brands = st.multiselect(
                 labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
-                default=pellet_feed_brands,
+                default=pellet_feed_brands_current,
                 key="pellet_feed_brands"
-                # Removed on_change=save_draft
             )
             pellet_feed_qty = st.number_input(
                 labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
-                value=float(pellet_feed_qty),
+                value=float(pellet_feed_qty_current),
                 key="pellet_feed_qty"
-                # Removed on_change=save_draft
             )
         else:
             if 'pellet_feed_brands' in st.session_state: del st.session_state['pellet_feed_brands']
@@ -817,26 +817,23 @@ if st.session_state.current_step == 'form_entry':
             labels['Mineral Mixture'], mineral_mixture_options,
             index=mineral_mixture_default_idx,
             key="mineral_mixture"
-            # Removed on_change=save_draft
         )
-        mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
-        mineral_qty = st.session_state.get('mineral_qty', 0.0)
+        
+        mineral_brand_current = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
+        mineral_qty_current = st.session_state.get('mineral_qty', 0.0)
         if mineral_mixture == labels['Yes']:
-            current_mineral_brand = st.session_state.get('mineral_brand', MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None)
             mineral_brand_default_idx = 0
-            if current_mineral_brand in MINERAL_MIXTURE_BRANDS:
-                mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(current_mineral_brand)
+            if mineral_brand_current in MINERAL_MIXTURE_BRANDS:
+                mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(mineral_brand_current)
             mineral_brand = st.selectbox(
                 labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
                 index=mineral_brand_default_idx,
                 key="mineral_brand"
-                # Removed on_change=save_draft
             )
             mineral_qty = st.number_input(
                 labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
-                value=float(mineral_qty),
+                value=float(mineral_qty_current),
                 key="mineral_qty"
-                # Removed on_change=save_draft
             )
         else:
             if 'mineral_brand' in st.session_state: del st.session_state['mineral_brand']
@@ -853,22 +850,20 @@ if st.session_state.current_step == 'form_entry':
             labels['Silage'], silage_options,
             index=silage_default_idx,
             key="silage"
-            # Removed on_change=save_draft
         )
-        silage_source = st.session_state.get('silage_source', '')
-        silage_qty = st.session_state.get('silage_qty', 0.0)
+        
+        silage_source_current = st.session_state.get('silage_source', '')
+        silage_qty_current = st.session_state.get('silage_qty', 0.0)
         if silage == labels['Yes']:
             silage_source = st.text_input(
                 labels['Source and Price of Silage'],
-                value=silage_source,
+                value=silage_source_current,
                 key="silage_source"
-                # Removed on_change=save_draft
             )
             silage_qty = st.number_input(
                 labels['Quantity of Silage'], min_value=0.0, format="%.2f",
-                value=float(silage_qty),
+                value=float(silage_qty_current),
                 key="silage_qty"
-                # Removed on_change=save_draft
             )
         else:
             if 'silage_source' in st.session_state: del st.session_state['silage_source']
@@ -876,11 +871,11 @@ if st.session_state.current_step == 'form_entry':
             silage_source = ""
             silage_qty = 0.0
 
+        water_sources_current = st.session_state.get('water_sources', [])
         water_sources = st.multiselect(
             labels['Source of Water'], WATER_SOURCE_OPTIONS,
-            default=st.session_state.get('water_sources', []),
+            default=water_sources_current,
             key="water_sources"
-            # Removed on_change=save_draft
         )
 
         # --- Photo Upload Snippet ---
@@ -890,67 +885,75 @@ if st.session_state.current_step == 'form_entry':
             type=["jpg", "jpeg", "png"],
             accept_multiple_files=True,
             key="image_uploader" # Unique key for file uploader
-            # Removed on_change=save_draft (not applicable for file_uploader in a form context this way)
         )
 
         # Process newly uploaded files
         if uploaded_files:
+            # This loop runs *every time* the form is submitted or a rerun happens.
+            # We need to ensure we only add new files and handle duplicates properly.
             for uploaded_file in uploaded_files:
-                # Create a unique filename for the temporary image
-                unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
-                temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
+                # Use a more robust check for uniqueness - combining filename and size or content hash
+                # For this example, we'll use a combination of name and size as a basic check
+                file_content = uploaded_file.getvalue()
+                file_hash = base64.b64encode(file_content).decode() # Simple hash based on content
 
-                # Check if this exact file content (or a file with the same name) has already been uploaded in this session
-                # For robust check, you'd hash file content, but for this context, checking existing paths and name is simpler.
+                # Check if this file (by content hash) has already been uploaded in this session
                 is_duplicate = False
                 for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
-                    if os.path.basename(temp_photo_path) == os.path.basename(existing_path) and os.path.exists(existing_path):
-                        is_duplicate = True
-                        break
+                    if os.path.exists(existing_path):
+                        with open(existing_path, "rb") as f:
+                            existing_hash = base64.b64encode(f.read()).decode()
+                        if existing_hash == file_hash:
+                            is_duplicate = True
+                            break
                 
                 if not is_duplicate:
                     if len(st.session_state.get('uploaded_temp_photo_paths', [])) < 3:
+                        unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
+                        temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
                         try:
                             with open(temp_photo_path, "wb") as f:
-                                f.write(uploaded_file.getbuffer())
+                                f.write(file_content)
                             st.session_state.uploaded_temp_photo_paths.append(temp_photo_path)
                             st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
-                            # No explicit save_draft() here, as form submission will capture it.
-                            # If you want real-time saving of photos, this would need to be outside the form.
                         except Exception as e:
                             st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
                     else:
                         st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
+                # else:
+                #     st.info(f"Skipped duplicate upload: {uploaded_file.name}") # Optional: inform user about duplicates
         
         # Display existing temporary photos and provide a remove option
         if st.session_state.get('uploaded_temp_photo_paths'):
             st.subheader("Currently uploaded photos:")
             # Use a copy of the list for iteration to avoid issues when modifying during iteration
-            for i, photo_path in enumerate(list(st.session_state.uploaded_temp_photo_paths)):
+            photos_to_display = list(st.session_state.uploaded_temp_photo_paths)
+            
+            # Clear invalid paths first to avoid errors during display
+            valid_photos = []
+            for photo_path in photos_to_display:
                 if os.path.exists(photo_path):
-                    try:
-                        with open(photo_path, "rb") as f:
-                            encoded_string = base64.b64encode(f.read()).decode()
-                        
-                        col1, col2 = st.columns([0.7, 0.3])
-                        with col1:
-                            st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
-                        with col2:
-                            # Button inside a column, unique key per photo
-                            if st.button(f"Remove", key=f"remove_photo_{i}_{photo_path.replace('.', '_').replace('/', '_').replace('\\', '_')}"):
-                                os.remove(photo_path)
-                                # Remove the path from the session state list
-                                st.session_state.uploaded_temp_photo_paths.remove(photo_path) 
-                                st.rerun() # Rerun to update the display after removal
-                    except Exception as e:
-                        st.error(f"Could not load image {os.path.basename(photo_path)}: {e}")
-                        # If file cannot be loaded, consider removing it from the list to avoid future errors
-                        if photo_path in st.session_state.uploaded_temp_photo_paths:
-                            st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                            st.rerun()
+                    valid_photos.append(photo_path)
                 else:
                     st.warning(f"Temporary photo path not found: {os.path.basename(photo_path)}. It might have been moved or deleted.")
-                    # Clean up broken paths from session state
+            st.session_state.uploaded_temp_photo_paths = valid_photos # Update session state with only valid paths
+            
+            cols = st.columns(3) # Adjust number of columns as needed
+            for i, photo_path in enumerate(st.session_state.uploaded_temp_photo_paths):
+                try:
+                    with open(photo_path, "rb") as f:
+                        encoded_string = base64.b64encode(f.read()).decode()
+                    
+                    with cols[i % 3]: # Distribute images across columns
+                        st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
+                        # Button inside a column, unique key per photo
+                        if st.button(f"Remove", key=f"remove_photo_{i}_{os.path.basename(photo_path).replace('.', '_')}"):
+                            os.remove(photo_path)
+                            st.session_state.uploaded_temp_photo_paths.remove(photo_path) # Remove the path from the session state list
+                            st.rerun() # Rerun to update the display after removal
+                except Exception as e:
+                    cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
+                    # If file cannot be loaded, consider removing it from the list to avoid future errors
                     if photo_path in st.session_state.uploaded_temp_photo_paths:
                         st.session_state.uploaded_temp_photo_paths.remove(photo_path)
                         st.rerun()
@@ -967,7 +970,6 @@ if st.session_state.current_step == 'form_entry':
             labels['Name'], SURVEYOR_NAMES,
             index=surveyor_name_default_idx,
             key="surveyor_name"
-            # Removed on_change=save_draft
         )
         
         current_visit_date = st.session_state.get('visit_date', datetime.date.today())
@@ -981,54 +983,7 @@ if st.session_state.current_step == 'form_entry':
             labels['Date of Visit'],
             value=current_visit_date,
             key="visit_date"
-            # Removed on_change=save_draft
         )
-# Add this at the end of `if st.session_state.current_step == 'form_entry':`
-
-st.markdown("---")
-st.header("📊 View & Download Survey Data")
-
-# View all responses DataFrame
-responses_df = get_all_responses_df()
-if not responses_df.empty:
-    with st.expander("🔍 View All Responses"):
-        st.dataframe(responses_df)
-
-    # Download CSV
-    csv_buffer = io.StringIO()
-    responses_df.to_csv(csv_buffer, index=False)
-    st.download_button(
-        label=labels['Download All Responses (CSV)'],
-        data=csv_buffer.getvalue(),
-        file_name="all_survey_responses.csv",
-        mime="text/csv",
-        key="download_csv_button"
-    )
-
-    # Download Excel
-    excel_buffer = io.BytesIO()
-    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
-        responses_df.to_excel(writer, index=False, sheet_name='Survey Data')
-    st.download_button(
-        label=labels['Download All Responses (Excel)'],
-        data=excel_buffer.getvalue(),
-        file_name="all_survey_responses.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        key="download_excel_button"
-    )
-else:
-    st.info("No survey responses found yet.")
-
-# Download all photos (ZIP)
-photo_zip = create_zip_file()
-st.download_button(
-    label=labels['Download All Photos (ZIP)'],
-    data=photo_zip,
-    file_name="all_photos.zip",
-    mime="application/zip",
-    key="download_photos_button"
-)
-
 
         # --- Submit Button (MUST BE INSIDE THE FORM) ---
         submit_for_review = st.form_submit_button(labels['Submit'])
@@ -1054,21 +1009,21 @@ st.download_button(
                 "No. of Buffalo": buffalo,
                 "Milk Production (liters/day)": milk_production,
                 "Green Fodder Provided": green_fodder,
-                "Type of Green Fodder": ", ".join(green_fodder_types) if green_fodder == labels['Yes'] else "N/A",
-                "Quantity of Green Fodder (Kg/day)": green_fodder_qty if green_fodder == labels['Yes'] else 0.0,
+                "Type of Green Fodder": ", ".join(st.session_state.get('green_fodder_types', [])) if st.session_state.get('green_fodder') == labels['Yes'] else "N/A",
+                "Quantity of Green Fodder (Kg/day)": st.session_state.get('green_fodder_qty', 0.0) if st.session_state.get('green_fodder') == labels['Yes'] else 0.0,
                 "Dry Fodder Provided": dry_fodder,
-                "Type of Dry Fodder": ", ".join(dry_fodder_types) if dry_fodder == labels['Yes'] else "N/A",
-                "Quantity of Dry Fodder (Kg/day)": dry_fodder_qty if dry_fodder == labels['Yes'] else 0.0,
+                "Type of Dry Fodder": ", ".join(st.session_state.get('dry_fodder_types', [])) if st.session_state.get('dry_fodder') == labels['Yes'] else "N/A",
+                "Quantity of Dry Fodder (Kg/day)": st.session_state.get('dry_fodder_qty', 0.0) if st.session_state.get('dry_fodder') == labels['Yes'] else 0.0,
                 "Pellet Feed Provided": pellet_feed,
-                "Pellet Feed Brand": ", ".join(pellet_feed_brands) if pellet_feed == labels['Yes'] else "N/A",
-                "Quantity of Pellet Feed (Kg/day)": pellet_feed_qty if pellet_feed == labels['Yes'] else 0.0,
+                "Pellet Feed Brand": ", ".join(st.session_state.get('pellet_feed_brands', [])) if st.session_state.get('pellet_feed') == labels['Yes'] else "N/A",
+                "Quantity of Pellet Feed (Kg/day)": st.session_state.get('pellet_feed_qty', 0.0) if st.session_state.get('pellet_feed') == labels['Yes'] else 0.0,
                 "Mineral Mixture Provided": mineral_mixture,
-                "Mineral Mixture Brand": mineral_brand if mineral_mixture == labels['Yes'] else "N/A",
-                "Quantity of Mineral Mixture (gm/day)": mineral_qty if mineral_mixture == labels['Yes'] else 0.0,
+                "Mineral Mixture Brand": st.session_state.get('mineral_brand') if st.session_state.get('mineral_mixture') == labels['Yes'] else "N/A",
+                "Quantity of Mineral Mixture (gm/day)": st.session_state.get('mineral_qty', 0.0) if st.session_state.get('mineral_mixture') == labels['Yes'] else 0.0,
                 "Silage Provided": silage,
-                "Source and Price of Silage": silage_source if silage == labels['Yes'] else "N/A",
-                "Quantity of Silage (Kg/day)": silage_qty if silage == labels['Yes'] else 0.0,
-                "Source of Water": ", ".join(water_sources) if water_sources else "N/A",
+                "Source and Price of Silage": st.session_state.get('silage_source', '') if st.session_state.get('silage') == labels['Yes'] else "N/A",
+                "Quantity of Silage (Kg/day)": st.session_state.get('silage_qty', 0.0) if st.session_state.get('silage') == labels['Yes'] else 0.0,
+                "Source of Water": ", ".join(st.session_state.get('water_sources', [])) if st.session_state.get('water_sources') else "N/A",
                 "Name of Surveyor": surveyor_name,
                 "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
                 "Photo Paths": st.session_state.uploaded_temp_photo_paths # Store temp paths for review
@@ -1161,7 +1116,6 @@ elif st.session_state.current_step == 'review':
                 final_photo_paths = []
                 for temp_path in st.session_state.uploaded_temp_photo_paths:
                     if os.path.exists(temp_path):
-                        # Create a unique filename for the final image to avoid conflicts
                         final_image_name = os.path.basename(temp_path)
                         final_path = os.path.join(FINAL_IMAGE_DIR, final_image_name)
                         try:
@@ -1169,10 +1123,9 @@ elif st.session_state.current_step == 'review':
                             final_photo_paths.append(final_path)
                         except Exception as e:
                             st.error(f"Error moving photo {os.path.basename(temp_path)}: {e}")
-                            # If move fails, keep the original temp path as a fallback for the CSV record
-                            final_photo_paths.append(temp_path)
+                            final_photo_paths.append(temp_path) # Keep temp path if move fails
                     else:
-                        st.warning(f"Temporary photo {os.path.basename(temp_path)} not found during final submission.")
+                        st.warning(f"Temporary photo {os.path.basename(temp_path)} not found during final submission. Skipping.")
                 
                 # Update the photo paths in the data to be saved to CSV (joining paths with comma)
                 data_to_review["Photo Paths"] = ", ".join(final_photo_paths)
@@ -1187,10 +1140,9 @@ elif st.session_state.current_step == 'review':
                 # Save to CSV
                 try:
                     # Append to file if it exists, otherwise create it
-                    if not os.path.exists(file_path):
-                        df.to_csv(file_path, index=False)
-                    else:
-                        df.to_csv(file_path, mode='a', header=False, index=False)
+                    # Check if the file exists to decide whether to write header
+                    file_exists = os.path.exists(file_path)
+                    df.to_csv(file_path, mode='a', header=not file_exists, index=False)
                     
                     st.session_state.current_step = 'submitted'
                     st.session_state.last_saved_time_persistent = None # Clear auto-save message
@@ -1257,7 +1209,8 @@ else:
     st.sidebar.info("No survey responses available for download (CSV/Excel).")
 
 # Download All Photos (ZIP)
-if os.listdir(FINAL_IMAGE_DIR):
+# Check if FINAL_IMAGE_DIR exists and contains files
+if os.path.exists(FINAL_IMAGE_DIR) and os.listdir(FINAL_IMAGE_DIR):
     zip_buffer = create_zip_file()
     st.sidebar.download_button(
         label=labels['Download All Photos (ZIP)'],
