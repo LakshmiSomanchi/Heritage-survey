@@ -235,63 +235,8 @@ dict_translations = {
     }
 }
 
-# --- Heritage Specific Data
-VLCC_NAMES = [
-    "3025-K.V.PALLE", "3026-KOTHA PALLE", "3028-BONAMVARIPALLE", "3029-BOMMAICHERUVUPALLI",
-    "3030-BADDALAVARIPALLI", "3033-CHINNAGOTTIGALLU", "3034-VODDIPALLE", "3036-MUDUPULAVEMULA",
-    "3037-BAYYAREDDYGARIPALLE", "3038-DODDIPALLE", "3040-MARAMREDDYGARIPALLE", "3041-GUTTAPALEM",
-    "3042-CHERUVUMUNDARAPALLI", "3044-VARAMPATIVARIPALLE", "3045-ROMPICHERLA", "3046-BANDAKINDAPALLE",
-    "3047-MARASANIVARIPALLI", "3024-DEVALAVARIPALLE", "3002-KHAMBAMMITTAPALLE", "3004-MARRIMAKULAPALLE",
-    "3005-NAGARIMADUGUVARIPALLE", "3006-KOORAPARTHIVARIPALLE", "3008-IRRIVANDLAPALLE", "3009-PATHEGADA (U.I)",
-    "3011-PULICHERLA", "3013-GUDAREVUPALLE", "3014-ENUMALAVARIPALLE", "3015-MUNTHAVANDLAPALLE", "3016-REGALLU",
-    "3018-REDDIVARIPALLE", "3019-MAJJIGAVANDLAPALLE", "3020-VENKATADASARAPALLE", "3021-BURRAVANDLAPALLE",
-    "3022-KODEKAMBAMVARIPALLI", "3023-SEENAPPAGARIPALLE", "3071-KOTAKADAPALLE", "3072-KOTAKADAPALLE",
-    "3074-PODALAKUNTALAPALLE", "3075-SOMALA", "3076-SOMALA", "3077-SOMALA", "3078-CHINNAGOTTIGALLU",
-    "3079-MATLOLLPALLAI", "3080-POLIKIMAKULAPALLE", "3081-K.GOLLAPALLE", "3082-CHERUKUVARIPALLE",
-    "3083-SODUM", "3084-PILER", "3085-CHERUKUVARIPALLE", "3086-SOMALA", "3087-SODUM", "3088-YERRAVARIPALEM",
-    "3089-GUDAREVUPALLE", "3090-SOMALA", "3091-PUTTAVARIPALLE", "3092-VAGALLA", "3048-R.KUMMARA PALLE",
-    "3049-HANUMANTHARAYUNIPETA", "3050-CHENCHAMAREDDIGARIPALLE", "3051-BODUMALLUVARIPALLE", "3052-BANDAKINDAPALLE",
-    "3055-NAKKALADINNEVODDIPALLE", "3057-KUKKALODDU", "3059-GUNDLAKADAPALLI", "3070-PEDDAPANJANI",
-    "3069-PEDDAPALLI", "3068-KADIRAKUNTA", "3067-KOTALA", "3066-VLLIGATLA(U.I)", "3060-BALIREDDIGARIPALLE",
-    "3061-SODUM", "3062-GONGIVARIPALLE", "3064-SRINADHAPURAM", "3063-GANGUVARIPALLE", "1664-DEVALAMPETA",
-    "1651-YERRAGUNTLAVARIPALLE", "1740-KALIKIRI", "1718-KOTHA PALLE", "1542-HARIJANAWADA", "1937-KAMMAPALLE",
-    "1993-T.SANDRAVARIPALLE", "1959-MANCHOORIVARIPALLE", "1812-GANGIREDDIGARIPALLE", "1781-ROMPICHERLA",
-    "1773-SREERAMULAVADDIPALLE", "1770-THATIGUNTAPALEM", "1868-ROMPICHERLA", "1824-YERRAGUNTLAVARIPALLE",
-    "0884-KOTHAPALLE", "0881-ROMPICHERLA", "0880-MUREVANDLAPALLE", "0878-KALIKIRI", "0876-DIGUVAJUPALLI",
-    "0874-KONDAREDDIGARIPALLE", "0871-ROMPICHERLA", "0868-NAGARIMADUGUVARIPALLE", "0863-KHAMBAMMITTAPALLE",
-    "0906-REDDIVARIPALLE", "0900-GOLLAPALLE", "0895-PEDDAMALLELA", "0893-PEDDIREDDIGARIPALLE",
-    "0888-BANDARALAVARIPALLE", "0887-ELLAMPALLE", "0830-REGALLU", "0826-MUNIREDDIGARIPALLE", "0824-PILER",
-    "0859-KRIHSNAREDDIGARIPALLE", "0851-GYARAMPALLE", "0848-ELLAREDDIGARIPALLE", "0846-KURAVAPALLE",
-    "0842-PEDDAMALLELA", "0839-BANDAMVARIPALLE", "1058-CHERUKUVARIPALLE", "1057-CHERUKUVARIPALLE",
-    "1052-NANJAMPETA", "1017-KHAMBAMVARIPALLE", "1003-PUTTAVANDLAPALLE THANDA", "1272-USTIKAYALAPENTA",
-    "1240-MITTAPALLE", "0916-AGRAHARAM", "0915-CHALLAVARIPALLE", "0982-KUCHAMVARIPALLE", "2388-SAGGAMVARI ENDLU",
-    "2380-PILER", "2374-PILER", "2437-MARRIMAKULAPALLE", "2421-MATLOLLPALLAI", "2314-KUMMARAPALLE",
-    "2338-SETTIPALLEVANDLAPALLE", "2500-KAMMAPALLE", "2530-AVULAPEDDIREDDIGARIPALL", "2528-MARAMREDDIGARIPALLE",
-    "2526-AVULAPEDDIREDDIGARIPALL", "2463-BOMMAIAHGARIPALLE", "2444-ROMPICHERLA", "2440-BASIREDDIGARIPALLE",
-    "2013-THOTIMALAPALLE", "2083-RAJUVARIPALLI H/W", "2045-RAJUVARIPALLI", "2288-RAJUVARIPALLI",
-    "2272-THATIGUNTAPALEM", "2186-KANTAMVARIPALLE", "2183-REGALLU", "2178-SANKENIGUTTAPALLE",
-    "2173-MUNELLAPALLE", "2160-V.K.THURPUPALLE", "2228-GAJULAVARIPALLI", "0296-BESTAPALLE",
-    "0335-MATLOLLPALLAI", "0326-LOKAVARIPALLE", "0256-VOOTUPALLE", "0245-BETAPALLE", "0237-BATTUVARIPALLE",
-    "0417-ROMPICHERLA", "0414-BODIPATIVARIPALLE", "0441-BODIPATIVARIPALLE", "0440-VARANASIVARIPALLE",
-    "0360-CHICHILIVARIPALLE", "0357-AKKISANIVARIPALLE", "0394-SETTIPALLEVANDLAPALLE", "0072-VAGALLA",
-    "0056-LEMATIVARIPALLE", "0108-KONDAREDDIGARIPALLE", "0016-ROMPICHERLA", "0030-MELLAVARIPALLE",
-    "0197-BASIREDDIGARIPALLE", "0173-MORAVAPALLE", "0221-KURABAPALLE", "0130-PATHAKURVAPALLE",
-    "0165-AGRAHARAM", "0151-BONAMVARIPALLE", "0649-PILER", "0645-NADIMPALLE", "0643-SAVVALAVARIPALLE",
-    "0636-KURAPATHIVARIPALLE", "0689-VANKAVODDIPALLE", "0688-BADDALAVARIPALLI H.W.", "0685-NAGARIMADUGUVARIPALLE",
-    "0668-KANDUR", "0663-DEVALAVARIPALLE", "0585-SRIVARAMPURAM", "0575-RAMREDDIGARIPALLE", "0572-LOKAVARIPALLE",
-    "0613-NAGAVANDLAPALLI", "0611-BODIPATIVARIPALLE", "0610-ROMPICHERLA", "0604-NAGAVANDLAPALLI",
-    "0782-CHICHILIVARIPALLE", "0770-DEVALAVARIPALLE", "0767-PEDDAGOTTIGALLU", "0764-K.V.PALLE",
-    "0762-JAGADAMVARIPALLE", "0753-BOLLINANIVARIPALLI", "0813-ROMPICHERLA", "0811-ALAKAMVARIPALLE",
-    "0809-KOTAKADAPALLE", "0794-PEDDAGOTTIGALLU", "0793-DIGUVAJUPALLI", "0789-SODUM", "0788-BURUJUPALLE",
-    "0786-PEDDAGOTTIGALLU CROSS", "0719-NADIMPALLE", "0718-PEDDAGOTTIGALLU", "0714-BODIPATIVARIPALLE",
-    "0709-REDDIVARIPALLE", "0700-RAMIREDDIGARIPALLE", "0721-SODUM", "0747-KURAVAPALLE", "0745-ETUKURIVARIPALLE",
-    "0743-ROMPICHERLA", "0736-VOOTUPALLE", "0732-ROMPICHERLA", "0727-DUSSAVANDLA PALLI", "0726-SAVVALAVARIPALLE",
-    "0508-MUREVANDLAPALLE", "0490-MATAMPALLE", "0551-TALUPULA", "0512-BONAMVARIPALLE", "0473-KURAVAPALLE",
-    "0477-VARANASIVARIPALLE"
-]
-
-# Parse the provided farmer data
-farmer_data_raw = """
+# Raw data from your CSV input
+farmer_data_raw_csv = """
 S No.	Year	HPC Code	HPC Name	Member Code	Rep ID	Farmer Name	Average of SNF	Slabs
 1	Feb-25	3028	HPC-BONAMVARI PALLI	0008	9300033214	C VIJAYAKUMARI	8.02	Slab 5
 2	Feb-25	3028	HPC-BONAMVARI PALLI	0013	9300040221	SHAIK SUBAHAN ALI	7.86	Slab 5
@@ -429,7 +374,7 @@ S No.	Year	HPC Code	HPC Name	Member Code	Rep ID	Farmer Name	Average of SNF	Slabs
 134	Feb-25	3048	HPC-R KUMMARA PALLI	0019	9300055111	C VIJAYA	7.87	Slab 5
 135	Feb-25	3048	HPC-R KUMMARA PALLI	0020	9300055112	M NARASAMMA	7.95	Slab 5
 136	Feb-25	3048	HPC-R KUMMARA PALLI	0021	9300055114	N DAMODARA	8.07	Slab 5
-137	Feb-25	3048	HPC-R KUMMARA PALLI	0023	9300071406	N  MALLIKA	7.83	Slab 5
+137	Feb-25	3048	HPC-R KUMMARA PALLI	0023	9300071406	N MALLIKA	7.83	Slab 5
 138	Feb-25	3048	HPC-R KUMMARA PALLI	0025	9300077785	M VENKATAPATHI	7.84	Slab 5
 139	Feb-25	3048	HPC-R KUMMARA PALLI	0026	9300077786	N SRINIVASULU	7.83	Slab 5
 140	Feb-25	3048	HPC-R KUMMARA PALLI	0027	9300086744	N LAVANYA	8.02	Slab 5
@@ -545,18 +490,33 @@ S No.	Year	HPC Code	HPC Name	Member Code	Rep ID	Farmer Name	Average of SNF	Slabs
 250	Feb-25	3064	HPC-GANDLA PALLI	0027	9300103262	N CHARAN KUMAR	8.03	Slab 5
 """
 
-FARMER_DATA = {}
-# Skip the header row and then process each line
-for line in farmer_data_raw.strip().split('\n')[1:]:
-    parts = line.split('\t')
-    if len(parts) >= 7:  # Ensure there are enough columns
-        member_code = parts[4].strip()
-        farmer_name = parts[6].strip()
-        FARMER_DATA[member_code] = farmer_name
+# Load the raw data into a DataFrame
+# Using StringIO to treat the string as a file
+df_farmer_data = pd.read_csv(io.StringIO(farmer_data_raw_csv), sep='\t')
 
-# Create lists for dropdowns based on the new FARMER_DATA
-FARMER_CODES = sorted(list(FARMER_DATA.keys())) if FARMER_DATA else []
-FARMER_NAMES_ORIGINAL = sorted(list(FARMER_DATA.values())) if FARMER_DATA else []
+# Clean up column names by stripping whitespace
+df_farmer_data.columns = df_farmer_data.columns.str.strip()
+
+# Create a dictionary for farmer data lookup
+# Using VLCC Name as HPC Name for this application's context
+VLCC_NAMES = sorted(df_farmer_data['HPC Name'].unique().tolist())
+
+# Create a master lookup dictionary for farmer details based on Member Code
+# This dictionary will store a dictionary of details for each farmer
+FARMER_LOOKUP = {}
+for index, row in df_farmer_data.iterrows():
+    farmer_code = str(row['Member Code']).strip()
+    FARMER_LOOKUP[farmer_code] = {
+        'HPC Name': row['HPC Name'].strip(),
+        'Farmer Name': row['Farmer Name'].strip(),
+        'Rep ID': str(row['Rep ID']).strip(), # Phone number
+        'HPC Code': str(row['HPC Code']).strip()
+    }
+
+# Create lists for dropdowns from the processed data
+FARMER_CODES_ALL = sorted(list(FARMER_LOOKUP.keys()))
+FARMER_NAMES_ALL = sorted(list(set(data['Farmer Name'] for data in FARMER_LOOKUP.values()))) # Unique farmer names
+
 
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
@@ -571,9 +531,10 @@ initial_values_defaults = {
     'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None,
     'hpc_code': '',
     'types': "HPC",
-    'farmer_name_selected': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others',
+    'farmer_name_selected': 'Others', # Default to 'Others' to allow custom entry or selection
     'farmer_name_other': '',
-    'farmer_code': FARMER_CODES[0] if FARMER_CODES else None,
+    'farmer_code': None, # Will be set based on VLCC or user selection
+    'rep_id': '', # Added Rep ID
     'gender': "Male",
     'cows': 0,
     'cattle_in_milk': 0,
@@ -600,24 +561,19 @@ initial_values_defaults = {
     'water_sources': [],
     'surveyor_name': SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None,
     'visit_date': datetime.date.today(),
-    'uploaded_temp_photo_paths': [],  # To store paths of temporarily uploaded photos
-    'final_submitted_data': None,  # To store data ready for review/submission
-    'current_step': 'form_entry',  # 'form_entry', 'review', 'submitted'
-    'farmer_name_selected_prev': FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else 'Others' # To track previous farmer name selection
+    'uploaded_temp_photo_paths': [],
+    'final_submitted_data': None,
+    'current_step': 'form_entry',
 }
 
 # Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
-    # Get current values from session_state, falling back to defaults if not present
-    # Only save the keys that are part of the form's state
     draft_data = {key: st.session_state.get(key, initial_values_defaults.get(key)) for key in initial_values_defaults.keys()}
     
-    # Convert datetime.date objects to string for JSON serialization
     if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
         draft_data['visit_date'] = draft_data['visit_date'].isoformat()
     
-    # Special handling for uploaded_temp_photo_paths to ensure it's a list even if it was None/empty
     if 'uploaded_temp_photo_paths' not in draft_data or not isinstance(draft_data['uploaded_temp_photo_paths'], list):
         draft_data['uploaded_temp_photo_paths'] = []
 
@@ -643,18 +599,14 @@ def load_draft():
                     except ValueError:
                         st.session_state[key] = initial_values_defaults.get(key, datetime.date.today())
                 elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_temp_photo_paths']:
-                    # Ensure multiselect defaults are lists
                     st.session_state[key] = list(value) if isinstance(value, list) else []
                 else:
                     st.session_state[key] = value
             
             # --- VALIDATE DROPDOWN SELECTIONS AFTER LOADING DRAFT ---
-            # Ensure vlcc_name is a valid option if it exists in loaded_data
             if 'vlcc_name' in st.session_state and st.session_state['vlcc_name'] not in VLCC_NAMES:
                 st.session_state['vlcc_name'] = VLCC_NAMES[0] if VLCC_NAMES else None
             
-            # Re-validate other dropdown selections based on current language
-            # This requires fetching labels *after* lang_select might have been updated from draft
             temp_lang = loaded_data.get('lang_select', 'English')
             current_labels = dict_translations.get(temp_lang, dict_translations['English'])
             
@@ -674,23 +626,20 @@ def load_draft():
                 st.session_state['silage'] = current_labels['Yes']
             
             # For farmer_name_selected, ensure it's a valid option or "Others"
-            farmer_names_with_others_for_load = FARMER_NAMES_ORIGINAL + [current_labels['Others']]
+            farmer_names_with_others_for_load = FARMER_NAMES_ALL + [current_labels['Others']]
             if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in farmer_names_with_others_for_load:
-                st.session_state['farmer_name_selected'] = FARMER_NAMES_ORIGINAL[0] if FARMER_NAMES_ORIGINAL else current_labels['Others']
+                st.session_state['farmer_name_selected'] = FARMER_NAMES_ALL[0] if FARMER_NAMES_ALL else current_labels['Others']
 
             # For farmer_code, ensure it's a valid option
-            if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES:
-                st.session_state['farmer_code'] = FARMER_CODES[0] if FARMER_CODES else None
+            if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES_ALL:
+                st.session_state['farmer_code'] = FARMER_CODES_ALL[0] if FARMER_CODES_ALL else None
 
-            # For mineral_brand, ensure it's a valid option
             if 'mineral_brand' in st.session_state and st.session_state['mineral_brand'] not in MINERAL_MIXTURE_BRANDS:
                 st.session_state['mineral_brand'] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
             
-            # For surveyor_name, ensure it's a valid option
             if 'surveyor_name' in st.session_state and st.session_state['surveyor_name'] not in SURVEYOR_NAMES:
                 st.session_state['surveyor_name'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
 
-            # Explicitly ensure uploaded_temp_photo_paths is a list after loading
             if 'uploaded_temp_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_temp_photo_paths, list):
                 st.session_state.uploaded_temp_photo_paths = []
 
@@ -703,37 +652,29 @@ def load_draft():
 
 # Function to clear form fields (reset session state for form entry)
 def clear_form_fields():
-    # Define keys to *always keep* (not clear)
     persistent_keys = ['lang_select', 'app_initialized_flag', 'current_step']
-
-    # Iterate through all session state keys and delete those not in persistent_keys
-    # Create a list of keys to delete to avoid modifying dict during iteration
     keys_to_delete = [key for key in st.session_state.keys() if key not in persistent_keys]
 
     for key in keys_to_delete:
-        if key in st.session_state: # Check if key still exists before deleting
+        if key in st.session_state:
             del st.session_state[key]
     
-    # Reset specific keys to their defaults for a fresh form
     for key, default_value in initial_values_defaults.items():
-        if key not in st.session_state: # Only set if it was deleted or never existed
+        if key not in st.session_state:
             st.session_state[key] = default_value
     
-    # Ensure current_step is back to form_entry
     st.session_state.current_step = 'form_entry'
-    st.session_state.last_saved_time_persistent = None # Clear auto-save message
+    st.session_state.last_saved_time_persistent = None
     
-    # Clear temporary images
     for f in os.listdir(TEMP_IMAGE_DIR):
         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
-    st.session_state.uploaded_temp_photo_paths = [] # Also clear paths in session state
+    st.session_state.uploaded_temp_photo_paths = []
 
-    # Important: Remove the draft file after successful submission
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     if os.path.exists(draft_filename):
         os.remove(draft_filename)
 
-    st.rerun() # Rerun to clear the form fields and update display
+    st.rerun()
 
 # Function to create a ZIP file of all images
 def create_zip_file():
@@ -751,9 +692,8 @@ def get_all_responses_df():
     all_files = [os.path.join(SAVE_DIR, f) for f in os.listdir(SAVE_DIR) if f.endswith('.csv') and f.startswith('survey_response_')]
     
     if not all_files:
-        return pd.DataFrame() # Return empty DataFrame if no files
+        return pd.DataFrame()
 
-    # Read each CSV file and concatenate them
     df_list = []
     for file in all_files:
         try:
@@ -767,34 +707,30 @@ def get_all_responses_df():
     else:
         return pd.DataFrame()
 
-
 # Initialize session state for the first time or load draft
 if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
     st.session_state.last_saved_time_persistent = None
     
-    # Initialize all defaults first
     for key, default_value in initial_values_defaults.items():
         if key not in st.session_state:
             st.session_state[key] = default_value
     
-    # Then try to load draft, which will overwrite defaults if successful and valid
     load_draft()
 
 # Language Selection
 initial_lang_options = ("English", "Hindi", "Marathi", "Telugu")
-# Ensure st.session_state.lang_select is initialized before using it for index
 if 'lang_select' not in st.session_state or st.session_state.lang_select not in initial_lang_options:
     st.session_state.lang_select = "English"
 
 initial_lang_index = initial_lang_options.index(st.session_state.lang_select)
 
-lang = st.sidebar.selectbox( # Moved to sidebar
-    "Language / भाषा / भाषा / భాష", # Updated display text for sidebar
+lang = st.sidebar.selectbox(
+    "Language / भाषा / भाषा / భాష",
     initial_lang_options,
     index=initial_lang_index,
     key="lang_select",
-    on_change=save_draft # Save draft when language changes
+    on_change=save_draft
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
@@ -809,11 +745,10 @@ else:
 if st.session_state.current_step == 'form_entry':
     st.title(labels['Farmer Profile'])
 
-    # Form Start
     with st.form("survey_form"):
         st.header(labels['Farmer Profile'])
 
-        # Safely get vlcc_name from session state for default index
+        # VLCC Name (HPC Name from your data)
         current_vlcc_name = st.session_state.get('vlcc_name', VLCC_NAMES[0] if VLCC_NAMES else None)
         vlcc_name_default_idx = 0
         if current_vlcc_name in VLCC_NAMES:
@@ -821,21 +756,171 @@ if st.session_state.current_step == 'form_entry':
         elif VLCC_NAMES:
             vlcc_name_default_idx = 0
 
+        # Callback function for VLCC selection
+        def update_farmer_options_on_vlcc_change():
+            selected_vlcc = st.session_state.vlcc_name
+            st.session_state.filtered_farmer_codes = sorted(df_farmer_data[df_farmer_data['HPC Name'] == selected_vlcc]['Member Code'].astype(str).unique().tolist())
+            st.session_state.filtered_farmer_names = sorted(df_farmer_data[df_farmer_data['HPC Name'] == selected_vlcc]['Farmer Name'].unique().tolist())
+            
+            # Reset farmer name/code selections if they are not in the new filtered list
+            if st.session_state.farmer_code not in st.session_state.filtered_farmer_codes:
+                st.session_state.farmer_code = st.session_state.filtered_farmer_codes[0] if st.session_state.filtered_farmer_codes else None
+            if st.session_state.farmer_name_selected not in st.session_state.filtered_farmer_names and st.session_state.farmer_name_selected != labels['Others']:
+                st.session_state.farmer_name_selected = labels['Others']
+                st.session_state.farmer_name_other = ''
+            
+            # Clear HPC Code and Rep ID if VLCC changes and they don't match the new VLCC's first farmer
+            if st.session_state.farmer_code:
+                farmer_info = FARMER_LOOKUP.get(st.session_state.farmer_code)
+                if farmer_info and farmer_info['HPC Name'] == selected_vlcc:
+                    st.session_state.hpc_code = farmer_info['HPC Code']
+                    st.session_state.rep_id = farmer_info['Rep ID']
+                else:
+                    st.session_state.hpc_code = ''
+                    st.session_state.rep_id = ''
+            else:
+                st.session_state.hpc_code = ''
+                st.session_state.rep_id = ''
+
         vlcc_name = st.selectbox(
             labels['VLCC Name'], VLCC_NAMES,
             index=vlcc_name_default_idx,
             key="vlcc_name",
-            disabled=(not VLCC_NAMES)
+            disabled=(not VLCC_NAMES),
+            on_change=update_farmer_options_on_vlcc_change # Set callback
         )
 
+        # Initialize filtered options based on initial VLCC selection or loaded draft
+        if 'filtered_farmer_codes' not in st.session_state:
+             st.session_state.filtered_farmer_codes = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Member Code'].astype(str).unique().tolist())
+        if 'filtered_farmer_names' not in st.session_state:
+            st.session_state.filtered_farmer_names = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Farmer Name'].unique().tolist())
+
+        # Farmer Name (selected from filtered list or 'Others')
+        farmer_names_options = st.session_state.filtered_farmer_names + [labels['Others']]
+        
+        current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_options[0] if farmer_names_options else labels['Others'])
+        farmer_name_default_idx = 0
+        if current_farmer_name_selected in farmer_names_options:
+            farmer_name_default_idx = farmer_names_options.index(current_farmer_name_selected)
+        elif farmer_names_options:
+            farmer_name_default_idx = 0
+
+        def update_farmer_code_on_name_change():
+            selected_farmer_name = st.session_state.farmer_name_selected
+            if selected_farmer_name != labels['Others']:
+                # Find the corresponding farmer code and update
+                # Assuming farmer names might not be unique, pick the first match for simplicity
+                # For unique mapping, farmer code should be the primary driver
+                matching_farmers = df_farmer_data[
+                    (df_farmer_data['HPC Name'] == st.session_state.vlcc_name) &
+                    (df_farmer_data['Farmer Name'] == selected_farmer_name)
+                ]
+                if not matching_farmers.empty:
+                    farmer_info = FARMER_LOOKUP.get(str(matching_farmers.iloc[0]['Member Code']))
+                    if farmer_info:
+                        st.session_state.farmer_code = str(matching_farmers.iloc[0]['Member Code'])
+                        st.session_state.hpc_code = farmer_info['HPC Code']
+                        st.session_state.rep_id = farmer_info['Rep ID']
+                else:
+                    st.session_state.farmer_code = None
+                    st.session_state.hpc_code = ''
+                    st.session_state.rep_id = ''
+            else:
+                st.session_state.farmer_code = None
+                st.session_state.hpc_code = ''
+                st.session_state.rep_id = ''
+                st.session_state.farmer_name_other = st.session_state.get('farmer_name_other', '') # Keep custom name if exists
+
+        farmer_name_selected = st.selectbox(
+            labels['Farmer Name'], options=farmer_names_options,
+            index=farmer_name_default_idx,
+            key="farmer_name_selected",
+            disabled=(not farmer_names_options),
+            on_change=update_farmer_code_on_name_change
+        )
+
+        farmer_name_other = st.session_state.get('farmer_name_other', '')
+        if farmer_name_selected == labels['Others']:
+            farmer_name_other = st.text_input(
+                labels['Specify Farmer Name'],
+                value=farmer_name_other,
+                key="farmer_name_other"
+            )
+        else:
+            st.session_state['farmer_name_other'] = ""
+            farmer_name_other = ""
+
+        # Farmer Code selection based on filtered codes
+        farmer_codes_options = st.session_state.filtered_farmer_codes
+        
+        current_farmer_code = st.session_state.get('farmer_code', farmer_codes_options[0] if farmer_codes_options else None)
+        farmer_code_default_idx = 0
+        if current_farmer_code in farmer_codes_options:
+            farmer_code_default_idx = farmer_codes_options.index(current_farmer_code)
+        elif farmer_codes_options:
+            farmer_code_default_idx = 0
+
+        def update_farmer_name_on_code_change():
+            selected_farmer_code = st.session_state.farmer_code
+            if selected_farmer_code in FARMER_LOOKUP:
+                farmer_info = FARMER_LOOKUP[selected_farmer_code]
+                # Update HPC Code and Rep ID based on selected farmer code
+                st.session_state.hpc_code = farmer_info['HPC Code']
+                st.session_state.rep_id = farmer_info['Rep ID']
+                # Try to set farmer name dropdown to actual name if it exists, else 'Others'
+                if farmer_info['Farmer Name'] in st.session_state.filtered_farmer_names:
+                    st.session_state.farmer_name_selected = farmer_info['Farmer Name']
+                    st.session_state.farmer_name_other = '' # Clear 'others' field
+                else:
+                    st.session_state.farmer_name_selected = labels['Others']
+                    # Keep farmer_name_other blank or try to fill with the found name if it's new
+                    st.session_state.farmer_name_other = farmer_info['Farmer Name'] # Autofill unknown name
+            else:
+                st.session_state.hpc_code = ''
+                st.session_state.rep_id = ''
+                st.session_state.farmer_name_selected = labels['Others'] # Reset to Others
+                st.session_state.farmer_name_other = '' # Clear other name
+
+        farmer_code = st.selectbox(
+            labels['Farmer Code'], options=farmer_codes_options,
+            index=farmer_code_default_idx,
+            key="farmer_code",
+            disabled=(not farmer_codes_options),
+            on_change=update_farmer_name_on_code_change
+        )
+        
+        # Display HPC Code (autofilled or manual)
+        st.session_state.hpc_code = st.session_state.get('hpc_code', '')
+        # Attempt to autofill HPC Code if VLCC and Farmer Code are selected
+        if st.session_state.vlcc_name and st.session_state.farmer_code in FARMER_LOOKUP:
+            lookup_hpc_code = FARMER_LOOKUP[st.session_state.farmer_code]['HPC Code']
+            if lookup_hpc_code != st.session_state.hpc_code:
+                st.session_state.hpc_code = lookup_hpc_code
         hpc_code = st.text_input(
             labels['HPC/MCC Code'],
-            value=st.session_state.get('hpc_code', ''), # Safely get
-            key="hpc_code"
+            value=st.session_state.hpc_code,
+            key="hpc_code_display", # Use a different key if it's just for display
+            disabled=True # Usually HPC code would be auto-filled if farmer is selected
+        )
+        # Allow manual override if needed, but for now it's disabled.
+        # If manual entry is required, remove disabled=True and handle conflicts.
+
+        # Display Rep ID (Phone Number) (autofilled)
+        st.session_state.rep_id = st.session_state.get('rep_id', '')
+        if st.session_state.farmer_code in FARMER_LOOKUP:
+            lookup_rep_id = FARMER_LOOKUP[st.session_state.farmer_code]['Rep ID']
+            if lookup_rep_id != st.session_state.rep_id:
+                st.session_state.rep_id = lookup_rep_id
+        st.text_input(
+            "Rep ID (Phone Number)", # Label for Rep ID
+            value=st.session_state.rep_id,
+            key="rep_id_display",
+            disabled=True # Usually Rep ID would be auto-filled
         )
 
         types_options = (labels['HPC'], labels['MCC'])
-        current_types = st.session_state.get('types', types_options[0]) # Safely get
+        current_types = st.session_state.get('types', types_options[0])
         types_default_idx = 0
         if current_types in types_options:
             types_default_idx = types_options.index(current_types)
@@ -845,58 +930,8 @@ if st.session_state.current_step == 'form_entry':
             key="types"
         )
 
-        farmer_names_with_others = FARMER_NAMES_ORIGINAL + [labels['Others']]
-        current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_with_others[0] if farmer_names_with_others else labels['Others'])
-        farmer_name_default_idx = 0
-        if current_farmer_name_selected in farmer_names_with_others:
-            farmer_name_default_idx = farmer_names_with_others.index(current_farmer_name_selected)
-        elif farmer_names_with_others:
-            farmer_name_default_idx = 0
-
-        farmer_name_selected = st.selectbox(
-            labels['Farmer Name'], options=farmer_names_with_others,
-            index=farmer_name_default_idx,
-            key="farmer_name_selected",
-            disabled=(not farmer_names_with_others)
-        )
-
-        # Logic to handle "Others" for Farmer Name
-        # Ensure farmer_name_other is correctly retrieved/initialized
-        farmer_name_other = st.session_state.get('farmer_name_other', '')
-        
-        # Store the current selection to compare in the next run
-        # This needs to be outside the if block so it's always updated
-        # It's better to manage this logic after the form submission or with explicit callbacks
-        # For now, relying on Streamlit's reruns for visibility
-        if farmer_name_selected == labels['Others']:
-            farmer_name_other = st.text_input(
-                labels['Specify Farmer Name'],
-                value=farmer_name_other,
-                key="farmer_name_other"
-            )
-        else:
-            # If "Others" is not selected, ensure the 'farmer_name_other' in session state is cleared
-            # This is crucial for data integrity, as form submission only captures current state.
-            if 'farmer_name_other' in st.session_state:
-                st.session_state['farmer_name_other'] = ""
-            farmer_name_other = "" # Ensure local variable is also empty
-
-        current_farmer_code = st.session_state.get('farmer_code', FARMER_CODES[0] if FARMER_CODES else None) # Safely get
-        farmer_code_default_idx = 0
-        if current_farmer_code in FARMER_CODES:
-            farmer_code_default_idx = FARMER_CODES.index(current_farmer_code)
-        elif FARMER_CODES:
-            farmer_code_default_idx = 0
-
-        farmer_code = st.selectbox(
-            labels['Farmer Code'], options=FARMER_CODES,
-            index=farmer_code_default_idx,
-            key="farmer_code",
-            disabled=(not FARMER_CODES)
-        )
-
         gender_options = (labels['Male'], labels['Female'])
-        current_gender = st.session_state.get('gender', gender_options[0]) # Safely get
+        current_gender = st.session_state.get('gender', gender_options[0])
         gender_default_idx = 0
         if current_gender in gender_options:
             gender_default_idx = gender_options.index(current_gender)
@@ -909,7 +944,7 @@ if st.session_state.current_step == 'form_entry':
         st.header(labels['Farm Details'])
         cows = st.number_input(
             labels['Number of Cows'], min_value=0,
-            value=int(st.session_state.get('cows', 0)), # Safely get
+            value=int(st.session_state.get('cows', 0)),
             key="cows"
         )
 
@@ -956,7 +991,6 @@ if st.session_state.current_step == 'form_entry':
             key="green_fodder"
         )
         
-        # Initialize with current session state values, or empty list/0.0
         green_fodder_types_current = st.session_state.get('green_fodder_types', [])
         green_fodder_qty_current = st.session_state.get('green_fodder_qty', 0.0)
 
@@ -972,10 +1006,9 @@ if st.session_state.current_step == 'form_entry':
                 key="green_fodder_qty"
             )
         else:
-            # Clear associated session state values when "No" is selected
             if 'green_fodder_types' in st.session_state: del st.session_state['green_fodder_types']
             if 'green_fodder_qty' in st.session_state: del st.session_state['green_fodder_qty']
-            green_fodder_types = [] # Ensure local variables are also reset
+            green_fodder_types = []
             green_fodder_qty = 0.0
 
         dry_fodder_options = (labels['Yes'], labels['No'])
@@ -1114,20 +1147,14 @@ if st.session_state.current_step == 'form_entry':
             labels['Upload Photos'],
             type=["jpg", "jpeg", "png"],
             accept_multiple_files=True,
-            key="image_uploader" # Unique key for file uploader
+            key="image_uploader"
         )
 
-        # Process newly uploaded files
         if uploaded_files:
-            # This loop runs *every time* the form is submitted or a rerun happens.
-            # We need to ensure we only add new files and handle duplicates properly.
             for uploaded_file in uploaded_files:
-                # Use a more robust check for uniqueness - combining filename and size or content hash
-                # For this example, we'll use a combination of name and size as a basic check
                 file_content = uploaded_file.getvalue()
-                file_hash = base64.b64encode(file_content).decode() # Simple hash based on content
+                file_hash = base64.b64encode(file_content).decode()
 
-                # Check if this file (by content hash) has already been uploaded in this session
                 is_duplicate = False
                 for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
                     if os.path.exists(existing_path):
@@ -1150,40 +1177,33 @@ if st.session_state.current_step == 'form_entry':
                             st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
                     else:
                         st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
-                # else:
-                #     st.info(f"Skipped duplicate upload: {uploaded_file.name}") # Optional: inform user about duplicates
         
-        # Display existing temporary photos and provide a remove option
         if st.session_state.get('uploaded_temp_photo_paths'):
             st.subheader("Currently uploaded photos:")
-            # Use a copy of the list for iteration to avoid issues when modifying during iteration
             photos_to_display = list(st.session_state.uploaded_temp_photo_paths)
             
-            # Clear invalid paths first to avoid errors during display
             valid_photos = []
             for photo_path in photos_to_display:
                 if os.path.exists(photo_path):
                     valid_photos.append(photo_path)
                 else:
                     st.warning(f"Temporary photo path not found: {os.path.basename(photo_path)}. It might have been moved or deleted.")
-            st.session_state.uploaded_temp_photo_paths = valid_photos # Update session state with only valid paths
+            st.session_state.uploaded_temp_photo_paths = valid_photos
             
-            cols = st.columns(3) # Adjust number of columns as needed
+            cols = st.columns(3)
             for i, photo_path in enumerate(st.session_state.uploaded_temp_photo_paths):
                 try:
                     with open(photo_path, "rb") as f:
                         encoded_string = base64.b64encode(f.read()).decode()
                     
-                    with cols[i % 3]: # Distribute images across columns
+                    with cols[i % 3]:
                         st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
-                        # Button inside a column, unique key per photo
                         if st.button(f"Remove", key=f"remove_photo_{i}_{os.path.basename(photo_path).replace('.', '_')}"):
                             os.remove(photo_path)
-                            st.session_state.uploaded_temp_photo_paths.remove(photo_path) # Remove the path from the session state list
-                            st.rerun() # Rerun to update the display after removal
+                            st.session_state.uploaded_temp_photo_paths.remove(photo_path)
+                            st.rerun()
                 except Exception as e:
                     cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
-                    # If file cannot be loaded, consider removing it from the list to avoid future errors
                     if photo_path in st.session_state.uploaded_temp_photo_paths:
                         st.session_state.uploaded_temp_photo_paths.remove(photo_path)
                         st.rerun()
@@ -1192,7 +1212,7 @@ if st.session_state.current_step == 'form_entry':
 
 
         st.header("Survey Details")
-        current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None) # Safely get
+        current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None)
         surveyor_name_default_idx = 0
         if current_surveyor_name in SURVEYOR_NAMES:
             surveyor_name_default_idx = SURVEYOR_NAMES.index(current_surveyor_name)
@@ -1219,17 +1239,16 @@ if st.session_state.current_step == 'form_entry':
         submit_for_review = st.form_submit_button(labels['Submit'])
 
         if submit_for_review:
-            # Determine the final farmer name based on selection
             final_farmer_name = farmer_name_other if farmer_name_selected == labels['Others'] else farmer_name_selected
 
-            # Collect all data for review from session state
             data_for_review = {
                 "Language": lang,
                 "VLCC Name": vlcc_name,
-                "HPC/MCC Code": hpc_code,
+                "HPC/MCC Code": st.session_state.hpc_code, # Use session state for HPC Code
                 "Type": types,
                 "Farmer Name": final_farmer_name,
-                "Farmer Code / Pourer ID": farmer_code,
+                "Farmer Code / Pourer ID": st.session_state.farmer_code if st.session_state.farmer_code else 'N/A', # Use session state for farmer code
+                "Rep ID (Phone Number)": st.session_state.rep_id, # Include Rep ID
                 "Gender": gender,
                 "Number of Cows": cows,
                 "No. of Cattle in Milk": cattle_in_milk,
@@ -1255,12 +1274,12 @@ if st.session_state.current_step == 'form_entry':
                 "Quantity of Silage (Kg/day)": st.session_state.get('silage_qty', 0.0) if st.session_state.get('silage') == labels['Yes'] else 0.0,
                 "Source of Water": ", ".join(st.session_state.get('water_sources', [])) if st.session_state.get('water_sources') else "N/A",
                 "Name of Surveyor": surveyor_name,
-                "Date of Visit": visit_date.isoformat(), # ISO format for consistent saving
-                "Photo Paths": st.session_state.uploaded_temp_photo_paths # Store temp paths for review
+                "Date of Visit": visit_date.isoformat(),
+                "Photo Paths": st.session_state.uploaded_temp_photo_paths
             }
             st.session_state.final_submitted_data = data_for_review
             st.session_state.current_step = 'review'
-            save_draft() # Save draft here, after data is collected and state updated
+            save_draft()
             st.rerun()
 
 elif st.session_state.current_step == 'review':
@@ -1270,7 +1289,6 @@ elif st.session_state.current_step == 'review':
     data_to_review = st.session_state.final_submitted_data
 
     if data_to_review:
-        # Display all collected data in a more structured way
         st.subheader("Farmer Profile")
         st.write(f"**{labels['Language']}:** {data_to_review['Language']}")
         st.write(f"**{labels['VLCC Name']}:** {data_to_review['VLCC Name']}")
@@ -1278,6 +1296,7 @@ elif st.session_state.current_step == 'review':
         st.write(f"**{labels['Types']}:** {data_to_review['Type']}")
         st.write(f"**{labels['Farmer Name']}:** {data_to_review['Farmer Name']}")
         st.write(f"**{labels['Farmer Code']}:** {data_to_review['Farmer Code / Pourer ID']}")
+        st.write(f"**Rep ID (Phone Number):** {data_to_review['Rep ID (Phone Number)']}") # Display Rep ID
         st.write(f"**{labels['Gender']}:** {data_to_review['Gender']}")
 
         st.subheader("Farm Details")
@@ -1342,7 +1361,6 @@ elif st.session_state.current_step == 'review':
         col1, col2 = st.columns(2)
         with col1:
             if st.button(labels['Confirm and Submit'], key="confirm_submit_button"):
-                # Move photos from temp to final directory
                 final_photo_paths = []
                 for temp_path in st.session_state.uploaded_temp_photo_paths:
                     if os.path.exists(temp_path):
@@ -1353,41 +1371,33 @@ elif st.session_state.current_step == 'review':
                             final_photo_paths.append(final_path)
                         except Exception as e:
                             st.error(f"Error moving photo {os.path.basename(temp_path)}: {e}")
-                            final_photo_paths.append(temp_path) # Keep temp path if move fails
+                            final_photo_paths.append(temp_path)
                     else:
                         st.warning(f"Temporary photo {os.path.basename(temp_path)} not found during final submission. Skipping.")
                 
-                # Update the photo paths in the data to be saved to CSV (joining paths with comma)
                 data_to_review["Photo Paths"] = ", ".join(final_photo_paths)
 
-                # Convert to DataFrame and save
                 df = pd.DataFrame([data_to_review])
 
-                # Define filename
                 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 file_path = os.path.join(SAVE_DIR, f"survey_response_{timestamp}.csv")
 
-                # Save to CSV
                 try:
-                    # Append to file if it exists, otherwise create it
-                    # Check if the file exists to decide whether to write header
                     file_exists = os.path.exists(file_path)
                     df.to_csv(file_path, mode='a', header=not file_exists, index=False)
                     
                     st.session_state.current_step = 'submitted'
-                    st.session_state.last_saved_time_persistent = None # Clear auto-save message
+                    st.session_state.last_saved_time_persistent = None
                     
-                    # Clear temporary image directory after successful submission
                     for f in os.listdir(TEMP_IMAGE_DIR):
                         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
-                    st.session_state.uploaded_temp_photo_paths = [] # Clear the list in session state
+                    st.session_state.uploaded_temp_photo_paths = []
 
-                    # Important: Remove the draft file after successful submission
                     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
                     if os.path.exists(draft_filename):
                         os.remove(draft_filename)
 
-                    st.rerun() # Rerun to show success message
+                    st.rerun()
                 except Exception as e:
                     st.error(f"Error saving data: {e}")
         with col2:
@@ -1405,13 +1415,12 @@ elif st.session_state.current_step == 'submitted':
     st.success(labels['Successfully Submitted!'])
     st.write("Thank you for your submission!")
     if st.button(labels['Fill Another Form']):
-        clear_form_fields() # This function will reset state and rerun
+        clear_form_fields()
 
 # --- Sidebar for Download Options ---
 st.sidebar.markdown("---")
 st.sidebar.header("Download Options")
 
-# Download All Responses (CSV)
 all_responses_df = get_all_responses_df()
 if not all_responses_df.empty:
     csv_data = all_responses_df.to_csv(index=False).encode('utf-8')
@@ -1423,7 +1432,6 @@ if not all_responses_df.empty:
         key="download_all_csv"
     )
 
-    # Download All Responses (Excel)
     excel_buffer = io.BytesIO()
     with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
         all_responses_df.to_excel(writer, index=False, sheet_name='SurveyResponses')
@@ -1438,8 +1446,6 @@ if not all_responses_df.empty:
 else:
     st.sidebar.info("No survey responses available for download (CSV/Excel).")
 
-# Download All Photos (ZIP)
-# Check if FINAL_IMAGE_DIR exists and contains files
 if os.path.exists(FINAL_IMAGE_DIR) and os.listdir(FINAL_IMAGE_DIR):
     zip_buffer = create_zip_file()
     st.sidebar.download_button(
