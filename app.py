@@ -348,146 +348,146 @@ S No.	Year	HPC Code	HPC Name	Member Code	Rep ID	Farmer Name	Average of SNF	Slabs
 108	Feb-25	3047	HPC-MARASANIVARI PALLI	0005	9300053648	M JYOSHNA	7.91	Slab 5
 109	Feb-25	3047	HPC-MARASANIVARI PALLI	0006	9300053649	M SUDARSAN REDDY	8.08	Slab 5
 110	Feb-25	3047	HPC-MARASANIVARI PALLI	0007	9300053650	M VENKATRAMAIAH	7.95	Slab 5
-111	Feb-25	3047	HPC-MARASANIVARI PALLI	0012	9300054156	M YARRAMMA	8.05	Slab 5
-112	Feb-25	3047	HPC-MARASANIVARI PALLI	0013	9300055109	M VENKTRAMAIAH	7.97	Slab 5
-113	Feb-25	3047	HPC-MARASANIVARI PALLI	0023	9300061776	M BHARATHI	7.98	Slab 5
-114	Feb-25	3047	HPC-MARASANIVARI PALLI	0025	9300066825	M KRISHNA REDDY	7.99	Slab 5
-115	Feb-25	3047	HPC-MARASANIVARI PALLI	0026	9300074993	B MANGAMMA	7.86	Slab 5
-116	Feb-25	3047	HPC-MARASANIVARI PALLI	0028	9300128261	M DEEPIKA	8.02	Slab 5
-117	Feb-25	3047	HPC-MARASANIVARI PALLI	0029	9300128262	M LAKSHMI DEVI	7.99	Slab 5
-118	Feb-25	3048	HPC-R KUMMARA PALLI	0001	9300054644	C GOVIDAMMA	7.86	Slab 5
-119	Feb-25	3048	HPC-R KUMMARA PALLI	0002	9300054647	M BHARGAVI	7.81	Slab 5
-120	Feb-25	3048	HPC-R KUMMARA PALLI	0003	9300054648	M LAKSHMI MOUNIKA	7.85	Slab 5
-121	Feb-25	3048	HPC-R KUMMARA PALLI	0005	9300054655	MUNIKRISHNA	7.94	Slab 5
-122	Feb-25	3048	HPC-R KUMMARA PALLI	0006	9300054658	N GANGAIAH	7.83	Slab 5
-123	Feb-25	3048	HPC-R KUMMARA PALLI	0007	9300054659	N JYOTHI	7.88	Slab 5
-124	Feb-25	3048	HPC-R KUMMARA PALLI	0008	9300054660	N LAKSHMIDEVI	8.04	Slab 5
-125	Feb-25	3048	HPC-R KUMMARA PALLI	0009	9300054662	N PURUSHOTHAM	7.85	Slab 5
-126	Feb-25	3048	HPC-R KUMMARA PALLI	0011	9300054664	N RAMADEVI	7.82	Slab 5
-127	Feb-25	3048	HPC-R KUMMARA PALLI	0012	9300054665	N VENKATRAMANA	7.84	Slab 5
-128	Feb-25	3048	HPC-R KUMMARA PALLI	0013	9300054666	V JAYALAXMI	7.89	Slab 5
-129	Feb-25	3048	HPC-R KUMMARA PALLI	0014	9300054667	V NARAYANAMMA	7.85	Slab 5
-130	Feb-25	3048	HPC-R KUMMARA PALLI	0015	9300054668	V RAJAMMA	7.84	Slab 5
-131	Feb-25	3048	HPC-R KUMMARA PALLI	0016	9300054669	V RAMBABU	7.84	Slab 5
-132	Feb-25	3048	HPC-R KUMMARA PALLI	0017	9300054670	Y LAKSHMI	7.84	Slab 5
-133	Feb-25	3048	HPC-R KUMMARA PALLI	0018	9300054671	Y NAGAVENI	7.84	Slab 5
-134	Feb-25	3048	HPC-R KUMMARA PALLI	0019	9300055111	C VIJAYA	7.87	Slab 5
-135	Feb-25	3048	HPC-R KUMMARA PALLI	0020	9300055112	M NARASAMMA	7.95	Slab 5
-136	Feb-25	3048	HPC-R KUMMARA PALLI	0021	9300055114	N DAMODARA	8.07	Slab 5
-137	Feb-25	3048	HPC-R KUMMARA PALLI	0023	9300071406	N  MALLIKA	7.83	Slab 5
-138	Feb-25	3048	HPC-R KUMMARA PALLI	0025	9300077785	M VENKATAPATHI	7.84	Slab 5
-139	Feb-25	3048	HPC-R KUMMARA PALLI	0026	9300077786	N SRINIVASULU	7.83	Slab 5
-140	Feb-25	3048	HPC-R KUMMARA PALLI	0027	9300086744	N LAVANYA	8.02	Slab 5
-141	Feb-25	3048	HPC-R KUMMARA PALLI	0028	9300092313	N HARITHA	7.84	Slab 5
-142	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0001	9300059314	B LAKSHMIDEVI	7.97	Slab 5
-143	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0002	9300059315	B MURALI	7.92	Slab 5
-144	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0003	9300059316	K DEVI	8.00	Slab 5
-145	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0004	9300059317	K REDDEPPA	7.92	Slab 5
-146	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0008	9300059326	RUPA LAVANYA	8.00	Slab 5
-147	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0011	9300059331	V JAYANTHI	7.92	Slab 5
-148	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0013	9300061844	R LEELA KUMAR	8.01	Slab 5
-149	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0014	9300062337	S MUBARAK ALI	7.91	Slab 5
-150	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0015	9300062339	S SABEEN TAJ	7.93	Slab 5
-151	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0017	9300085648	P JALEEL KHAN	7.99	Slab 5
-152	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0018	9300085649	P REDDY KHAN	7.92	Slab 5
-153	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0019	9300086275	D NARASAMMA	8.03	Slab 5
-154	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0020	9300092828	V RANI	7.93	Slab 5
-155	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0001	9300059332	A RAJAMMA	7.90	Slab 5
-156	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0002	9300059334	C PRABAKAR	8.06	Slab 5
-157	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0006	9300059353	D SURENDRA REDDY	8.04	Slab 5
-158	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0008	9300059358	M VISHNUVARDHAN REDDY	7.90	Slab 5
-159	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0009	9300059360	T VENKATARAMANA	7.94	Slab 5
-160	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0008	9300062401	K KALAVATHI	7.88	Slab 5
-161	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0010	9300062412	K SAHADEVA	7.93	Slab 5
-162	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0016	9300062437	O MAHESWAR REDDY	7.83	Slab 5
-163	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0017	9300062444	P SAIDANNI	7.85	Slab 5
-164	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0019	9300062449	S SAYAD BHASHA	7.87	Slab 5
-165	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0029	9300094787	O KRISHNAMMA	7.80	Slab 5
-166	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0035	9300094793	D PRASANNA	7.91	Slab 5
-167	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0036	9300104122	K ESWARAMMA	7.90	Slab 5
-168	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0002	9300062913	D ASHOK KUMAR	7.90	Slab 5
-169	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0003	9300062916	D KALAVTHI	8.07	Slab 5
-170	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0006	9300062921	D RATHNAMMA	7.90	Slab 5
-171	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0008	9300062929	K BHUDEVI	7.86	Slab 5
-172	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0009	9300062932	K GEETHA RANI	7.89	Slab 5
-173	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0011	9300062939	K SANDHYA	7.99	Slab 5
-174	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0013	9300062945	K VASANTHA KUMARI	7.85	Slab 5
-175	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0014	9300062949	K VENKATRAMAIAH	7.86	Slab 5
-176	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0017	9300072434	V SARADA	7.89	Slab 5
-177	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0020	9300132040	DOVALA RAMANAIAH	8.04	Slab 5
-178	Feb-25	3055	HPC-N D VADDIPALLI	0010	9300076356	G PARVATHAMMA	8.08	Slab 5
-179	Feb-25	3055	HPC-N D VADDIPALLI	0011	9300076354	G SYAMALAMMA	8.04	Slab 5
-180	Feb-25	3055	HPC-N D VADDIPALLI	0016	9300081340	G MADHAVI	7.89	Slab 5
-181	Feb-25	3055	HPC-N D VADDIPALLI	0021	9300107480	K THULASAMMA	7.96	Slab 5
-182	Feb-25	3055	HPC-N D VADDIPALLI	0023	9300134967	K ROOPA	8.02	Slab 5
-183	Feb-25	3057	HPC-KUKKALAODDU	0001	9300082822	D KAMALA	8.02	Slab 5
-184	Feb-25	3057	HPC-KUKKALAODDU	0002	9300082785	G CHITTEMMA	8.05	Slab 5
-185	Feb-25	3057	HPC-KUKKALAODDU	0003	9300082779	G ESWARAMMA	7.94	Slab 5
-186	Feb-25	3057	HPC-KUKKALAODDU	0005	9300082780	G VASANTHA	7.98	Slab 5
-187	Feb-25	3057	HPC-KUKKALAODDU	0006	9300082778	P CHANDU	8.07	Slab 5
-188	Feb-25	3057	HPC-KUKKALAODDU	0007	9300082782	P LAKSHMI DEVI	8.03	Slab 5
-189	Feb-25	3057	HPC-KUKKALAODDU	0008	9300082783	P REDDY RANI	8.02	Slab 5
-190	Feb-25	3057	HPC-KUKKALAODDU	0010	9300082784	P VEDAVATHI	8.07	Slab 5
-191	Feb-25	3057	HPC-KUKKALAODDU	0011	9300082781	P YELLAMMA	8.10	Slab 5
-192	Feb-25	3057	HPC-KUKKALAODDU	0012	9300082777	S CHANGAMMA	7.96	Slab 5
-193	Feb-25	3057	HPC-KUKKALAODDU	0015	9300083852	D MANI KUMAR	7.90	Slab 5
-194	Feb-25	3057	HPC-KUKKALAODDU	0016	9300084604	G GANGADHARA	8.01	Slab 5
-195	Feb-25	3057	HPC-KUKKALAODDU	0018	9300118043	prabhakar	8.10	Slab 5
-196	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0006	9300086948	K RAJAMMA	7.99	Slab 5
-197	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0008	9300086950	P ANASUYA	7.83	Slab 5
-198	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0010	9300086943	P RAJAMMA	7.83	Slab 5
-199	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0012	9300086942	P SAHADEVAREDDY	7.98	Slab 5
-200	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0015	9300090637	P BHARATHAMMA	7.92	Slab 5
-201	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0017	9300090635	S GOWRAMMA	7.87	Slab 5
-202	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0001	9300095607	V RANEMMA	8.09	Slab 5
-203	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0003	9300095609	B GANNIMITTA	7.83	Slab 5
-204	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0004	9300095610	V BHASKAR REDDY	7.90	Slab 5
-205	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0008	9300095614	V PADMAJA	7.99	Slab 5
-206	Feb-25	3061	HPC-CHEEKALA CHENU	0002	9300096474	PACHIPALA SURENDRA	8.07	Slab 5
-207	Feb-25	3061	HPC-CHEEKALA CHENU	0004	9300096476	PACHIPALA SUDAKARA	8.06	Slab 5
-208	Feb-25	3061	HPC-CHEEKALA CHENU	0007	9300096479	PACHIPALA MANEESH	7.82	Slab 5
-209	Feb-25	3061	HPC-CHEEKALA CHENU	0008	9300096480	MALLE KIRAN KUMAR	7.83	Slab 5
-210	Feb-25	3061	HPC-CHEEKALA CHENU	0009	9300096481	PACHIPALA VENUGOPALU	7.82	Slab 5
-211	Feb-25	3061	HPC-CHEEKALA CHENU	0010	9300096482	V CHITTEMMA	7.82	Slab 5
-212	Feb-25	3061	HPC-CHEEKALA CHENU	0014	9300097911	APPINENI NARASAMMA	7.86	Slab 5
-213	Feb-25	3061	HPC-CHEEKALA CHENU	0017	9300102353	B GIRI BABU	7.95	Slab 5
-214	Feb-25	3061	HPC-CHEEKALA CHENU	0019	9300119676	P MOHAN BABU	7.85	Slab 5
-215	Feb-25	3061	HPC-CHEEKALA CHENU	0020	9300119677	B MURALI	7.84	Slab 5
-216	Feb-25	3061	HPC-CHEEKALA CHENU	0022	9300142878	M RAMADEVI	7.92	Slab 5
-217	Feb-25	3062	HPC-GANTAVARI PALLI	0002	9300096701	SREENIVASULU	8.04	Slab 5
-218	Feb-25	3062	HPC-GANTAVARI PALLI	0012	9300096711	C NARSAMMA	8.06	Slab 5
-219	Feb-25	3062	HPC-GANTAVARI PALLI	0015	9300097218	A YARRAIAH	8.06	Slab 5
-220	Feb-25	3062	HPC-GANTAVARI PALLI	0017	9300097220	G MUNEMMA	7.83	Slab 5
-221	Feb-25	3062	HPC-GANTAVARI PALLI	0020	9300100969	KUKATI RAJESH	8.07	Slab 5
-222	Feb-25	3063	HPC-GONGIVARI PALLI	0004	9300096489	A CHANDRAMMA	7.81	Slab 5
-223	Feb-25	3063	HPC-GONGIVARI PALLI	0005	9300096490	P NANDINI	7.93	Slab 5
-224	Feb-25	3063	HPC-GONGIVARI PALLI	0006	9300096491	ANKIREDDY RAMIREDDY	7.80	Slab 5
-225	Feb-25	3063	HPC-GONGIVARI PALLI	0007	9300096492	K SRI RAMULU	7.87	Slab 5
-226	Feb-25	3063	HPC-GONGIVARI PALLI	0008	9300096493	G NAGESH	7.81	Slab 5
-227	Feb-25	3063	HPC-GONGIVARI PALLI	0009	9300096494	U VENKATAMUNI NAIDU	7.90	Slab 5
-228	Feb-25	3063	HPC-GONGIVARI PALLI	0011	9300097092	A NAGARAJA	7.80	Slab 5
-229	Feb-25	3063	HPC-GONGIVARI PALLI	0012	9300097093	G ANJAMMA	7.82	Slab 5
-230	Feb-25	3063	HPC-GONGIVARI PALLI	0013	9300097094	A MARUTHEESWARA REDDY	7.90	Slab 5
-231	Feb-25	3063	HPC-GONGIVARI PALLI	0014	9300098209	G RAMNJULU	7.81	Slab 5
-232	Feb-25	3063	HPC-GONGIVARI PALLI	0015	9300100972	A BHUDEVI	7.81	Slab 5
-233	Feb-25	3063	HPC-GONGIVARI PALLI	0016	9300115028	K VISWANADHA	7.86	Slab 5
-234	Feb-25	3063	HPC-GONGIVARI PALLI	0017	9300115029	A RAGHUVA REDDY	7.85	Slab 5
-235	Feb-25	3063	HPC-GONGIVARI PALLI	0018	9300119680	P SYAMALAMMA	7.95	Slab 5
-236	Feb-25	3063	HPC-GONGIVARI PALLI	0019	9300123431	K BHARGAVI	7.89	Slab 5
-237	Feb-25	3064	HPC-GANDLA PALLI	0001	9300096463	SAHADEVAIAH N	8.09	Slab 5
-238	Feb-25	3064	HPC-GANDLA PALLI	0005	9300096467	LAXMIDEV B	7.83	Slab 5
-239	Feb-25	3064	HPC-GANDLA PALLI	0006	9300096468	P HANUMANTHU	7.95	Slab 5
-240	Feb-25	3064	HPC-GANDLA PALLI	0009	9300096471	HARI PRASAD P	7.89	Slab 5
-241	Feb-25	3064	HPC-GANDLA PALLI	0010	9300096472	K ESWARAMMA	7.92	Slab 5
-242	Feb-25	3064	HPC-GANDLA PALLI	0012	9300097090	M LAKSHMIDEVI	8.05	Slab 5
-243	Feb-25	3064	HPC-GANDLA PALLI	0013	9300097091	K MALLESWARI	8.06	Slab 5
-244	Feb-25	3064	HPC-GANDLA PALLI	0014	9300097912	SANKARAIH C	7.97	Slab 5
-245	Feb-25	3064	HPC-GANDLA PALLI	0015	9300097913	B KUMARI	7.95	Slab 5
-246	Feb-25	3064	HPC-GANDLA PALLI	0016	9300097914	M YERRAKKA	7.88	Slab 5
-247	Feb-25	3064	HPC-GANDLA PALLI	0017	9300097915	V GANGADEVI	7.90	Slab 5
-248	Feb-25	3064	HPC-GANDLA PALLI	0018	9300097916	C PADMAVATHAMMA	8.09	Slab 5
-249	Feb-25	3064	HPC-GANDLA PALLI	0021	9300097919	M CHANDRAMMA	7.87	Slab 5
-250	Feb-25	3064	HPC-GANDLA PALLI	0027	9300103262	N CHARAN KUMAR	8.03	Slab 5
+110	Feb-25	3047	HPC-MARASANIVARI PALLI	0012	9300054156	M YARRAMMA	8.05	Slab 5
+111	Feb-25	3047	HPC-MARASANIVARI PALLI	0013	9300055109	M VENKTRAMAIAH	7.97	Slab 5
+112	Feb-25	3047	HPC-MARASANIVARI PALLI	0023	9300061776	M BHARATHI	7.98	Slab 5
+113	Feb-25	3047	HPC-MARASANIVARI PALLI	0025	9300066825	M KRISHNA REDDY	7.99	Slab 5
+114	Feb-25	3047	HPC-MARASANIVARI PALLI	0026	9300074993	B MANGAMMA	7.86	Slab 5
+115	Feb-25	3047	HPC-MARASANIVARI PALLI	0028	9300128261	M DEEPIKA	8.02	Slab 5
+116	Feb-25	3047	HPC-MARASANIVARI PALLI	0029	9300128262	M LAKSHMI DEVI	7.99	Slab 5
+117	Feb-25	3048	HPC-R KUMMARA PALLI	0001	9300054644	C GOVIDAMMA	7.86	Slab 5
+118	Feb-25	3048	HPC-R KUMMARA PALLI	0002	9300054647	M BHARGAVI	7.81	Slab 5
+119	Feb-25	3048	HPC-R KUMMARA PALLI	0003	9300054648	M LAKSHMI MOUNIKA	7.85	Slab 5
+120	Feb-25	3048	HPC-R KUMMARA PALLI	0005	9300054655	MUNIKRISHNA	7.94	Slab 5
+121	Feb-25	3048	HPC-R KUMMARA PALLI	0006	9300054658	N GANGAIAH	7.83	Slab 5
+122	Feb-25	3048	HPC-R KUMMARA PALLI	0007	9300054659	N JYOTHI	7.88	Slab 5
+123	Feb-25	3048	HPC-R KUMMARA PALLI	0008	9300054660	N LAKSHMIDEVI	8.04	Slab 5
+124	Feb-25	3048	HPC-R KUMMARA PALLI	0009	9300054662	N PURUSHOTHAM	7.85	Slab 5
+125	Feb-25	3048	HPC-R KUMMARA PALLI	0011	9300054664	N RAMADEVI	7.82	Slab 5
+126	Feb-25	3048	HPC-R KUMMARA PALLI	0012	9300054665	N VENKATRAMANA	7.84	Slab 5
+127	Feb-25	3048	HPC-R KUMMARA PALLI	0013	9300054666	V JAYALAXMI	7.89	Slab 5
+128	Feb-25	3048	HPC-R KUMMARA PALLI	0014	9300054667	V NARAYANAMMA	7.85	Slab 5
+129	Feb-25	3048	HPC-R KUMMARA PALLI	0015	9300054668	V RAJAMMA	7.84	Slab 5
+130	Feb-25	3048	HPC-R KUMMARA PALLI	0016	9300054669	V RAMBABU	7.84	Slab 5
+131	Feb-25	3048	HPC-R KUMMARA PALLI	0017	9300054670	Y LAKSHMI	7.84	Slab 5
+132	Feb-25	3048	HPC-R KUMMARA PALLI	0018	9300054671	Y NAGAVENI	7.84	Slab 5
+133	Feb-25	3048	HPC-R KUMMARA PALLI	0019	9300055111	C VIJAYA	7.87	Slab 5
+134	Feb-25	3048	HPC-R KUMMARA PALLI	0020	9300055112	M NARASAMMA	7.95	Slab 5
+135	Feb-25	3048	HPC-R KUMMARA PALLI	0021	9300055114	N DAMODARA	8.07	Slab 5
+136	Feb-25	3048	HPC-R KUMMARA PALLI	0023	9300071406	N  MALLIKA	7.83	Slab 5
+137	Feb-25	3048	HPC-R KUMMARA PALLI	0025	9300077785	M VENKATAPATHI	7.84	Slab 5
+138	Feb-25	3048	HPC-R KUMMARA PALLI	0026	9300077786	N SRINIVASULU	7.83	Slab 5
+139	Feb-25	3048	HPC-R KUMMARA PALLI	0027	9300086744	N LAVANYA	8.02	Slab 5
+140	Feb-25	3048	HPC-R KUMMARA PALLI	0028	9300092313	N HARITHA	7.84	Slab 5
+141	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0001	9300059314	B LAKSHMIDEVI	7.97	Slab 5
+142	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0002	9300059315	B MURALI	7.92	Slab 5
+143	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0003	9300059316	K DEVI	8.00	Slab 5
+144	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0004	9300059317	K REDDEPPA	7.92	Slab 5
+145	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0008	9300059326	RUPA LAVANYA	8.00	Slab 5
+146	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0011	9300059331	V JAYANTHI	7.92	Slab 5
+147	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0013	9300061844	R LEELA KUMAR	8.01	Slab 5
+148	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0014	9300062337	S MUBARAK ALI	7.91	Slab 5
+149	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0015	9300062339	S SABEEN TAJ	7.93	Slab 5
+150	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0017	9300085648	P JALEEL KHAN	7.99	Slab 5
+151	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0018	9300085649	P REDDY KHAN	7.92	Slab 5
+152	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0019	9300086275	D NARASAMMA	8.03	Slab 5
+153	Feb-25	3049	HPC-HANUMANTHARAYUNI PETTA	0020	9300092828	V RANI	7.93	Slab 5
+154	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0001	9300059332	A RAJAMMA	7.90	Slab 5
+155	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0002	9300059334	C PRABAKAR	8.06	Slab 5
+156	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0006	9300059353	D SURENDRA REDDY	8.04	Slab 5
+157	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0008	9300059358	M VISHNUVARDHAN REDDY	7.90	Slab 5
+158	Feb-25	3050	HPC-CHENCHAMREDDYGARI PALLI	0009	9300059360	T VENKATARAMANA	7.94	Slab 5
+159	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0008	9300062401	K KALAVATHI	7.88	Slab 5
+160	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0010	9300062412	K SAHADEVA	7.93	Slab 5
+161	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0016	9300062437	O MAHESWAR REDDY	7.83	Slab 5
+162	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0017	9300062444	P SAIDANNI	7.85	Slab 5
+163	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0019	9300062449	S SAYAD BHASHA	7.87	Slab 5
+164	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0029	9300094787	O KRISHNAMMA	7.80	Slab 5
+165	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0035	9300094793	D PRASANNA	7.91	Slab 5
+166	Feb-25	3051	HPC-BODUMALLUVARI PALLI	0036	9300104122	K ESWARAMMA	7.90	Slab 5
+167	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0002	9300062913	D ASHOK KUMAR	7.90	Slab 5
+168	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0003	9300062916	D KALAVTHI	8.07	Slab 5
+169	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0006	9300062921	D RATHNAMMA	7.90	Slab 5
+170	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0008	9300062929	K BHUDEVI	7.86	Slab 5
+171	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0009	9300062932	K GEETHA RANI	7.89	Slab 5
+172	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0011	9300062939	K SANDHYA	7.99	Slab 5
+173	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0013	9300062945	K VASANTHA KUMARI	7.85	Slab 5
+174	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0014	9300062949	K VENKATRAMAIAH	7.86	Slab 5
+175	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0017	9300072434	V SARADA	7.89	Slab 5
+176	Feb-25	3052	HPC-BANDAKINDAPALLI HW	0020	9300132040	DOVALA RAMANAIAH	8.04	Slab 5
+177	Feb-25	3055	HPC-N D VADDIPALLI	0010	9300076356	G PARVATHAMMA	8.08	Slab 5
+178	Feb-25	3055	HPC-N D VADDIPALLI	0011	9300076354	G SYAMALAMMA	8.04	Slab 5
+179	Feb-25	3055	HPC-N D VADDIPALLI	0016	9300081340	G MADHAVI	7.89	Slab 5
+180	Feb-25	3055	HPC-N D VADDIPALLI	0021	9300107480	K THULASAMMA	7.96	Slab 5
+181	Feb-25	3055	HPC-N D VADDIPALLI	0023	9300134967	K ROOPA	8.02	Slab 5
+182	Feb-25	3057	HPC-KUKKALAODDU	0001	9300082822	D KAMALA	8.02	Slab 5
+183	Feb-25	3057	HPC-KUKKALAODDU	0002	9300082785	G CHITTEMMA	8.05	Slab 5
+184	Feb-25	3057	HPC-KUKKALAODDU	0003	9300082779	G ESWARAMMA	7.94	Slab 5
+185	Feb-25	3057	HPC-KUKKALAODDU	0005	9300082780	G VASANTHA	7.98	Slab 5
+186	Feb-25	3057	HPC-KUKKALAODDU	0006	9300082778	P CHANDU	8.07	Slab 5
+187	Feb-25	3057	HPC-KUKKALAODDU	0007	9300082782	P LAKSHMI DEVI	8.03	Slab 5
+188	Feb-25	3057	HPC-KUKKALAODDU	0008	9300082783	P REDDY RANI	8.02	Slab 5
+189	Feb-25	3057	HPC-KUKKALAODDU	0010	9300082784	P VEDAVATHI	8.07	Slab 5
+190	Feb-25	3057	HPC-KUKKALAODDU	0011	9300082781	P YELLAMMA	8.10	Slab 5
+191	Feb-25	3057	HPC-KUKKALAODDU	0012	9300082777	S CHANGAMMA	7.96	Slab 5
+192	Feb-25	3057	HPC-KUKKALAODDU	0015	9300083852	D MANI KUMAR	7.90	Slab 5
+193	Feb-25	3057	HPC-KUKKALAODDU	0016	9300084604	G GANGADHARA	8.01	Slab 5
+194	Feb-25	3057	HPC-KUKKALAODDU	0018	9300118043	prabhakar	8.10	Slab 5
+195	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0006	9300086948	K RAJAMMA	7.99	Slab 5
+196	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0008	9300086950	P ANASUYA	7.83	Slab 5
+197	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0010	9300086943	P RAJAMMA	7.83	Slab 5
+198	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0012	9300086942	P SAHADEVAREDDY	7.98	Slab 5
+199	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0015	9300090637	P BHARATHAMMA	7.92	Slab 5
+200	Feb-25	3059	HPC-GUNDLURIVARI PALLI	0017	9300090635	S GOWRAMMA	7.87	Slab 5
+201	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0001	9300095607	V RANEMMA	8.09	Slab 5
+202	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0003	9300095609	B GANNIMITTA	7.83	Slab 5
+203	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0004	9300095610	V BHASKAR REDDY	7.90	Slab 5
+204	Feb-25	3060	HPC-BALIREDDYGARIPALLI	0008	9300095614	V PADMAJA	7.99	Slab 5
+205	Feb-25	3061	HPC-CHEEKALA CHENU	0002	9300096474	PACHIPALA SURENDRA	8.07	Slab 5
+206	Feb-25	3061	HPC-CHEEKALA CHENU	0004	9300096476	PACHIPALA SUDAKARA	8.06	Slab 5
+207	Feb-25	3061	HPC-CHEEKALA CHENU	0007	9300096479	PACHIPALA MANEESH	7.82	Slab 5
+208	Feb-25	3061	HPC-CHEEKALA CHENU	0008	9300096480	MALLE KIRAN KUMAR	7.83	Slab 5
+209	Feb-25	3061	HPC-CHEEKALA CHENU	0009	9300096481	PACHIPALA VENUGOPALU	7.82	Slab 5
+210	Feb-25	3061	HPC-CHEEKALA CHENU	0010	9300096482	V CHITTEMMA	7.82	Slab 5
+211	Feb-25	3061	HPC-CHEEKALA CHENU	0014	9300097911	APPINENI NARASAMMA	7.86	Slab 5
+212	Feb-25	3061	HPC-CHEEKALA CHENU	0017	9300102353	B GIRI BABU	7.95	Slab 5
+213	Feb-25	3061	HPC-CHEEKALA CHENU	0019	9300119676	P MOHAN BABU	7.85	Slab 5
+214	Feb-25	3061	HPC-CHEEKALA CHENU	0020	9300119677	B MURALI	7.84	Slab 5
+215	Feb-25	3061	HPC-CHEEKALA CHENU	0022	9300142878	M RAMADEVI	7.92	Slab 5
+216	Feb-25	3062	HPC-GANTAVARI PALLI	0002	9300096701	SREENIVASULU	8.04	Slab 5
+217	Feb-25	3062	HPC-GANTAVARI PALLI	0012	9300096711	C NARSAMMA	8.06	Slab 5
+218	Feb-25	3062	HPC-GANTAVARI PALLI	0015	9300097218	A YARRAIAH	8.06	Slab 5
+219	Feb-25	3062	HPC-GANTAVARI PALLI	0017	9300097220	G MUNEMMA	7.83	Slab 5
+220	Feb-25	3062	HPC-GANTAVARI PALLI	0020	9300100969	KUKATI RAJESH	8.07	Slab 5
+221	Feb-25	3063	HPC-GONGIVARI PALLI	0004	9300096489	A CHANDRAMMA	7.81	Slab 5
+222	Feb-25	3063	HPC-GONGIVARI PALLI	0005	9300096490	P NANDINI	7.93	Slab 5
+223	Feb-25	3063	HPC-GONGIVARI PALLI	0006	9300096491	ANKIREDDY RAMIREDDY	7.80	Slab 5
+224	Feb-25	3063	HPC-GONGIVARI PALLI	0007	9300096492	K SRI RAMULU	7.87	Slab 5
+225	Feb-25	3063	HPC-GONGIVARI PALLI	0008	9300096493	G NAGESH	7.81	Slab 5
+226	Feb-25	3063	HPC-GONGIVARI PALLI	0009	9300096494	U VENKATAMUNI NAIDU	7.90	Slab 5
+227	Feb-25	3063	HPC-GONGIVARI PALLI	0011	9300097092	A NAGARAJA	7.80	Slab 5
+228	Feb-25	3063	HPC-GONGIVARI PALLI	0012	9300097093	G ANJAMMA	7.82	Slab 5
+229	Feb-25	3063	HPC-GONGIVARI PALLI	0013	9300097094	A MARUTHEESWARA REDDY	7.90	Slab 5
+230	Feb-25	3063	HPC-GONGIVARI PALLI	0014	9300098209	G RAMNJULU	7.81	Slab 5
+231	Feb-25	3063	HPC-GONGIVARI PALLI	0015	9300100972	A BHUDEVI	7.81	Slab 5
+232	Feb-25	3063	HPC-GONGIVARI PALLI	0016	9300115028	K VISWANADHA	7.86	Slab 5
+233	Feb-25	3063	HPC-GONGIVARI PALLI	0017	9300115029	A RAGHUVA REDDY	7.85	Slab 5
+234	Feb-25	3063	HPC-GONGIVARI PALLI	0018	9300119680	P SYAMALAMMA	7.95	Slab 5
+235	Feb-25	3063	HPC-GONGIVARI PALLI	0019	9300123431	K BHARGAVI	7.89	Slab 5
+236	Feb-25	3064	HPC-GANDLA PALLI	0001	9300096463	SAHADEVAIAH N	8.09	Slab 5
+237	Feb-25	3064	HPC-GANDLA PALLI	0005	9300096467	LAXMIDEV B	7.83	Slab 5
+238	Feb-25	3064	HPC-GANDLA PALLI	0006	9300096468	P HANUMANTHU	7.95	Slab 5
+239	Feb-25	3064	HPC-GANDLA PALLI	0009	9300096471	HARI PRASAD P	7.89	Slab 5
+240	Feb-25	3064	HPC-GANDLA PALLI	0010	9300096472	K ESWARAMMA	7.92	Slab 5
+241	Feb-25	3064	HPC-GANDLA PALLI	0012	9300097090	M LAKSHMIDEVI	8.05	Slab 5
+242	Feb-25	3064	HPC-GANDLA PALLI	0013	9300097091	K MALLESWARI	8.06	Slab 5
+243	Feb-25	3064	HPC-GANDLA PALLI	0014	9300097912	SANKARAIH C	7.97	Slab 5
+244	Feb-25	3064	HPC-GANDLA PALLI	0015	9300097913	B KUMARI	7.95	Slab 5
+245	Feb-25	3064	HPC-GANDLA PALLI	0016	9300097914	M YERRAKKA	7.88	Slab 5
+246	Feb-25	3064	HPC-GANDLA PALLI	0017	9300097915	V GANGADEVI	7.90	Slab 5
+247	Feb-25	3064	HPC-GANDLA PALLI	0018	9300097916	C PADMAVATHAMMA	8.09	Slab 5
+248	Feb-25	3064	HPC-GANDLA PALLI	0021	9300097919	M CHANDRAMMA	7.87	Slab 5
+249	Feb-25	3064	HPC-GANDLA PALLI	0027	9300103262	N CHARAN KUMAR	8.03	Slab 5
 """
 
 # Load the raw data into a DataFrame
@@ -507,7 +507,7 @@ for index, row in df_farmer_data.iterrows():
         'HPC Code': str(row['HPC Code']).strip()
     }
 
-# Create initial lists for VLCC Names, Farmer Codes, and Farmer Names
+# Create initial lists for ALL VLCC Names, Farmer Codes, and Farmer Names
 VLCC_NAMES = sorted(df_farmer_data['HPC Name'].unique().tolist())
 FARMER_CODES_ALL = sorted(list(FARMER_LOOKUP.keys()))
 FARMER_NAMES_ALL = sorted(list(set(data['Farmer Name'] for data in FARMER_LOOKUP.values()))) # Unique farmer names
@@ -525,10 +525,10 @@ initial_values_defaults = {
     'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None,
     'hpc_code': '',
     'types': "HPC",
-    'farmer_name_selected': 'Others',
+    'farmer_name_selected': 'Others', # Still default to others to allow free text or first in list
     'farmer_name_other': '',
-    'farmer_code': None,
-    'rep_id': '',
+    'farmer_code': None, # Will be set based on first entry or selection
+    'rep_id': '', # Added Rep ID
     'gender': "Male",
     'cows': 0,
     'cattle_in_milk': 0,
@@ -578,7 +578,7 @@ def save_draft():
     except Exception as e:
         st.error(f"Error saving draft: {e}")
 
-# Function to load draft data into session state (kept same logic, adjusted for new vars)
+# Function to load draft data into session state (adjusted for global farmer lists)
 def load_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     if os.path.exists(draft_filename):
@@ -598,16 +598,20 @@ def load_draft():
                     st.session_state[key] = value
             
             # --- VALIDATE DROPDOWN SELECTIONS AFTER LOADING DRAFT ---
+            # VLCC Name
             if 'vlcc_name' in st.session_state and st.session_state['vlcc_name'] not in VLCC_NAMES:
                 st.session_state['vlcc_name'] = VLCC_NAMES[0] if VLCC_NAMES else None
             
             temp_lang = loaded_data.get('lang_select', 'English')
             current_labels = dict_translations.get(temp_lang, dict_translations['English'])
             
+            # Types and Gender
             if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
                 st.session_state['types'] = current_labels['HPC']
             if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
                 st.session_state['gender'] = current_labels['Male']
+            
+            # Yes/No options
             if 'green_fodder' in st.session_state and st.session_state['green_fodder'] not in (current_labels['Yes'], current_labels['No']):
                 st.session_state['green_fodder'] = current_labels['Yes']
             if 'dry_fodder' in st.session_state and st.session_state['dry_fodder'] not in (current_labels['Yes'], current_labels['No']):
@@ -619,29 +623,24 @@ def load_draft():
             if 'silage' in st.session_state and st.session_state['silage'] not in (current_labels['Yes'], current_labels['No']):
                 st.session_state['silage'] = current_labels['Yes']
             
-            # For farmer_name_selected, ensure it's a valid option or "Others" based on loaded VLCC
-            if 'vlcc_name' in st.session_state:
-                st.session_state.filtered_farmer_names = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Farmer Name'].unique().tolist())
-                farmer_names_with_others_for_load = st.session_state.filtered_farmer_names + [current_labels['Others']]
-                if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in farmer_names_with_others_for_load:
-                    st.session_state['farmer_name_selected'] = st.session_state.filtered_farmer_names[0] if st.session_state.filtered_farmer_names else current_labels['Others']
-            else: # Fallback if VLCC name couldn't be validated
-                 st.session_state['farmer_name_selected'] = initial_values_defaults['farmer_name_selected']
+            # Farmer Name (use global list for validation)
+            farmer_names_with_others_for_load = FARMER_NAMES_ALL + [current_labels['Others']]
+            if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in farmer_names_with_others_for_load:
+                st.session_state['farmer_name_selected'] = FARMER_NAMES_ALL[0] if FARMER_NAMES_ALL else current_labels['Others']
 
-            # For farmer_code, ensure it's a valid option based on loaded VLCC
-            if 'vlcc_name' in st.session_state:
-                st.session_state.filtered_farmer_codes = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Member Code'].astype(str).unique().tolist())
-                if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in st.session_state.filtered_farmer_codes:
-                    st.session_state['farmer_code'] = st.session_state.filtered_farmer_codes[0] if st.session_state.filtered_farmer_codes else None
-            else: # Fallback if VLCC name couldn't be validated
-                st.session_state['farmer_code'] = initial_values_defaults['farmer_code']
+            # Farmer Code (use global list for validation)
+            if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES_ALL:
+                st.session_state['farmer_code'] = FARMER_CODES_ALL[0] if FARMER_CODES_ALL else None
 
+            # Mineral Brand
             if 'mineral_brand' in st.session_state and st.session_state['mineral_brand'] not in MINERAL_MIXTURE_BRANDS:
                 st.session_state['mineral_brand'] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
             
+            # Surveyor Name
             if 'surveyor_name' in st.session_state and st.session_state['surveyor_name'] not in SURVEYOR_NAMES:
                 st.session_state['surveyor_name'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
 
+            # Photo Paths
             if 'uploaded_temp_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_temp_photo_paths, list):
                 st.session_state.uploaded_temp_photo_paths = []
 
@@ -709,7 +708,7 @@ def get_all_responses_df():
     else:
         return pd.DataFrame()
 
-# Initialize session state (adjusted for new state variables)
+# Initialize session state (adjusted for ALL farmer data)
 if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
     st.session_state.last_saved_time_persistent = None
@@ -718,70 +717,74 @@ if 'app_initialized_flag' not in st.session_state:
     for key, default_value in initial_values_defaults.items():
         if key not in st.session_state:
             st.session_state[key] = default_value
-
-    # Initialize filtered options based on initial VLCC selection
-    st.session_state.filtered_farmer_codes = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Member Code'].astype(str).unique().tolist()) if st.session_state.vlcc_name else []
-    st.session_state.filtered_farmer_names = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Farmer Name'].unique().tolist()) if st.session_state.vlcc_name else []
     
-    # Attempt to autofill HPC Code and Rep ID for the initial VLCC/farmer code
-    if st.session_state.farmer_code in FARMER_LOOKUP:
-        farmer_info = FARMER_LOOKUP[st.session_state.farmer_code]
-        st.session_state.hpc_code = farmer_info['HPC Code']
-        st.session_state.rep_id = farmer_info['Rep ID']
+    # Initial setup for farmer code/name selection
+    if FARMER_CODES_ALL:
+        st.session_state.farmer_code = FARMER_CODES_ALL[0]
+        # Attempt to set farmer name default based on the first farmer code
+        if FARMER_CODES_ALL[0] in FARMER_LOOKUP:
+            st.session_state.farmer_name_selected = FARMER_LOOKUP[FARMER_CODES_ALL[0]]['Farmer Name']
+            st.session_state.hpc_code = FARMER_LOOKUP[FARMER_CODES_ALL[0]]['HPC Code']
+            st.session_state.rep_id = FARMER_LOOKUP[FARMER_CODES_ALL[0]]['Rep ID']
+        else:
+            st.session_state.farmer_name_selected = initial_values_defaults['farmer_name_selected']
+    else:
+        st.session_state.farmer_code = None
+        st.session_state.farmer_name_selected = initial_values_defaults['farmer_name_selected']
+
+    # Initial VLCC selection should also come from the chosen farmer if possible
+    if st.session_state.farmer_code and st.session_state.farmer_code in FARMER_LOOKUP:
+        st.session_state.vlcc_name = FARMER_LOOKUP[st.session_state.farmer_code]['HPC Name']
+    else:
+        st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None
+
 
     # Then try to load draft, which will overwrite defaults if successful and valid
     load_draft()
 
 # --- Callback functions for dynamic updates (outside the form) ---
 
+# VLCC name change now updates other fields directly, no filtering of farmer lists based on VLCC.
 def on_vlcc_change():
     selected_vlcc = st.session_state.vlcc_name
-    st.session_state.filtered_farmer_codes = sorted(df_farmer_data[df_farmer_data['HPC Name'] == selected_vlcc]['Member Code'].astype(str).unique().tolist())
-    st.session_state.filtered_farmer_names = sorted(df_farmer_data[df_farmer_data['HPC Name'] == selected_vlcc]['Farmer Name'].unique().tolist())
-    
-    # Reset farmer name/code selections and autofill fields
-    st.session_state.farmer_code = st.session_state.filtered_farmer_codes[0] if st.session_state.filtered_farmer_codes else None
-    st.session_state.farmer_name_selected = st.session_state.filtered_farmer_names[0] if st.session_state.filtered_farmer_names else st.session_state.get('Others') # Use get to avoid error if Others is not in labels yet
-    st.session_state.farmer_name_other = '' # Clear custom name on VLCC change
-
-    # Autofill HPC Code and Rep ID based on the new (first) farmer code for the selected VLCC
-    if st.session_state.farmer_code and st.session_state.farmer_code in FARMER_LOOKUP:
-        farmer_info = FARMER_LOOKUP[st.session_state.farmer_code]
-        st.session_state.hpc_code = farmer_info['HPC Code']
-        st.session_state.rep_id = farmer_info['Rep ID']
-    else:
-        st.session_state.hpc_code = ''
-        st.session_state.rep_id = ''
-    save_draft() # Save draft on changes (important for auto-save feature)
+    # When VLCC changes, we clear farmer selections and autofill,
+    # expecting user to re-select from the global lists.
+    st.session_state.farmer_code = None
+    st.session_state.farmer_name_selected = labels['Others']
+    st.session_state.farmer_name_other = ''
+    st.session_state.hpc_code = ''
+    st.session_state.rep_id = ''
+    save_draft()
 
 def on_farmer_name_change():
     selected_farmer_name = st.session_state.farmer_name_selected
     current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
     if selected_farmer_name != current_labels['Others']:
-        # Find the corresponding farmer code and update
-        matching_farmers = df_farmer_data[
-            (df_farmer_data['HPC Name'] == st.session_state.vlcc_name) &
-            (df_farmer_data['Farmer Name'] == selected_farmer_name)
-        ]
+        # Find the first matching farmer based on name (can be ambiguous)
+        matching_farmers = df_farmer_data[df_farmer_data['Farmer Name'] == selected_farmer_name]
         if not matching_farmers.empty:
             farmer_info = FARMER_LOOKUP.get(str(matching_farmers.iloc[0]['Member Code']))
             if farmer_info:
                 st.session_state.farmer_code = str(matching_farmers.iloc[0]['Member Code'])
                 st.session_state.hpc_code = farmer_info['HPC Code']
                 st.session_state.rep_id = farmer_info['Rep ID']
+                st.session_state.vlcc_name = farmer_info['HPC Name'] # Autofill VLCC too
             else:
                 st.session_state.farmer_code = None
                 st.session_state.hpc_code = ''
                 st.session_state.rep_id = ''
+                st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None
         else:
             st.session_state.farmer_code = None
             st.session_state.hpc_code = ''
             st.session_state.rep_id = ''
+            st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None
         st.session_state.farmer_name_other = ''
     else:
         st.session_state.farmer_code = None
         st.session_state.hpc_code = ''
         st.session_state.rep_id = ''
+        st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC if "Others"
     save_draft()
 
 def on_farmer_code_change():
@@ -791,15 +794,13 @@ def on_farmer_code_change():
         farmer_info = FARMER_LOOKUP[selected_farmer_code]
         st.session_state.hpc_code = farmer_info['HPC Code']
         st.session_state.rep_id = farmer_info['Rep ID']
-        if farmer_info['Farmer Name'] in st.session_state.filtered_farmer_names:
-            st.session_state.farmer_name_selected = farmer_info['Farmer Name']
-            st.session_state.farmer_name_other = ''
-        else:
-            st.session_state.farmer_name_selected = current_labels['Others']
-            st.session_state.farmer_name_other = farmer_info['Farmer Name']
+        st.session_state.vlcc_name = farmer_info['HPC Name'] # Autofill VLCC too
+        st.session_state.farmer_name_selected = farmer_info['Farmer Name']
+        st.session_state.farmer_name_other = ''
     else:
         st.session_state.hpc_code = ''
         st.session_state.rep_id = ''
+        st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC if not found
         st.session_state.farmer_name_selected = current_labels['Others']
         st.session_state.farmer_name_other = ''
     save_draft()
@@ -846,12 +847,8 @@ if st.session_state.current_step == 'form_entry':
         on_change=on_vlcc_change
     )
 
-    # These filtered lists depend on vlcc_name, so re-initialize them based on current session state
-    # This ensures they are correct even after a refresh or draft load
-    st.session_state.filtered_farmer_codes = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Member Code'].astype(str).unique().tolist()) if st.session_state.vlcc_name else []
-    st.session_state.filtered_farmer_names = sorted(df_farmer_data[df_farmer_data['HPC Name'] == st.session_state.vlcc_name]['Farmer Name'].unique().tolist()) if st.session_state.vlcc_name else []
-
-    farmer_names_options = st.session_state.filtered_farmer_names + [labels['Others']]
+    # Farmer Name dropdown: Now uses FARMER_NAMES_ALL (all names)
+    farmer_names_options = FARMER_NAMES_ALL + [labels['Others']]
     current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_options[0] if farmer_names_options else labels['Others'])
     farmer_name_default_idx = 0
     if current_farmer_name_selected in farmer_names_options:
@@ -873,7 +870,8 @@ if st.session_state.current_step == 'form_entry':
     else:
         st.session_state.farmer_name_other = "" # Clear this if a specific farmer is chosen
 
-    farmer_codes_options = st.session_state.filtered_farmer_codes
+    # Farmer Code dropdown: Now uses FARMER_CODES_ALL (all codes)
+    farmer_codes_options = FARMER_CODES_ALL
     current_farmer_code = st.session_state.get('farmer_code', farmer_codes_options[0] if farmer_codes_options else None)
     farmer_code_default_idx = 0
     if current_farmer_code in farmer_codes_options:
@@ -907,10 +905,10 @@ if st.session_state.current_step == 'form_entry':
     types_default_idx = 0
     if current_types in types_options:
         types_default_idx = types_options.index(current_types)
-    st.session_state.types = st.selectbox(
+    st.session_state.types = st.selectbox( # Assign directly to session state
         labels['Types'], types_options,
         index=types_default_idx,
-        key="types_selectbox",
+        key="types_selectbox", # Unique key
         on_change=save_draft # Add save_draft for these too
     )
     
@@ -919,10 +917,10 @@ if st.session_state.current_step == 'form_entry':
     gender_default_idx = 0
     if current_gender in gender_options:
         gender_default_idx = gender_options.index(current_gender)
-    st.session_state.gender = st.selectbox(
+    st.session_state.gender = st.selectbox( # Assign directly to session state
         labels['Gender'], gender_options,
         index=gender_default_idx,
-        key="gender_selectbox",
+        key="gender_selectbox", # Unique key
         on_change=save_draft # Add save_draft for these too
     )
 
@@ -1118,26 +1116,34 @@ if st.session_state.current_step == 'form_entry':
             key="image_uploader_form"
         )
 
-        # Process newly uploaded files (this part is sensitive to re-runs inside forms)
-        # The logic here will be applied when the form is submitted.
-        # For real-time updates of uploaded images, the uploader itself usually needs to be outside the form,
-        # or manage temp files and display them with session state for removal.
-        # Keeping it as-is for now, acknowledging it primarily processes on form submit.
         if uploaded_files:
-            # A common pattern for uploaders *inside* a form is to process files only on form submit
-            # or to use a separate form for the uploader if immediate display/removal is critical.
-            # For this context, the files will be handled on main form submission.
-            # However, if you want "real-time" display/removal *before* the main form submit,
-            # the file_uploader and its display/removal logic often sit outside the main form.
-            # Given the current error was about callbacks *inside* the form,
-            # this part is less directly related but important to consider.
-            # For simplicity for this fix, we'll assume processing happens on final submit.
-            # If immediate feedback is needed, this entire upload section should also move outside.
-            pass # The actual processing will happen in the submit_for_review block
+            for uploaded_file in uploaded_files:
+                file_content = uploaded_file.getvalue()
+                file_hash = base64.b64encode(file_content).decode()
+
+                is_duplicate = False
+                for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
+                    if os.path.exists(existing_path):
+                        with open(existing_path, "rb") as f:
+                            existing_hash = base64.b64encode(f.read()).decode()
+                        if existing_hash == file_hash:
+                            is_duplicate = True
+                            break
+                
+                if not is_duplicate:
+                    if len(st.session_state.get('uploaded_temp_photo_paths', [])) < 3:
+                        unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
+                        temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
+                        try:
+                            with open(temp_photo_path, "wb") as f:
+                                f.write(file_content)
+                            st.session_state.uploaded_temp_photo_paths.append(temp_photo_path)
+                            st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+                        except Exception as e:
+                            st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
+                    else:
+                        st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
         
-        # Display existing temporary photos and provide a remove option
-        # This part *can* live outside the form if you want immediate removal effect.
-        # If it's inside the form, removing a photo will trigger a form submission, which is fine.
         if st.session_state.get('uploaded_temp_photo_paths'):
             st.subheader("Currently uploaded photos:")
             photos_to_display = list(st.session_state.uploaded_temp_photo_paths)
@@ -1162,12 +1168,10 @@ if st.session_state.current_step == 'form_entry':
                     
                     with cols[i % 3]:
                         st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
-                        # This button triggers a re-run. If it modifies session state that impacts other form widgets,
-                        # it can still lead to issues. Best practice is to keep removal outside or handle carefully.
-                        if st.button(f"Remove", key=f"remove_photo_{i}_{os.path.basename(photo_path).replace('.', '_')}_form"):
+                        if st.button(f"Remove", key=f"remove_photo_{i}_{os.path.basename(photo_path).replace('.', '_')}_form"): # Unique key
                             os.remove(photo_path)
                             st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                            st.experimental_rerun() # Use this for immediate effect
+                            st.experimental_rerun() # Use this for immediate effect, but be aware of Streamlit's constraints
                 except Exception as e:
                     cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
                     if photo_path in st.session_state.uploaded_temp_photo_paths:
