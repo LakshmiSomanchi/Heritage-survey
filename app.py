@@ -924,6 +924,95 @@ if st.session_state.current_step == 'form_entry':
         on_change=save_draft # Add save_draft for these too
     )
 
+    # --- PHOTO UPLOAD SECTION MOVED HERE ---
+    st.header(labels['Upload Photos'])
+    uploaded_files = st.file_uploader(
+        labels['Upload Photos'],
+        type=["jpg", "jpeg", "png"],
+        accept_multiple_files=True,
+        key="image_uploader_outside_form" # New unique key for file_uploader outside the form
+    )
+
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            file_content = uploaded_file.getvalue()
+            file_hash = base64.b64encode(file_content).decode()
+
+            is_duplicate = False
+            # Check for duplicates based on content hash and existing paths
+            for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
+                if os.path.exists(existing_path):
+                    with open(existing_path, "rb") as f:
+                        existing_hash = base64.b64encode(f.read()).decode()
+                    if existing_hash == file_hash:
+                        is_duplicate = True
+                        break
+            
+            if not is_duplicate:
+                if len(st.session_state.get('uploaded_temp_photo_paths', [])) < 3:
+                    unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
+                    temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
+                    try:
+                        with open(temp_photo_path, "wb") as f:
+                            f.write(file_content)
+                        st.session_state.uploaded_temp_photo_paths.append(temp_photo_path)
+                        st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
+                        save_draft() # Save draft immediately after successful upload
+                        st.rerun() # Rerun to update the displayed images and clear the uploader
+                    except Exception as e:
+                        st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
+                else:
+                    st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
+            else:
+                st.info(f"Skipping duplicate photo: {uploaded_file.name}")
+    
+    if st.session_state.get('uploaded_temp_photo_paths'):
+        st.subheader("Currently uploaded photos:")
+        photos_to_display = list(st.session_state.uploaded_temp_photo_paths) # Create a copy to iterate
+        
+        # Clean up invalid paths first
+        valid_photos = []
+        rerun_needed_for_cleanup = False
+        for photo_path in photos_to_display:
+            if os.path.exists(photo_path):
+                valid_photos.append(photo_path)
+            else:
+                rerun_needed_for_cleanup = True # Mark that a cleanup occurred
+
+        if rerun_needed_for_cleanup:
+            st.session_state.uploaded_temp_photo_paths = valid_photos
+            st.warning("Some temporary photo paths were invalid and have been removed. Rerunning to update display.")
+            st.rerun() # Trigger rerun to update UI after cleaning
+        
+        if valid_photos: # Only proceed if there are valid photos to display
+            cols = st.columns(3)
+            for i, photo_path in enumerate(valid_photos):
+                try:
+                    with open(photo_path, "rb") as f:
+                        encoded_string = base64.b64encode(f.read()).decode()
+                    
+                    with cols[i % 3]:
+                        st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
+                        # The key for the remove button must be unique and stable across reruns
+                        if st.button(f"Remove", key=f"remove_photo_{i}_{os.path.basename(photo_path).replace('.', '_')}"):
+                            os.remove(photo_path)
+                            st.session_state.uploaded_temp_photo_paths.remove(photo_path)
+                            save_draft() # Save draft after removal
+                            st.rerun() # Use this for immediate effect
+                except Exception as e:
+                    cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
+                    # If an error occurs during loading, remove the path from session state
+                    if photo_path in st.session_state.uploaded_temp_photo_paths:
+                        st.session_state.uploaded_temp_photo_paths.remove(photo_path)
+                        save_draft()
+                        st.rerun() # Trigger rerun to update UI after cleaning
+        else:
+            st.info(labels['No photo uploaded.'])
+    else:
+        st.info(labels['No photo uploaded.'])
+    # --- END PHOTO UPLOAD SECTION ---
+
+
     # --- Start of the actual Streamlit form for other fields ---
     # This form will now ONLY contain inputs whose values are collected upon a single submission.
     # The farmer identification details are already handled and stored in session_state.
@@ -1107,80 +1196,6 @@ if st.session_state.current_step == 'form_entry':
             key="water_sources_multi"
         )
 
-        # --- Photo Upload Snippet (kept inside form as it's part of the submission) ---
-        st.header(labels['Upload Photos'])
-        uploaded_files = st.file_uploader(
-            labels['Upload Photos'],
-            type=["jpg", "jpeg", "png"],
-            accept_multiple_files=True,
-            key="image_uploader_form"
-        )
-
-        if uploaded_files:
-            for uploaded_file in uploaded_files:
-                file_content = uploaded_file.getvalue()
-                file_hash = base64.b64encode(file_content).decode()
-
-                is_duplicate = False
-                for existing_path in st.session_state.get('uploaded_temp_photo_paths', []):
-                    if os.path.exists(existing_path):
-                        with open(existing_path, "rb") as f:
-                            existing_hash = base64.b64encode(f.read()).decode()
-                        if existing_hash == file_hash:
-                            is_duplicate = True
-                            break
-                
-                if not is_duplicate:
-                    if len(st.session_state.get('uploaded_temp_photo_paths', [])) < 3:
-                        unique_filename = f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{uploaded_file.name.replace(' ', '_')}"
-                        temp_photo_path = os.path.join(TEMP_IMAGE_DIR, unique_filename)
-                        try:
-                            with open(temp_photo_path, "wb") as f:
-                                f.write(file_content)
-                            st.session_state.uploaded_temp_photo_paths.append(temp_photo_path)
-                            st.success(f"{labels['Photo uploaded successfully!']} {uploaded_file.name}")
-                        except Exception as e:
-                            st.error(f"{labels['Error uploading photo:']} {uploaded_file.name}. {e}")
-                    else:
-                        st.warning(f"Could not upload {uploaded_file.name}: {labels['Please upload up to 3 photos.']}")
-        
-        if st.session_state.get('uploaded_temp_photo_paths'):
-            st.subheader("Currently uploaded photos:")
-            photos_to_display = list(st.session_state.uploaded_temp_photo_paths)
-            
-            valid_photos = []
-            for photo_path in photos_to_display:
-                if os.path.exists(photo_path):
-                    valid_photos.append(photo_path)
-                else:
-                    # Clean up broken paths from session state
-                    if photo_path in st.session_state.uploaded_temp_photo_paths:
-                        st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                        st.experimental_rerun() # Trigger rerun to update UI after cleaning
-                    st.warning(f"Temporary photo path not found: {os.path.basename(photo_path)}. It might have been moved or deleted.")
-            st.session_state.uploaded_temp_photo_paths = valid_photos
-            
-            cols = st.columns(3)
-            for i, photo_path in enumerate(st.session_state.uploaded_temp_photo_paths):
-                try:
-                    with open(photo_path, "rb") as f:
-                        encoded_string = base64.b64encode(f.read()).decode()
-                    
-                    with cols[i % 3]:
-                        st.image(f"data:image/png;base64,{encoded_string}", caption=os.path.basename(photo_path), use_column_width=True)
-                        if st.button(f"Remove", key=f"remove_photo_{i}_{os.path.basename(photo_path).replace('.', '_')}_form"): # Unique key
-                            os.remove(photo_path)
-                            st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                            st.experimental_rerun() # Use this for immediate effect, but be aware of Streamlit's constraints
-                except Exception as e:
-                    cols[i % 3].error(f"Could not load image {os.path.basename(photo_path)}: {e}")
-                    if photo_path in st.session_state.uploaded_temp_photo_paths:
-                        st.session_state.uploaded_temp_photo_paths.remove(photo_path)
-                        st.experimental_rerun() # Trigger rerun to update UI after cleaning
-        else:
-            st.info(labels['No photo uploaded.'])
-
-
         st.header("Survey Details")
         current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None)
         surveyor_name_default_idx = 0
@@ -1210,7 +1225,7 @@ if st.session_state.current_step == 'form_entry':
 
         if submit_for_review:
             # When the form submits, we gather values from session state for all fields,
-            # both those outside the form (farmer ID) and inside the form (farm details, etc.).
+            # both those outside the form (farmer ID, photos) and inside the form (farm details, etc.).
             final_farmer_name = st.session_state.farmer_name_other if st.session_state.farmer_name_selected == labels['Others'] else st.session_state.farmer_name_selected
 
             data_for_review = {
@@ -1247,7 +1262,7 @@ if st.session_state.current_step == 'form_entry':
                 "Source of Water": ", ".join(st.session_state.get('water_sources', [])) if st.session_state.get('water_sources') else "N/A",
                 "Name of Surveyor": st.session_state.surveyor_name,
                 "Date of Visit": st.session_state.visit_date.isoformat(),
-                "Photo Paths": st.session_state.uploaded_temp_photo_paths
+                "Photo Paths": st.session_state.uploaded_temp_photo_paths # Now this gets the paths stored from outside the form
             }
             st.session_state.final_submitted_data = data_for_review
             st.session_state.current_step = 'review'
