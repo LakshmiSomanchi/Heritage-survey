@@ -512,6 +512,13 @@ VLCC_NAMES = sorted(df_farmer_data['HPC Name'].unique().tolist())
 FARMER_CODES_ALL = sorted(list(FARMER_LOOKUP.keys()))
 FARMER_NAMES_ALL = sorted(list(set(data['Farmer Name'] for data in FARMER_LOOKUP.values()))) # Unique farmer names
 
+# --- DEBUGGING: Display the counts of data extracted ---
+st.sidebar.info(f"Total entries in farmer_data_raw_csv: {len(df_farmer_data)}")
+st.sidebar.info(f"Unique VLCC Names: {len(VLCC_NAMES)}")
+st.sidebar.info(f"Unique Farmer Codes: {len(FARMER_CODES_ALL)}")
+st.sidebar.info(f"Unique Farmer Names: {len(FARMER_NAMES_ALL)}")
+# --- END DEBUGGING ---
+
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
 PELLET_FEED_BRANDS = ["Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus", "Kamadhenu", "Godrej", "Sreeja", "Vallabha-Panchamruth", "Vallabha-Subham Pusti"]
@@ -763,6 +770,12 @@ def on_farmer_name_change():
         # Find the first matching farmer based on name (can be ambiguous)
         matching_farmers = df_farmer_data[df_farmer_data['Farmer Name'] == selected_farmer_name]
         if not matching_farmers.empty:
+            # Prefer to match by HPC Name if VLCC is already selected to narrow down
+            if st.session_state.vlcc_name:
+                filtered_farmers = matching_farmers[matching_farmers['HPC Name'] == st.session_state.vlcc_name]
+                if not filtered_farmers.empty:
+                    matching_farmers = filtered_farmers
+            
             farmer_info = FARMER_LOOKUP.get(str(matching_farmers.iloc[0]['Member Code']))
             if farmer_info:
                 st.session_state.farmer_code = str(matching_farmers.iloc[0]['Member Code'])
@@ -773,7 +786,8 @@ def on_farmer_name_change():
                 st.session_state.farmer_code = None
                 st.session_state.hpc_code = ''
                 st.session_state.rep_id = ''
-                st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None
+                # Keep existing VLCC if no exact match found within it, or reset to first
+                st.session_state.vlcc_name = st.session_state.vlcc_name if st.session_state.vlcc_name in VLCC_NAMES else (VLCC_NAMES[0] if VLCC_NAMES else None)
         else:
             st.session_state.farmer_code = None
             st.session_state.hpc_code = ''
