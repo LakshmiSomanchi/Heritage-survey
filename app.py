@@ -512,13 +512,6 @@ VLCC_NAMES = sorted(df_farmer_data['HPC Name'].unique().tolist())
 FARMER_CODES_ALL = sorted(list(FARMER_LOOKUP.keys()))
 FARMER_NAMES_ALL = sorted(list(set(data['Farmer Name'] for data in FARMER_LOOKUP.values()))) # Unique farmer names
 
-# --- DEBUGGING: Display the counts of data extracted ---
-st.sidebar.info(f"Total entries in farmer_data_raw_csv: {len(df_farmer_data)}")
-st.sidebar.info(f"Unique VLCC Names: {len(VLCC_NAMES)}")
-st.sidebar.info(f"Unique Farmer Codes: {len(FARMER_CODES_ALL)}")
-st.sidebar.info(f"Unique Farmer Names: {len(FARMER_NAMES_ALL)}")
-# --- END DEBUGGING ---
-
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
 PELLET_FEED_BRANDS = ["Heritage Milk Rich", "Heritage Milk Joy", "Heritage Power Plus", "Kamadhenu", "Godrej", "Sreeja", "Vallabha-Panchamruth", "Vallabha-Subham Pusti"]
@@ -756,50 +749,66 @@ def on_vlcc_change():
     selected_vlcc = st.session_state.vlcc_name
     # When VLCC changes, we clear farmer selections and autofill,
     # expecting user to re-select from the global lists.
-    st.session_state.farmer_code = None
-    st.session_state.farmer_name_selected = labels['Others']
-    st.session_state.farmer_name_other = ''
-    st.session_state.hpc_code = ''
-    st.session_state.rep_id = ''
+    # We maintain the "Others" option if it was selected and reset to it.
+    current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
+    
+    # Check if the currently selected farmer name exists within the new VLCC.
+    # If not, reset it.
+    current_farmer_name = st.session_state.farmer_name_selected
+    if current_farmer_name != current_labels['Others']:
+        matching_in_new_vlcc = df_farmer_data[(df_farmer_data['Farmer Name'] == current_farmer_name) & 
+                                              (df_farmer_data['HPC Name'] == selected_vlcc)]
+        if matching_in_new_vlcc.empty:
+            st.session_state.farmer_name_selected = current_labels['Others']
+            st.session_state.farmer_name_other = '' # Clear other name if it was used
+            st.session_state.farmer_code = None
+            st.session_state.hpc_code = ''
+            st.session_state.rep_id = ''
+        # If it does match in the new VLCC, then farmer_name_selected is fine,
+        # and on_farmer_name_change will handle updating code/rep_id.
+    
     save_draft()
 
 def on_farmer_name_change():
     selected_farmer_name = st.session_state.farmer_name_selected
     current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
     if selected_farmer_name != current_labels['Others']:
-        # Find the first matching farmer based on name (can be ambiguous)
+        # Find the first matching farmer based on name
+        # Prioritize matching within the currently selected VLCC, if one is selected
         matching_farmers = df_farmer_data[df_farmer_data['Farmer Name'] == selected_farmer_name]
+        
+        if st.session_state.vlcc_name and st.session_state.vlcc_name in VLCC_NAMES:
+            filtered_by_vlcc = matching_farmers[matching_farmers['HPC Name'] == st.session_state.vlcc_name]
+            if not filtered_by_vlcc.empty:
+                matching_farmers = filtered_by_vlcc
+            # else: continue with all matching farmers if no specific match in VLCC
+
         if not matching_farmers.empty:
-            # Prefer to match by HPC Name if VLCC is already selected to narrow down
-            if st.session_state.vlcc_name:
-                filtered_farmers = matching_farmers[matching_farmers['HPC Name'] == st.session_state.vlcc_name]
-                if not filtered_farmers.empty:
-                    matching_farmers = filtered_farmers
+            # Take the first match
+            farmer_info_row = matching_farmers.iloc[0]
+            farmer_code_from_lookup = str(farmer_info_row['Member Code']).strip()
             
-            farmer_info = FARMER_LOOKUP.get(str(matching_farmers.iloc[0]['Member Code']))
-            if farmer_info:
-                st.session_state.farmer_code = str(matching_farmers.iloc[0]['Member Code'])
-                st.session_state.hpc_code = farmer_info['HPC Code']
-                st.session_state.rep_id = farmer_info['Rep ID']
-                st.session_state.vlcc_name = farmer_info['HPC Name'] # Autofill VLCC too
-            else:
-                st.session_state.farmer_code = None
-                st.session_state.hpc_code = ''
-                st.session_state.rep_id = ''
-                # Keep existing VLCC if no exact match found within it, or reset to first
-                st.session_state.vlcc_name = st.session_state.vlcc_name if st.session_state.vlcc_name in VLCC_NAMES else (VLCC_NAMES[0] if VLCC_NAMES else None)
+            # Ensure the VLCC is also consistent with the selected farmer
+            st.session_state.vlcc_name = farmer_info_row['HPC Name'].strip()
+            st.session_state.farmer_code = farmer_code_from_lookup
+            st.session_state.hpc_code = farmer_info_row['HPC Code'].strip()
+            st.session_state.rep_id = farmer_info_row['Rep ID'].strip()
+            st.session_state.farmer_name_other = '' # Clear "other" if a known farmer is selected
         else:
+            # If no match found (e.g., if data is inconsistent), revert to "Others" and clear fields
             st.session_state.farmer_code = None
             st.session_state.hpc_code = ''
             st.session_state.rep_id = ''
-            st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None
-        st.session_state.farmer_name_other = ''
-    else:
+            st.session_state.farmer_name_selected = current_labels['Others']
+            st.session_state.farmer_name_other = ''
+            st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC
+    else: # If "Others" is selected
         st.session_state.farmer_code = None
         st.session_state.hpc_code = ''
         st.session_state.rep_id = ''
         st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC if "Others"
     save_draft()
+
 
 def on_farmer_code_change():
     selected_farmer_code = st.session_state.farmer_code
@@ -810,7 +819,7 @@ def on_farmer_code_change():
         st.session_state.rep_id = farmer_info['Rep ID']
         st.session_state.vlcc_name = farmer_info['HPC Name'] # Autofill VLCC too
         st.session_state.farmer_name_selected = farmer_info['Farmer Name']
-        st.session_state.farmer_name_other = ''
+        st.session_state.farmer_name_other = '' # Clear this if a specific code is chosen
     else:
         st.session_state.hpc_code = ''
         st.session_state.rep_id = ''
