@@ -519,16 +519,16 @@ MINERAL_MIXTURE_BRANDS = ["Herita Vit", "Herita Min", "Other (Specify)"]
 WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 
-# Define initial_values_defaults at the global scope
+# Define initial_values_defaults at the global scope, using logical keys
 initial_values_defaults = {
     'lang_select': "English",
     'vlcc_name': VLCC_NAMES[0] if VLCC_NAMES else None,
     'hpc_code': '',
     'types': "HPC",
-    'farmer_name_selected': 'Others', # Still default to others to allow free text or first in list
+    'farmer_name_selected': 'Others',
     'farmer_name_other': '',
-    'farmer_code': None, # Will be set based on first entry or selection
-    'rep_id': '', # Added Rep ID
+    'farmer_code': None,
+    'rep_id': '',
     'gender': "Male",
     'cows': 0,
     'cattle_in_milk': 0,
@@ -560,17 +560,83 @@ initial_values_defaults = {
     'current_step': 'form_entry',
 }
 
-# Function to save current form data to a draft file (kept same)
+# Helper functions for dynamic options
+def get_filtered_farmer_names(selected_vlcc):
+    if selected_vlcc and selected_vlcc in VLCC_NAMES:
+        filtered_df = df_farmer_data[df_farmer_data['HPC Name'] == selected_vlcc]
+        return sorted(filtered_df['Farmer Name'].unique().tolist())
+    return []
+
+def get_filtered_farmer_codes(selected_vlcc):
+    if selected_vlcc and selected_vlcc in VLCC_NAMES:
+        filtered_df = df_farmer_data[df_farmer_data['HPC Name'] == selected_vlcc]
+        return sorted(filtered_df['Member Code'].astype(str).unique().tolist())
+    return []
+
+# Function to save current form data to a draft file
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
-    draft_data = {key: st.session_state.get(key, initial_values_defaults.get(key)) for key in initial_values_defaults.keys()}
+    draft_data = {}
     
-    if 'visit_date' in draft_data and isinstance(draft_data['visit_date'], datetime.date):
-        draft_data['visit_date'] = draft_data['visit_date'].isoformat()
-    
-    if 'uploaded_temp_photo_paths' not in draft_data or not isinstance(draft_data['uploaded_temp_photo_paths'], list):
-        draft_data['uploaded_temp_photo_paths'] = []
+    # Map original_key to the session state key used for the widget
+    key_mapping = {
+        'vlcc_name': 'vlcc_name_select',
+        'farmer_name_selected': 'farmer_name_selected_select',
+        'farmer_name_other': 'farmer_name_other_input',
+        'farmer_code': 'farmer_code_select',
+        'hpc_code': 'hpc_code_display',
+        'rep_id': 'rep_id_display',
+        'types': 'types_selectbox',
+        'gender': 'gender_selectbox',
+        'green_fodder': 'green_fodder_radio',
+        'dry_fodder': 'dry_fodder_radio',
+        'pellet_feed': 'pellet_feed_radio',
+        'mineral_mixture': 'mineral_mixture_radio',
+        'silage': 'silage_radio',
+        'mineral_brand': 'mineral_brand_select',
+        'surveyor_name': 'surveyor_name_select',
+        'visit_date': 'visit_date_input',
+        'uploaded_temp_photo_paths': 'uploaded_temp_photo_paths',
+        'lang_select': 'lang_select',
+        'current_step': 'current_step',
+        # Other form fields
+        'cows': 'cows_input',
+        'cattle_in_milk': 'cattle_in_milk_input',
+        'calves': 'calves_input',
+        'desi_cows': 'desi_cows_input',
+        'crossbreed_cows': 'crossbreed_cows_input',
+        'buffalo': 'buffalo_input',
+        'milk_production': 'milk_production_input',
+        'green_fodder_types': 'green_fodder_types_multi',
+        'green_fodder_qty': 'green_fodder_qty_input',
+        'dry_fodder_types': 'dry_fodder_types_multi',
+        'dry_fodder_qty': 'dry_fodder_qty_input',
+        'pellet_feed_brands': 'pellet_feed_brands_multi',
+        'pellet_feed_qty': 'pellet_feed_qty_input',
+        'mineral_qty': 'mineral_qty_input',
+        'silage_source': 'silage_source_input',
+        'silage_qty': 'silage_qty_input',
+        'water_sources': 'water_sources_multi',
+        'final_submitted_data': 'final_submitted_data',
+    }
 
+    # Iterate through initial_values_defaults to ensure all expected fields are saved
+    for original_key, default_value in initial_values_defaults.items():
+        session_key = key_mapping.get(original_key, original_key) # Use direct key if not in map
+
+        value_to_save = st.session_state.get(session_key, default_value)
+
+        # Special handling for datetime.date
+        if original_key == 'visit_date' and isinstance(value_to_save, datetime.date):
+            value_to_save = value_to_save.isoformat()
+        
+        # Ensure list types are saved as lists
+        if original_key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_temp_photo_paths']:
+            if not isinstance(value_to_save, list):
+                value_to_save = [] # Default to empty list if not a list
+            
+        draft_data[original_key] = value_to_save
+    
     try:
         with open(draft_filename, 'w') as f:
             json.dump(draft_data, f, indent=4)
@@ -578,7 +644,7 @@ def save_draft():
     except Exception as e:
         st.error(f"Error saving draft: {e}")
 
-# Function to load draft data into session state (adjusted for global farmer lists)
+# Function to load draft data into session state
 def load_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     if os.path.exists(draft_filename):
@@ -586,59 +652,117 @@ def load_draft():
             with open(draft_filename, 'r') as f:
                 loaded_data = json.load(f)
 
-            for key, value in loaded_data.items():
-                if key == 'visit_date' and isinstance(value, str):
-                    try:
-                        st.session_state[key] = datetime.date.fromisoformat(value)
-                    except ValueError:
-                        st.session_state[key] = initial_values_defaults.get(key, datetime.date.today())
-                elif key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_temp_photo_paths']:
-                    st.session_state[key] = list(value) if isinstance(value, list) else []
-                else:
-                    st.session_state[key] = value
-            
+            # Map loaded data keys to session state widget keys
+            key_mapping = {
+                'vlcc_name': 'vlcc_name_select',
+                'farmer_name_selected': 'farmer_name_selected_select',
+                'farmer_name_other': 'farmer_name_other_input',
+                'farmer_code': 'farmer_code_select',
+                'hpc_code': 'hpc_code_display',
+                'rep_id': 'rep_id_display',
+                'types': 'types_selectbox',
+                'gender': 'gender_selectbox',
+                'green_fodder': 'green_fodder_radio',
+                'dry_fodder': 'dry_fodder_radio',
+                'pellet_feed': 'pellet_feed_radio',
+                'mineral_mixture': 'mineral_mixture_radio',
+                'silage': 'silage_radio',
+                'mineral_brand': 'mineral_brand_select',
+                'surveyor_name': 'surveyor_name_select',
+                'visit_date': 'visit_date_input',
+                'uploaded_temp_photo_paths': 'uploaded_temp_photo_paths', # This one maps directly
+                'lang_select': 'lang_select', # This one maps directly
+                'current_step': 'current_step', # This one maps directly
+                # Other form fields that are directly mapped or managed by the form
+                'cows': 'cows_input',
+                'cattle_in_milk': 'cattle_in_milk_input',
+                'calves': 'calves_input',
+                'desi_cows': 'desi_cows_input',
+                'crossbreed_cows': 'crossbreed_cows_input',
+                'buffalo': 'buffalo_input',
+                'milk_production': 'milk_production_input',
+                'green_fodder_types': 'green_fodder_types_multi',
+                'green_fodder_qty': 'green_fodder_qty_input',
+                'dry_fodder_types': 'dry_fodder_types_multi',
+                'dry_fodder_qty': 'dry_fodder_qty_input',
+                'pellet_feed_brands': 'pellet_feed_brands_multi',
+                'pellet_feed_qty': 'pellet_feed_qty_input',
+                'mineral_qty': 'mineral_qty_input',
+                'silage_source': 'silage_source_input',
+                'silage_qty': 'silage_qty_input',
+                'water_sources': 'water_sources_multi',
+                'final_submitted_data': 'final_submitted_data', # For review step
+            }
+
+            for original_key, session_key in key_mapping.items():
+                if original_key in loaded_data:
+                    value = loaded_data[original_key]
+                    if original_key == 'visit_date' and isinstance(value, str):
+                        try:
+                            st.session_state[session_key] = datetime.date.fromisoformat(value)
+                        except ValueError:
+                            st.session_state[session_key] = initial_values_defaults.get(original_key, datetime.date.today())
+                    elif original_key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_temp_photo_paths'] and isinstance(value, list):
+                        st.session_state[session_key] = list(value)
+                    else:
+                        st.session_state[session_key] = value
+                # Ensure keys not in loaded_data are initialized to defaults for consistency
+                elif session_key not in st.session_state:
+                    st.session_state[session_key] = initial_values_defaults.get(original_key)
+
             # --- VALIDATE DROPDOWN SELECTIONS AFTER LOADING DRAFT ---
-            # VLCC Name
-            if 'vlcc_name' in st.session_state and st.session_state['vlcc_name'] not in VLCC_NAMES:
-                st.session_state['vlcc_name'] = VLCC_NAMES[0] if VLCC_NAMES else None
-            
-            temp_lang = loaded_data.get('lang_select', 'English')
+            temp_lang = st.session_state.get('lang_select', 'English') # Use session state for lang
             current_labels = dict_translations.get(temp_lang, dict_translations['English'])
+
+            # VLCC Name
+            if 'vlcc_name_select' in st.session_state and st.session_state['vlcc_name_select'] not in VLCC_NAMES:
+                st.session_state['vlcc_name_select'] = VLCC_NAMES[0] if VLCC_NAMES else None
             
+            # Farmer Name (validation against currently filtered names based on VLCC)
+            current_vlcc_for_validation = st.session_state.get('vlcc_name_select')
+            valid_farmer_names_for_vlcc = get_filtered_farmer_names(current_vlcc_for_validation) + [current_labels['Others']]
+
+            if 'farmer_name_selected_select' in st.session_state and st.session_state['farmer_name_selected_select'] not in valid_farmer_names_for_vlcc:
+                st.session_state['farmer_name_selected_select'] = current_labels['Others']
+                st.session_state['farmer_name_other_input'] = '' # Clear other name if invalid
+
+            # Farmer Code (validation against currently filtered codes based on VLCC)
+            valid_farmer_codes_for_vlcc = get_filtered_farmer_codes(current_vlcc_for_validation)
+            if 'farmer_code_select' in st.session_state and st.session_state['farmer_code_select'] not in valid_farmer_codes_for_vlcc:
+                st.session_state['farmer_code_select'] = None
+                st.session_state['hpc_code_display'] = ''
+                st.session_state['rep_id_display'] = ''
+                # Ensure farmer_name_selected_select is consistent if code becomes None
+                if st.session_state.farmer_name_selected_select != current_labels['Others']:
+                    st.session_state.farmer_name_selected_select = current_labels['Others']
+                    st.session_state.farmer_name_other_input = ''
+
+
             # Types and Gender
-            if 'types' in st.session_state and st.session_state['types'] not in (current_labels['HPC'], current_labels['MCC']):
-                st.session_state['types'] = current_labels['HPC']
-            if 'gender' in st.session_state and st.session_state['gender'] not in (current_labels['Male'], current_labels['Female']):
-                st.session_state['gender'] = current_labels['Male']
+            if 'types_selectbox' in st.session_state and st.session_state['types_selectbox'] not in (current_labels['HPC'], current_labels['MCC']):
+                st.session_state['types_selectbox'] = current_labels['HPC']
+            if 'gender_selectbox' in st.session_state and st.session_state['gender_selectbox'] not in (current_labels['Male'], current_labels['Female']):
+                st.session_state['gender_selectbox'] = current_labels['Male']
             
-            # Yes/No options
-            if 'green_fodder' in st.session_state and st.session_state['green_fodder'] not in (current_labels['Yes'], current_labels['No']):
-                st.session_state['green_fodder'] = current_labels['Yes']
-            if 'dry_fodder' in st.session_state and st.session_state['dry_fodder'] not in (current_labels['Yes'], current_labels['No']):
-                st.session_state['dry_fodder'] = current_labels['Yes']
-            if 'pellet_feed' in st.session_state and st.session_state['pellet_feed'] not in (current_labels['Yes'], current_labels['No']):
-                st.session_state['pellet_feed'] = current_labels['Yes']
-            if 'mineral_mixture' in st.session_state and st.session_state['mineral_mixture'] not in (current_labels['Yes'], current_labels['No']):
-                st.session_state['mineral_mixture'] = current_labels['Yes']
-            if 'silage' in st.session_state and st.session_state['silage'] not in (current_labels['Yes'], current_labels['No']):
-                st.session_state['silage'] = current_labels['Yes']
+            # Yes/No options (using new keys)
+            if 'green_fodder_radio' in st.session_state and st.session_state['green_fodder_radio'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['green_fodder_radio'] = current_labels['Yes']
+            if 'dry_fodder_radio' in st.session_state and st.session_state['dry_fodder_radio'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['dry_fodder_radio'] = current_labels['Yes']
+            if 'pellet_feed_radio' in st.session_state and st.session_state['pellet_feed_radio'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['pellet_feed_radio'] = current_labels['Yes']
+            if 'mineral_mixture_radio' in st.session_state and st.session_state['mineral_mixture_radio'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['mineral_mixture_radio'] = current_labels['Yes']
+            if 'silage_radio' in st.session_state and st.session_state['silage_radio'] not in (current_labels['Yes'], current_labels['No']):
+                st.session_state['silage_radio'] = current_labels['Yes']
             
-            # Farmer Name (use global list for validation)
-            farmer_names_with_others_for_load = FARMER_NAMES_ALL + [current_labels['Others']]
-            if 'farmer_name_selected' in st.session_state and st.session_state['farmer_name_selected'] not in farmer_names_with_others_for_load:
-                st.session_state['farmer_name_selected'] = FARMER_NAMES_ALL[0] if FARMER_NAMES_ALL else current_labels['Others']
-
-            # Farmer Code (use global list for validation)
-            if 'farmer_code' in st.session_state and st.session_state['farmer_code'] not in FARMER_CODES_ALL:
-                st.session_state['farmer_code'] = FARMER_CODES_ALL[0] if FARMER_CODES_ALL else None
-
             # Mineral Brand
-            if 'mineral_brand' in st.session_state and st.session_state['mineral_brand'] not in MINERAL_MIXTURE_BRANDS:
-                st.session_state['mineral_brand'] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
+            if 'mineral_brand_select' in st.session_state and st.session_state['mineral_brand_select'] not in MINERAL_MIXTURE_BRANDS:
+                st.session_state['mineral_brand_select'] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
             
             # Surveyor Name
-            if 'surveyor_name' in st.session_state and st.session_state['surveyor_name'] not in SURVEYOR_NAMES:
-                st.session_state['surveyor_name'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
+            if 'surveyor_name_select' in st.session_state and st.session_state['surveyor_name_select'] not in SURVEYOR_NAMES:
+                st.session_state['surveyor_name_select'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
 
             # Photo Paths
             if 'uploaded_temp_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_temp_photo_paths, list):
@@ -651,26 +775,99 @@ def load_draft():
             return False
     return False
 
-# Function to clear form fields (reset session state for form entry) (kept same)
-def clear_form_fields():
-    persistent_keys = ['lang_select', 'app_initialized_flag', 'current_step']
-    keys_to_delete = [key for key in st.session_state.keys() if key not in persistent_keys]
 
-    for key in keys_to_delete:
-        if key in st.session_state:
-            del st.session_state[key]
+# Function to clear form fields (reset session state for form entry)
+def clear_form_fields():
+    persistent_keys = ['lang_select', 'app_initialized_flag', 'current_step'] # Keep these
     
-    for key, default_value in initial_values_defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = default_value
+    # Identify all keys that need to be cleared/reset
+    all_current_session_keys = list(st.session_state.keys()) # Get a copy
     
+    for key in all_current_session_keys:
+        if key not in persistent_keys:
+            if key in st.session_state: # Double-check existence before deleting
+                del st.session_state[key]
+    
+    # Re-map initial_values_defaults to session state keys
+    key_mapping = {
+        'vlcc_name': 'vlcc_name_select',
+        'farmer_name_selected': 'farmer_name_selected_select',
+        'farmer_name_other': 'farmer_name_other_input',
+        'farmer_code': 'farmer_code_select',
+        'hpc_code': 'hpc_code_display',
+        'rep_id': 'rep_id_display',
+        'types': 'types_selectbox',
+        'gender': 'gender_selectbox',
+        'green_fodder': 'green_fodder_radio',
+        'dry_fodder': 'dry_fodder_radio',
+        'pellet_feed': 'pellet_feed_radio',
+        'mineral_mixture': 'mineral_mixture_radio',
+        'silage': 'silage_radio',
+        'mineral_brand': 'mineral_brand_select',
+        'surveyor_name': 'surveyor_name_select',
+        'visit_date': 'visit_date_input',
+        'uploaded_temp_photo_paths': 'uploaded_temp_photo_paths',
+        # Other form fields
+        'cows': 'cows_input',
+        'cattle_in_milk': 'cattle_in_milk_input',
+        'calves': 'calves_input',
+        'desi_cows': 'desi_cows_input',
+        'crossbreed_cows': 'crossbreed_cows_input',
+        'buffalo': 'buffalo_input',
+        'milk_production': 'milk_production_input',
+        'green_fodder_types': 'green_fodder_types_multi',
+        'green_fodder_qty': 'green_fodder_qty_input',
+        'dry_fodder_types': 'dry_fodder_types_multi',
+        'dry_fodder_qty': 'dry_fodder_qty_input',
+        'pellet_feed_brands': 'pellet_feed_brands_multi',
+        'pellet_feed_qty': 'pellet_feed_qty_input',
+        'mineral_qty': 'mineral_qty_input',
+        'silage_source': 'silage_source_input',
+        'silage_qty': 'silage_qty_input',
+        'water_sources': 'water_sources_multi',
+        'final_submitted_data': 'final_submitted_data',
+    }
+
+    for original_key, default_value in initial_values_defaults.items():
+        session_key = key_mapping.get(original_key, original_key)
+        st.session_state[session_key] = default_value # Set to default
+
+    # Re-apply the specific initial setup logic for farmer/VLCC
+    if VLCC_NAMES:
+        st.session_state.vlcc_name_select = VLCC_NAMES[0]
+        filtered_farmers_for_init = get_filtered_farmer_names(st.session_state.vlcc_name_select)
+        if filtered_farmers_for_init:
+            initial_farmer_name = filtered_farmers_for_init[0]
+            st.session_state.farmer_name_selected_select = initial_farmer_name
+            initial_farmer_info = df_farmer_data[
+                (df_farmer_data['Farmer Name'] == initial_farmer_name) &
+                (df_farmer_data['HPC Name'] == st.session_state.vlcc_name_select)
+            ]
+            if not initial_farmer_info.empty:
+                farmer_info_row = initial_farmer_info.iloc[0]
+                st.session_state.farmer_code_select = str(farmer_info_row['Member Code']).strip()
+                st.session_state.hpc_code_display = str(farmer_info_row['HPC Code']).strip()
+                st.session_state.rep_id_display = str(farmer_info_row['Rep ID']).strip()
+            else:
+                st.session_state.farmer_name_selected_select = initial_values_defaults['farmer_name_selected'] # 'Others'
+                st.session_state.farmer_code_select = None
+        else:
+            st.session_state.farmer_name_selected_select = initial_values_defaults['farmer_name_selected'] # 'Others'
+            st.session_state.farmer_code_select = None
+    else:
+        st.session_state.vlcc_name_select = None
+        st.session_state.farmer_name_selected_select = initial_values_defaults['farmer_name_selected']
+        st.session_state.farmer_code_select = None
+
     st.session_state.current_step = 'form_entry'
     st.session_state.last_saved_time_persistent = None
     
+    # Clear temporary image directory
     for f in os.listdir(TEMP_IMAGE_DIR):
         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
     st.session_state.uploaded_temp_photo_paths = []
 
+    # Remove draft file
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     if os.path.exists(draft_filename):
         os.remove(draft_filename)
@@ -708,125 +905,176 @@ def get_all_responses_df():
     else:
         return pd.DataFrame()
 
-# Initialize session state (adjusted for ALL farmer data)
-if 'app_initialized_flag' not in st.session_state:
-    st.session_state.app_initialized_flag = True
-    st.session_state.last_saved_time_persistent = None
-    
-    # Initialize all defaults first
-    for key, default_value in initial_values_defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = default_value
-    
-    # Initial setup for farmer code/name selection
-    if FARMER_CODES_ALL:
-        st.session_state.farmer_code = FARMER_CODES_ALL[0]
-        # Attempt to set farmer name default based on the first farmer code
-        if FARMER_CODES_ALL[0] in FARMER_LOOKUP:
-            st.session_state.farmer_name_selected = FARMER_LOOKUP[FARMER_CODES_ALL[0]]['Farmer Name']
-            st.session_state.hpc_code = FARMER_LOOKUP[FARMER_CODES_ALL[0]]['HPC Code']
-            st.session_state.rep_id = FARMER_LOOKUP[FARMER_CODES_ALL[0]]['Rep ID']
-        else:
-            st.session_state.farmer_name_selected = initial_values_defaults['farmer_name_selected']
-    else:
-        st.session_state.farmer_code = None
-        st.session_state.farmer_name_selected = initial_values_defaults['farmer_name_selected']
-
-    # Initial VLCC selection should also come from the chosen farmer if possible
-    if st.session_state.farmer_code and st.session_state.farmer_code in FARMER_LOOKUP:
-        st.session_state.vlcc_name = FARMER_LOOKUP[st.session_state.farmer_code]['HPC Name']
-    else:
-        st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None
-
-
-    # Then try to load draft, which will overwrite defaults if successful and valid
-    load_draft()
-
-# --- Callback functions for dynamic updates (outside the form) ---
+# --- Callback functions for dynamic updates ---
 
 # VLCC name change now updates other fields directly, no filtering of farmer lists based on VLCC.
 def on_vlcc_change():
-    selected_vlcc = st.session_state.vlcc_name
-    # When VLCC changes, we clear farmer selections and autofill,
-    # expecting user to re-select from the global lists.
-    # We maintain the "Others" option if it was selected and reset to it.
+    selected_vlcc = st.session_state.vlcc_name_select # Use the key from the selectbox
     current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
-    
-    # Check if the currently selected farmer name exists within the new VLCC.
-    # If not, reset it.
-    current_farmer_name = st.session_state.farmer_name_selected
-    if current_farmer_name != current_labels['Others']:
-        matching_in_new_vlcc = df_farmer_data[(df_farmer_data['Farmer Name'] == current_farmer_name) & 
-                                              (df_farmer_data['HPC Name'] == selected_vlcc)]
-        if matching_in_new_vlcc.empty:
-            st.session_state.farmer_name_selected = current_labels['Others']
-            st.session_state.farmer_name_other = '' # Clear other name if it was used
-            st.session_state.farmer_code = None
-            st.session_state.hpc_code = ''
-            st.session_state.rep_id = ''
-        # If it does match in the new VLCC, then farmer_name_selected is fine,
-        # and on_farmer_name_change will handle updating code/rep_id.
-    
+
+    # Get the filtered lists based on the new VLCC
+    filtered_names = get_filtered_farmer_names(selected_vlcc)
+    # filtered_codes = get_filtered_farmer_codes(selected_vlcc) # Not strictly needed here, will be derived by on_farmer_name_change/on_farmer_code_change
+
+    # Reset farmer name and code selections, then try to re-select a sensible default
+    st.session_state.farmer_name_selected_select = current_labels['Others'] # Default to Others initially
+    st.session_state.farmer_name_other_input = '' # Clear other name input
+    st.session_state.farmer_code_select = None
+    st.session_state.hpc_code_display = ''
+    st.session_state.rep_id_display = ''
+
+    # If the filtered list has farmers, pre-select the first one if not "Others"
+    if filtered_names and current_labels['Others'] not in filtered_names:
+        st.session_state.farmer_name_selected_select = filtered_names[0]
+        # Auto-fill other fields based on this new default farmer
+        on_farmer_name_change()
+
     save_draft()
+    st.rerun() # Rerun to update the dropdown options
 
 def on_farmer_name_change():
-    selected_farmer_name = st.session_state.farmer_name_selected
+    selected_farmer_name = st.session_state.farmer_name_selected_select # Use the key
     current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
+    selected_vlcc = st.session_state.vlcc_name_select # Use the VLCC selected above
+
     if selected_farmer_name != current_labels['Others']:
-        # Find the first matching farmer based on name
-        # Prioritize matching within the currently selected VLCC, if one is selected
-        matching_farmers = df_farmer_data[df_farmer_data['Farmer Name'] == selected_farmer_name]
-        
-        if st.session_state.vlcc_name and st.session_state.vlcc_name in VLCC_NAMES:
-            filtered_by_vlcc = matching_farmers[matching_farmers['HPC Name'] == st.session_state.vlcc_name]
-            if not filtered_by_vlcc.empty:
-                matching_farmers = filtered_by_vlcc
-            # else: continue with all matching farmers if no specific match in VLCC
+        # Filter by both name AND selected VLCC for precision
+        matching_farmers = df_farmer_data[
+            (df_farmer_data['Farmer Name'] == selected_farmer_name) &
+            (df_farmer_data['HPC Name'] == selected_vlcc) # Ensure consistency with VLCC
+        ]
 
         if not matching_farmers.empty:
-            # Take the first match
             farmer_info_row = matching_farmers.iloc[0]
-            farmer_code_from_lookup = str(farmer_info_row['Member Code']).strip()
-            
-            # Ensure the VLCC is also consistent with the selected farmer
-            st.session_state.vlcc_name = farmer_info_row['HPC Name'].strip()
-            st.session_state.farmer_code = farmer_code_from_lookup
-            st.session_state.hpc_code = farmer_info_row['HPC Code'].strip()
-            st.session_state.rep_id = farmer_info_row['Rep ID'].strip()
-            st.session_state.farmer_name_other = '' # Clear "other" if a known farmer is selected
+            st.session_state.farmer_code_select = str(farmer_info_row['Member Code']).strip()
+            st.session_state.hpc_code_display = str(farmer_info_row['HPC Code']).strip()
+            st.session_state.rep_id_display = str(farmer_info_row['Rep ID']).strip()
+            # The VLCC is already selected, no need to update st.session_state.vlcc_name_select here
+            st.session_state.farmer_name_other_input = '' # Clear "other" if a known farmer is selected
         else:
-            # If no match found (e.g., if data is inconsistent), revert to "Others" and clear fields
-            st.session_state.farmer_code = None
-            st.session_state.hpc_code = ''
-            st.session_state.rep_id = ''
-            st.session_state.farmer_name_selected = current_labels['Others']
-            st.session_state.farmer_name_other = ''
-            st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC
+            # If the selected farmer name is not found within the selected VLCC, revert to "Others"
+            st.session_state.farmer_code_select = None
+            st.session_state.hpc_code_display = ''
+            st.session_state.rep_id_display = ''
+            st.session_state.farmer_name_selected_select = current_labels['Others']
+            st.session_state.farmer_name_other_input = ''
+            st.warning(f"Selected farmer '{selected_farmer_name}' not found for VLCC '{selected_vlcc}'. Please select 'Others' or a valid farmer from the list.")
     else: # If "Others" is selected
-        st.session_state.farmer_code = None
-        st.session_state.hpc_code = ''
-        st.session_state.rep_id = ''
-        st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC if "Others"
+        st.session_state.farmer_code_select = None
+        st.session_state.hpc_code_display = ''
+        st.session_state.rep_id_display = ''
+        # farmer_name_other_input will be editable in the main UI section
+
     save_draft()
+    # No rerun here, let the main UI flow handle it unless absolutely necessary.
 
 
 def on_farmer_code_change():
-    selected_farmer_code = st.session_state.farmer_code
+    selected_farmer_code = st.session_state.farmer_code_select # Use the key
     current_labels = dict_translations.get(st.session_state.lang_select, dict_translations['English'])
+
     if selected_farmer_code in FARMER_LOOKUP:
         farmer_info = FARMER_LOOKUP[selected_farmer_code]
-        st.session_state.hpc_code = farmer_info['HPC Code']
-        st.session_state.rep_id = farmer_info['Rep ID']
-        st.session_state.vlcc_name = farmer_info['HPC Name'] # Autofill VLCC too
-        st.session_state.farmer_name_selected = farmer_info['Farmer Name']
-        st.session_state.farmer_name_other = '' # Clear this if a specific code is chosen
+        st.session_state.hpc_code_display = farmer_info['HPC Code']
+        st.session_state.rep_id_display = farmer_info['Rep ID']
+        st.session_state.vlcc_name_select = farmer_info['HPC Name'] # Autofill VLCC too
+        st.session_state.farmer_name_selected_select = farmer_info['Farmer Name']
+        st.session_state.farmer_name_other_input = '' # Clear this if a specific code is chosen
     else:
-        st.session_state.hpc_code = ''
-        st.session_state.rep_id = ''
-        st.session_state.vlcc_name = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC if not found
-        st.session_state.farmer_name_selected = current_labels['Others']
-        st.session_state.farmer_name_other = ''
+        st.session_state.hpc_code_display = ''
+        st.session_state.rep_id_display = ''
+        st.session_state.vlcc_name_select = VLCC_NAMES[0] if VLCC_NAMES else None # Reset VLCC if not found
+        st.session_state.farmer_name_selected_select = current_labels['Others']
+        st.session_state.farmer_name_other_input = ''
+
     save_draft()
+    # No rerun here, let the main UI flow handle it.
+
+# Initialize session state (adjusted for ALL farmer data and new keys)
+if 'app_initialized_flag' not in st.session_state:
+    st.session_state.app_initialized_flag = True
+    st.session_state.last_saved_time_persistent = None
+
+    # Initialize all defaults first, using unique keys for widgets
+    # This loop ensures all keys from initial_values_defaults exist in session_state,
+    # mapping to their widget-specific keys.
+    key_mapping_init = {
+        'vlcc_name': 'vlcc_name_select',
+        'farmer_name_selected': 'farmer_name_selected_select',
+        'farmer_name_other': 'farmer_name_other_input',
+        'farmer_code': 'farmer_code_select',
+        'hpc_code': 'hpc_code_display',
+        'rep_id': 'rep_id_display',
+        'types': 'types_selectbox',
+        'gender': 'gender_selectbox',
+        'green_fodder': 'green_fodder_radio',
+        'dry_fodder': 'dry_fodder_radio',
+        'pellet_feed': 'pellet_feed_radio',
+        'mineral_mixture': 'mineral_mixture_radio',
+        'silage': 'silage_radio',
+        'mineral_brand': 'mineral_brand_select',
+        'surveyor_name': 'surveyor_name_select',
+        'visit_date': 'visit_date_input',
+        'uploaded_temp_photo_paths': 'uploaded_temp_photo_paths',
+        'lang_select': 'lang_select',
+        'current_step': 'current_step',
+        'cows': 'cows_input',
+        'cattle_in_milk': 'cattle_in_milk_input',
+        'calves': 'calves_input',
+        'desi_cows': 'desi_cows_input',
+        'crossbreed_cows': 'crossbreed_cows_input',
+        'buffalo': 'buffalo_input',
+        'milk_production': 'milk_production_input',
+        'green_fodder_types': 'green_fodder_types_multi',
+        'green_fodder_qty': 'green_fodder_qty_input',
+        'dry_fodder_types': 'dry_fodder_types_multi',
+        'dry_fodder_qty': 'dry_fodder_qty_input',
+        'pellet_feed_brands': 'pellet_feed_brands_multi',
+        'pellet_feed_qty': 'pellet_feed_qty_input',
+        'mineral_qty': 'mineral_qty_input',
+        'silage_source': 'silage_source_input',
+        'silage_qty': 'silage_qty_input',
+        'water_sources': 'water_sources_multi',
+        'final_submitted_data': 'final_submitted_data',
+    }
+
+    for original_key, default_value in initial_values_defaults.items():
+        session_key = key_mapping_init.get(original_key, original_key)
+        if session_key not in st.session_state:
+            st.session_state[session_key] = default_value
+
+    # Initial setup for farmer code/name selection to ensure consistency
+    if VLCC_NAMES:
+        st.session_state.vlcc_name_select = VLCC_NAMES[0]
+        # Filter farmers based on this default VLCC
+        filtered_farmers_for_init = get_filtered_farmer_names(st.session_state.vlcc_name_select)
+        if filtered_farmers_for_init:
+            initial_farmer_name = filtered_farmers_for_init[0]
+            st.session_state.farmer_name_selected_select = initial_farmer_name
+            # Attempt to find the full info for this initial farmer
+            initial_farmer_info = df_farmer_data[
+                (df_farmer_data['Farmer Name'] == initial_farmer_name) &
+                (df_farmer_data['HPC Name'] == st.session_state.vlcc_name_select)
+            ]
+            if not initial_farmer_info.empty:
+                farmer_info_row = initial_farmer_info.iloc[0]
+                st.session_state.farmer_code_select = str(farmer_info_row['Member Code']).strip()
+                st.session_state.hpc_code_display = str(farmer_info_row['HPC Code']).strip()
+                st.session_state.rep_id_display = str(farmer_info_row['Rep ID']).strip()
+            else:
+                st.session_state.farmer_name_selected_select = initial_values_defaults['farmer_name_selected'] # 'Others'
+                st.session_state.farmer_code_select = None
+        else:
+            # If no farmers for initial VLCC, default to 'Others'
+            st.session_state.farmer_name_selected_select = initial_values_defaults['farmer_name_selected'] # 'Others'
+            st.session_state.farmer_code_select = None
+    else:
+        st.session_state.vlcc_name_select = None
+        st.session_state.farmer_name_selected_select = initial_values_defaults['farmer_name_selected']
+        st.session_state.farmer_code_select = None
+
+    # Then try to load draft, which will overwrite these defaults if successful and valid
+    load_draft()
 
 # Language Selection (kept same)
 initial_lang_options = ("English", "Hindi", "Marathi", "Telugu")
@@ -858,11 +1106,12 @@ if st.session_state.current_step == 'form_entry':
     # --- Farmer Profile Inputs (Moved OUTSIDE the form for dynamic updates) ---
     st.subheader("Farmer Identification")
 
-    current_vlcc_name = st.session_state.get('vlcc_name', VLCC_NAMES[0] if VLCC_NAMES else None)
+    # VLCC Name selectbox
+    current_vlcc_name = st.session_state.get('vlcc_name_select')
     vlcc_name_default_idx = 0
     if current_vlcc_name in VLCC_NAMES:
         vlcc_name_default_idx = VLCC_NAMES.index(current_vlcc_name)
-    st.session_state.vlcc_name = st.selectbox( # Assign directly to session state
+    st.session_state.vlcc_name_select = st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
         index=vlcc_name_default_idx,
         key="vlcc_name_select", # Unique key
@@ -870,53 +1119,69 @@ if st.session_state.current_step == 'form_entry':
         on_change=on_vlcc_change
     )
 
-    # Farmer Name dropdown: Now uses FARMER_NAMES_ALL (all names)
-    farmer_names_options = FARMER_NAMES_ALL + [labels['Others']]
-    current_farmer_name_selected = st.session_state.get('farmer_name_selected', farmer_names_options[0] if farmer_names_options else labels['Others'])
+    # Dynamically filtered farmer names and codes
+    current_selected_vlcc_for_filtering = st.session_state.get('vlcc_name_select')
+    filtered_farmer_names_for_display = get_filtered_farmer_names(current_selected_vlcc_for_filtering)
+    filtered_farmer_codes_for_display = get_filtered_farmer_codes(current_selected_vlcc_for_filtering)
+
+    # Add "Others" to the filtered farmer names for display
+    farmer_names_options_display = filtered_farmer_names_for_display + [labels['Others']]
+
+    # Determine the default index for Farmer Name
+    current_farmer_name_selected_display = st.session_state.get('farmer_name_selected_select', labels['Others'])
     farmer_name_default_idx = 0
-    if current_farmer_name_selected in farmer_names_options:
-        farmer_name_default_idx = farmer_names_options.index(current_farmer_name_selected)
-    st.session_state.farmer_name_selected = st.selectbox( # Assign directly to session state
-        labels['Farmer Name'], options=farmer_names_options,
+    if current_farmer_name_selected_display in farmer_names_options_display:
+        farmer_name_default_idx = farmer_names_options_display.index(current_farmer_name_selected_display)
+    # Ensure the index is valid for the current options, otherwise default to "Others"
+    if farmer_name_default_idx >= len(farmer_names_options_display):
+        farmer_name_default_idx = farmer_names_options_display.index(labels['Others']) if labels['Others'] in farmer_names_options_display else 0
+
+    st.session_state.farmer_name_selected_select = st.selectbox(
+        labels['Farmer Name'], options=farmer_names_options_display,
         index=farmer_name_default_idx,
         key="farmer_name_selected_select", # Unique key
-        disabled=(not farmer_names_options),
+        disabled=(not farmer_names_options_display),
         on_change=on_farmer_name_change
     )
 
-    if st.session_state.farmer_name_selected == labels['Others']:
-        st.session_state.farmer_name_other = st.text_input(
+    if st.session_state.farmer_name_selected_select == labels['Others']:
+        st.session_state.farmer_name_other_input = st.text_input(
             labels['Specify Farmer Name'],
-            value=st.session_state.get('farmer_name_other', ''), # Get from session state
-            key="farmer_name_other_input"
+            value=st.session_state.get('farmer_name_other_input', ''),
+            key="farmer_name_other_input",
+            on_change=save_draft # Add save_draft here
         )
-    else:
-        st.session_state.farmer_name_other = "" # Clear this if a specific farmer is chosen
+    # No else: block to clear farmer_name_other_input here, on_farmer_name_change handles it
 
-    # Farmer Code dropdown: Now uses FARMER_CODES_ALL (all codes)
-    farmer_codes_options = FARMER_CODES_ALL
-    current_farmer_code = st.session_state.get('farmer_code', farmer_codes_options[0] if farmer_codes_options else None)
+    # Farmer Code dropdown
+    current_farmer_code_display = st.session_state.get('farmer_code_select')
     farmer_code_default_idx = 0
-    if current_farmer_code in farmer_codes_options:
-        farmer_code_default_idx = farmer_codes_options.index(current_farmer_code)
-    st.session_state.farmer_code = st.selectbox( # Assign directly to session state
-        labels['Farmer Code'], options=farmer_codes_options,
+    if current_farmer_code_display in filtered_farmer_codes_for_display:
+        farmer_code_default_idx = filtered_farmer_codes_for_display.index(current_farmer_code_display)
+    elif current_farmer_code_display is None and filtered_farmer_codes_for_display:
+        farmer_code_default_idx = 0 # Default to first if None and options exist
+    else:
+        # If the current code isn't in filtered options, or no options, default to 0 (which might be invalid or empty list)
+        farmer_code_default_idx = 0
+
+    st.session_state.farmer_code_select = st.selectbox(
+        labels['Farmer Code'], options=filtered_farmer_codes_for_display,
         index=farmer_code_default_idx,
         key="farmer_code_select", # Unique key
-        disabled=(not farmer_codes_options),
+        disabled=(not filtered_farmer_codes_for_display),
         on_change=on_farmer_code_change
     )
     
     # Autofilled/displayed fields (HPC Code and Rep ID) - values are directly from session state
     st.text_input(
         labels['HPC/MCC Code'],
-        value=st.session_state.get('hpc_code', ''),
+        value=st.session_state.get('hpc_code_display', ''),
         key="hpc_code_display",
         disabled=True
     )
     st.text_input(
         "Rep ID (Phone Number)",
-        value=st.session_state.get('rep_id', ''),
+        value=st.session_state.get('rep_id_display', ''),
         key="rep_id_display",
         disabled=True
     )
@@ -924,11 +1189,11 @@ if st.session_state.current_step == 'form_entry':
     # Types and Gender are simple selectboxes, can be outside or inside,
     # but since Farmer Identification section is already outside, keep them here for consistency.
     types_options = (labels['HPC'], labels['MCC'])
-    current_types = st.session_state.get('types', types_options[0])
+    current_types = st.session_state.get('types_selectbox', types_options[0])
     types_default_idx = 0
     if current_types in types_options:
         types_default_idx = types_options.index(current_types)
-    st.session_state.types = st.selectbox( # Assign directly to session state
+    st.session_state.types_selectbox = st.selectbox( # Assign directly to session state
         labels['Types'], types_options,
         index=types_default_idx,
         key="types_selectbox", # Unique key
@@ -936,11 +1201,11 @@ if st.session_state.current_step == 'form_entry':
     )
     
     gender_options = (labels['Male'], labels['Female'])
-    current_gender = st.session_state.get('gender', gender_options[0])
+    current_gender = st.session_state.get('gender_selectbox', gender_options[0])
     gender_default_idx = 0
     if current_gender in gender_options:
         gender_default_idx = gender_options.index(current_gender)
-    st.session_state.gender = st.selectbox( # Assign directly to session state
+    st.session_state.gender_selectbox = st.selectbox( # Assign directly to session state
         labels['Gender'], gender_options,
         index=gender_default_idx,
         key="gender_selectbox", # Unique key
@@ -1037,207 +1302,205 @@ if st.session_state.current_step == 'form_entry':
 
 
     # --- Start of the actual Streamlit form for other fields ---
-    # This form will now ONLY contain inputs whose values are collected upon a single submission.
-    # The farmer identification details are already handled and stored in session_state.
     with st.form("survey_form_details"):
         st.header(labels['Farm Details'])
         
-        st.session_state.cows = st.number_input(
+        st.session_state.cows_input = st.number_input(
             labels['Number of Cows'], min_value=0,
-            value=int(st.session_state.get('cows', 0)),
+            value=int(st.session_state.get('cows_input', 0)),
             key="cows_input"
         )
-        st.session_state.cattle_in_milk = st.number_input(
+        st.session_state.cattle_in_milk_input = st.number_input(
             labels['No. of Cattle in Milk'], min_value=0,
-            value=int(st.session_state.get('cattle_in_milk', 0)),
+            value=int(st.session_state.get('cattle_in_milk_input', 0)),
             key="cattle_in_milk_input"
         )
-        st.session_state.calves = st.number_input(
+        st.session_state.calves_input = st.number_input(
             labels['No. of Calves/Heifers'], min_value=0,
-            value=int(st.session_state.get('calves', 0)),
+            value=int(st.session_state.get('calves_input', 0)),
             key="calves_input"
         )
-        st.session_state.desi_cows = st.number_input(
+        st.session_state.desi_cows_input = st.number_input(
             labels['No. of Desi cows'], min_value=0,
-            value=int(st.session_state.get('desi_cows', 0)),
+            value=int(st.session_state.get('desi_cows_input', 0)),
             key="desi_cows_input"
         )
-        st.session_state.crossbreed_cows = st.number_input(
+        st.session_state.crossbreed_cows_input = st.number_input(
             labels['No. of Cross breed cows'], min_value=0,
-            value=int(st.session_state.get('crossbreed_cows', 0)),
+            value=int(st.session_state.get('crossbreed_cows_input', 0)),
             key="crossbreed_cows_input"
         )
-        st.session_state.buffalo = st.number_input(
+        st.session_state.buffalo_input = st.number_input(
             labels['No. of Buffalo'], min_value=0,
-            value=int(st.session_state.get('buffalo', 0)),
+            value=int(st.session_state.get('buffalo_input', 0)),
             key="buffalo_input"
         )
-        st.session_state.milk_production = st.number_input(
+        st.session_state.milk_production_input = st.number_input(
             labels['Milk Production'], min_value=0.0, format="%.2f",
-            value=float(st.session_state.get('milk_production', 0.0)),
+            value=float(st.session_state.get('milk_production_input', 0.0)),
             key="milk_production_input"
         )
 
         st.header(labels['Specific Questions'])
         green_fodder_options = (labels['Yes'], labels['No'])
-        current_green_fodder = st.session_state.get('green_fodder', green_fodder_options[0])
+        current_green_fodder = st.session_state.get('green_fodder_radio', green_fodder_options[0])
         green_fodder_default_idx = 0
         if current_green_fodder in green_fodder_options:
             green_fodder_default_idx = green_fodder_options.index(current_green_fodder)
-        st.session_state.green_fodder = st.radio(
+        st.session_state.green_fodder_radio = st.radio(
             labels['Green Fodder'], green_fodder_options,
             index=green_fodder_default_idx,
             key="green_fodder_radio"
         )
         
-        if st.session_state.green_fodder == labels['Yes']:
-            st.session_state.green_fodder_types = st.multiselect(
+        if st.session_state.green_fodder_radio == labels['Yes']:
+            st.session_state.green_fodder_types_multi = st.multiselect(
                 labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
-                default=st.session_state.get('green_fodder_types', []),
+                default=st.session_state.get('green_fodder_types_multi', []),
                 key="green_fodder_types_multi"
             )
-            st.session_state.green_fodder_qty = st.number_input(
+            st.session_state.green_fodder_qty_input = st.number_input(
                 labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
-                value=float(st.session_state.get('green_fodder_qty', 0.0)),
+                value=float(st.session_state.get('green_fodder_qty_input', 0.0)),
                 key="green_fodder_qty_input"
             )
         else:
             # When radio button is 'No', clear these values in session state
-            st.session_state.green_fodder_types = []
-            st.session_state.green_fodder_qty = 0.0
+            st.session_state.green_fodder_types_multi = []
+            st.session_state.green_fodder_qty_input = 0.0
 
         dry_fodder_options = (labels['Yes'], labels['No'])
-        current_dry_fodder = st.session_state.get('dry_fodder', dry_fodder_options[0])
+        current_dry_fodder = st.session_state.get('dry_fodder_radio', dry_fodder_options[0])
         dry_fodder_default_idx = 0
         if current_dry_fodder in dry_fodder_options:
             dry_fodder_default_idx = dry_fodder_options.index(current_dry_fodder)
-        st.session_state.dry_fodder = st.radio(
+        st.session_state.dry_fodder_radio = st.radio(
             labels['Dry Fodder'], dry_fodder_options,
             index=dry_fodder_default_idx,
             key="dry_fodder_radio"
         )
         
-        if st.session_state.dry_fodder == labels['Yes']:
-            st.session_state.dry_fodder_types = st.multiselect(
+        if st.session_state.dry_fodder_radio == labels['Yes']:
+            st.session_state.dry_fodder_types_multi = st.multiselect(
                 labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
-                default=st.session_state.get('dry_fodder_types', []),
+                default=st.session_state.get('dry_fodder_types_multi', []),
                 key="dry_fodder_types_multi"
             )
-            st.session_state.dry_fodder_qty = st.number_input(
+            st.session_state.dry_fodder_qty_input = st.number_input(
                 labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
-                value=float(st.session_state.get('dry_fodder_qty', 0.0)),
+                value=float(st.session_state.get('dry_fodder_qty_input', 0.0)),
                 key="dry_fodder_qty_input"
             )
         else:
-            st.session_state.dry_fodder_types = []
-            st.session_state.dry_fodder_qty = 0.0
+            st.session_state.dry_fodder_types_multi = []
+            st.session_state.dry_fodder_qty_input = 0.0
 
         pellet_feed_options = (labels['Yes'], labels['No'])
-        current_pellet_feed = st.session_state.get('pellet_feed', pellet_feed_options[0])
+        current_pellet_feed = st.session_state.get('pellet_feed_radio', pellet_feed_options[0])
         pellet_feed_default_idx = 0
         if current_pellet_feed in pellet_feed_options:
             pellet_feed_default_idx = pellet_feed_options.index(current_pellet_feed)
-        st.session_state.pellet_feed = st.radio(
+        st.session_state.pellet_feed_radio = st.radio(
             labels['Pellet Feed'], pellet_feed_options,
             index=pellet_feed_default_idx,
             key="pellet_feed_radio"
         )
         
-        if st.session_state.pellet_feed == labels['Yes']:
-            st.session_state.pellet_feed_brands = st.multiselect(
+        if st.session_state.pellet_feed_radio == labels['Yes']:
+            st.session_state.pellet_feed_brands_multi = st.multiselect(
                 labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
-                default=st.session_state.get('pellet_feed_brands', []),
+                default=st.session_state.get('pellet_feed_brands_multi', []),
                 key="pellet_feed_brands_multi"
             )
-            st.session_state.pellet_feed_qty = st.number_input(
+            st.session_state.pellet_feed_qty_input = st.number_input(
                 labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
-                value=float(st.session_state.get('pellet_feed_qty', 0.0)),
+                value=float(st.session_state.get('pellet_feed_qty_input', 0.0)),
                 key="pellet_feed_qty_input"
             )
         else:
-            st.session_state.pellet_feed_brands = []
-            st.session_state.pellet_feed_qty = 0.0
+            st.session_state.pellet_feed_brands_multi = []
+            st.session_state.pellet_feed_qty_input = 0.0
 
         mineral_mixture_options = (labels['Yes'], labels['No'])
-        current_mineral_mixture = st.session_state.get('mineral_mixture', mineral_mixture_options[0])
+        current_mineral_mixture = st.session_state.get('mineral_mixture_radio', mineral_mixture_options[0])
         mineral_mixture_default_idx = 0
         if current_mineral_mixture in mineral_mixture_options:
             mineral_mixture_default_idx = mineral_mixture_options.index(current_mineral_mixture)
-        st.session_state.mineral_mixture = st.radio(
+        st.session_state.mineral_mixture_radio = st.radio(
             labels['Mineral Mixture'], mineral_mixture_options,
             index=mineral_mixture_default_idx,
             key="mineral_mixture_radio"
         )
         
-        if st.session_state.mineral_mixture == labels['Yes']:
+        if st.session_state.mineral_mixture_radio == labels['Yes']:
             mineral_brand_default_idx = 0
-            if st.session_state.get('mineral_brand') in MINERAL_MIXTURE_BRANDS:
-                mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.get('mineral_brand'))
-            st.session_state.mineral_brand = st.selectbox(
+            if st.session_state.get('mineral_brand_select') in MINERAL_MIXTURE_BRANDS:
+                mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.get('mineral_brand_select'))
+            st.session_state.mineral_brand_select = st.selectbox(
                 labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
                 index=mineral_brand_default_idx,
                 key="mineral_brand_select"
             )
-            st.session_state.mineral_qty = st.number_input(
+            st.session_state.mineral_qty_input = st.number_input(
                 labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
-                value=float(st.session_state.get('mineral_qty', 0.0)),
+                value=float(st.session_state.get('mineral_qty_input', 0.0)),
                 key="mineral_qty_input"
             )
         else:
-            st.session_state.mineral_brand = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
-            st.session_state.mineral_qty = 0.0
+            st.session_state.mineral_brand_select = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
+            st.session_state.mineral_qty_input = 0.0
 
         silage_options = (labels['Yes'], labels['No'])
-        current_silage = st.session_state.get('silage', silage_options[0])
+        current_silage = st.session_state.get('silage_radio', silage_options[0])
         silage_default_idx = 0
         if current_silage in silage_options:
             silage_default_idx = silage_options.index(current_silage)
-        st.session_state.silage = st.radio(
+        st.session_state.silage_radio = st.radio(
             labels['Silage'], silage_options,
             index=silage_default_idx,
             key="silage_radio"
         )
         
-        if st.session_state.silage == labels['Yes']:
-            st.session_state.silage_source = st.text_input(
+        if st.session_state.silage_radio == labels['Yes']:
+            st.session_state.silage_source_input = st.text_input(
                 labels['Source and Price of Silage'],
-                value=st.session_state.get('silage_source', ''),
+                value=st.session_state.get('silage_source_input', ''),
                 key="silage_source_input"
             )
-            st.session_state.silage_qty = st.number_input(
+            st.session_state.silage_qty_input = st.number_input(
                 labels['Quantity of Silage'], min_value=0.0, format="%.2f",
-                value=float(st.session_state.get('silage_qty', 0.0)),
+                value=float(st.session_state.get('silage_qty_input', 0.0)),
                 key="silage_qty_input"
             )
         else:
-            st.session_state.silage_source = ""
-            st.session_state.silage_qty = 0.0
+            st.session_state.silage_source_input = ""
+            st.session_state.silage_qty_input = 0.0
 
-        st.session_state.water_sources = st.multiselect(
+        st.session_state.water_sources_multi = st.multiselect(
             labels['Source of Water'], WATER_SOURCE_OPTIONS,
-            default=st.session_state.get('water_sources', []),
+            default=st.session_state.get('water_sources_multi', []),
             key="water_sources_multi"
         )
 
         st.header("Survey Details")
-        current_surveyor_name = st.session_state.get('surveyor_name', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None)
+        current_surveyor_name = st.session_state.get('surveyor_name_select', SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None)
         surveyor_name_default_idx = 0
         if current_surveyor_name in SURVEYOR_NAMES:
             surveyor_name_default_idx = SURVEYOR_NAMES.index(current_surveyor_name)
-        st.session_state.surveyor_name = st.selectbox(
+        st.session_state.surveyor_name_select = st.selectbox(
             labels['Name'], SURVEYOR_NAMES,
             index=surveyor_name_default_idx,
             key="surveyor_name_select"
         )
         
-        current_visit_date = st.session_state.get('visit_date', datetime.date.today())
+        current_visit_date = st.session_state.get('visit_date_input', datetime.date.today())
         if not isinstance(current_visit_date, datetime.date):
             try:
                 current_visit_date = datetime.date.fromisoformat(current_visit_date)
             except (TypeError, ValueError):
                 current_visit_date = datetime.date.today()
 
-        st.session_state.visit_date = st.date_input(
+        st.session_state.visit_date_input = st.date_input(
             labels['Date of Visit'],
             value=current_visit_date,
             key="visit_date_input"
@@ -1249,43 +1512,43 @@ if st.session_state.current_step == 'form_entry':
         if submit_for_review:
             # When the form submits, we gather values from session state for all fields,
             # both those outside the form (farmer ID, photos) and inside the form (farm details, etc.).
-            final_farmer_name = st.session_state.farmer_name_other if st.session_state.farmer_name_selected == labels['Others'] else st.session_state.farmer_name_selected
+            final_farmer_name = st.session_state.farmer_name_other_input if st.session_state.farmer_name_selected_select == labels['Others'] else st.session_state.farmer_name_selected_select
 
             data_for_review = {
                 "Language": st.session_state.lang_select,
-                "VLCC Name": st.session_state.vlcc_name,
-                "HPC/MCC Code": st.session_state.hpc_code,
-                "Type": st.session_state.types,
+                "VLCC Name": st.session_state.vlcc_name_select,
+                "HPC/MCC Code": st.session_state.hpc_code_display,
+                "Type": st.session_state.types_selectbox,
                 "Farmer Name": final_farmer_name,
-                "Farmer Code / Pourer ID": st.session_state.farmer_code if st.session_state.farmer_code else 'N/A',
-                "Rep ID (Phone Number)": st.session_state.rep_id,
-                "Gender": st.session_state.gender,
-                "Number of Cows": st.session_state.cows,
-                "No. of Cattle in Milk": st.session_state.cattle_in_milk,
-                "No. of Calves/Heifers": st.session_state.calves,
-                "No. of Desi cows": st.session_state.desi_cows,
-                "No. of Cross breed cows": st.session_state.crossbreed_cows,
-                "No. of Buffalo": st.session_state.buffalo,
-                "Milk Production (liters/day)": st.session_state.milk_production,
-                "Green Fodder Provided": st.session_state.green_fodder,
-                "Type of Green Fodder": ", ".join(st.session_state.get('green_fodder_types', [])) if st.session_state.get('green_fodder') == labels['Yes'] else "N/A",
-                "Quantity of Green Fodder (Kg/day)": st.session_state.get('green_fodder_qty', 0.0) if st.session_state.get('green_fodder') == labels['Yes'] else 0.0,
-                "Dry Fodder Provided": st.session_state.dry_fodder,
-                "Type of Dry Fodder": ", ".join(st.session_state.get('dry_fodder_types', [])) if st.session_state.get('dry_fodder') == labels['Yes'] else "N/A",
-                "Quantity of Dry Fodder (Kg/day)": st.session_state.get('dry_fodder_qty', 0.0) if st.session_state.get('dry_fodder') == labels['Yes'] else 0.0,
-                "Pellet Feed Provided": st.session_state.pellet_feed,
-                "Pellet Feed Brand": ", ".join(st.session_state.get('pellet_feed_brands', [])) if st.session_state.get('pellet_feed') == labels['Yes'] else "N/A",
-                "Quantity of Pellet Feed (Kg/day)": st.session_state.get('pellet_feed_qty', 0.0) if st.session_state.get('pellet_feed') == labels['Yes'] else 0.0,
-                "Mineral Mixture Provided": st.session_state.mineral_mixture,
-                "Mineral Mixture Brand": st.session_state.get('mineral_brand') if st.session_state.get('mineral_mixture') == labels['Yes'] else "N/A",
-                "Quantity of Mineral Mixture (gm/day)": st.session_state.get('mineral_qty', 0.0) if st.session_state.get('mineral_mixture') == labels['Yes'] else 0.0,
-                "Silage Provided": st.session_state.silage,
-                "Source and Price of Silage": st.session_state.get('silage_source', '') if st.session_state.get('silage') == labels['Yes'] else "N/A",
-                "Quantity of Silage (Kg/day)": st.session_state.get('silage_qty', 0.0) if st.session_state.get('silage') == labels['Yes'] else 0.0,
-                "Source of Water": ", ".join(st.session_state.get('water_sources', [])) if st.session_state.get('water_sources') else "N/A",
-                "Name of Surveyor": st.session_state.surveyor_name,
-                "Date of Visit": st.session_state.visit_date.isoformat(),
-                "Photo Paths": st.session_state.uploaded_temp_photo_paths # Now this gets the paths stored from outside the form
+                "Farmer Code / Pourer ID": st.session_state.farmer_code_select if st.session_state.farmer_code_select else 'N/A',
+                "Rep ID (Phone Number)": st.session_state.rep_id_display,
+                "Gender": st.session_state.gender_selectbox,
+                "Number of Cows": st.session_state.cows_input,
+                "No. of Cattle in Milk": st.session_state.cattle_in_milk_input,
+                "No. of Calves/Heifers": st.session_state.calves_input,
+                "No. of Desi cows": st.session_state.desi_cows_input,
+                "No. of Cross breed cows": st.session_state.crossbreed_cows_input,
+                "No. of Buffalo": st.session_state.buffalo_input,
+                "Milk Production (liters/day)": st.session_state.milk_production_input,
+                "Green Fodder Provided": st.session_state.green_fodder_radio,
+                "Type of Green Fodder": ", ".join(st.session_state.get('green_fodder_types_multi', [])) if st.session_state.get('green_fodder_radio') == labels['Yes'] else "N/A",
+                "Quantity of Green Fodder (Kg/day)": st.session_state.get('green_fodder_qty_input', 0.0) if st.session_state.get('green_fodder_radio') == labels['Yes'] else 0.0,
+                "Dry Fodder Provided": st.session_state.dry_fodder_radio,
+                "Type of Dry Fodder": ", ".join(st.session_state.get('dry_fodder_types_multi', [])) if st.session_state.get('dry_fodder_radio') == labels['Yes'] else "N/A",
+                "Quantity of Dry Fodder (Kg/day)": st.session_state.get('dry_fodder_qty_input', 0.0) if st.session_state.get('dry_fodder_radio') == labels['Yes'] else 0.0,
+                "Pellet Feed Provided": st.session_state.pellet_feed_radio,
+                "Pellet Feed Brand": ", ".join(st.session_state.get('pellet_feed_brands_multi', [])) if st.session_state.get('pellet_feed_radio') == labels['Yes'] else "N/A",
+                "Quantity of Pellet Feed (Kg/day)": st.session_state.get('pellet_feed_qty_input', 0.0) if st.session_state.get('pellet_feed_radio') == labels['Yes'] else 0.0,
+                "Mineral Mixture Provided": st.session_state.mineral_mixture_radio,
+                "Mineral Mixture Brand": st.session_state.get('mineral_brand_select') if st.session_state.get('mineral_mixture_radio') == labels['Yes'] else "N/A",
+                "Quantity of Mineral Mixture (gm/day)": st.session_state.get('mineral_qty_input', 0.0) if st.session_state.get('mineral_mixture_radio') == labels['Yes'] else 0.0,
+                "Silage Provided": st.session_state.silage_radio,
+                "Source and Price of Silage": st.session_state.get('silage_source_input', '') if st.session_state.get('silage_radio') == labels['Yes'] else "N/A",
+                "Quantity of Silage (Kg/day)": st.session_state.get('silage_qty_input', 0.0) if st.session_state.get('silage_radio') == labels['Yes'] else 0.0,
+                "Source of Water": ", ".join(st.session_state.get('water_sources_multi', [])) if st.session_state.get('water_sources_multi') else "N/A",
+                "Name of Surveyor": st.session_state.surveyor_name_select,
+                "Date of Visit": st.session_state.visit_date_input.isoformat(),
+                "Photo Paths": st.session_state.uploaded_temp_photo_paths
             }
             st.session_state.final_submitted_data = data_for_review
             st.session_state.current_step = 'review'
