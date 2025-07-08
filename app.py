@@ -914,7 +914,6 @@ def on_vlcc_change():
 
     # Get the filtered lists based on the new VLCC
     filtered_names = get_filtered_farmer_names(selected_vlcc)
-    # filtered_codes = get_filtered_farmer_codes(selected_vlcc) # Not strictly needed here, will be derived by on_farmer_name_change/on_farmer_code_change
 
     # Reset farmer name and code selections, then try to re-select a sensible default
     st.session_state.farmer_name_selected_select = current_labels['Others'] # Default to Others initially
@@ -949,7 +948,6 @@ def on_farmer_name_change():
             st.session_state.farmer_code_select = str(farmer_info_row['Member Code']).strip()
             st.session_state.hpc_code_display = str(farmer_info_row['HPC Code']).strip()
             st.session_state.rep_id_display = str(farmer_info_row['Rep ID']).strip()
-            # The VLCC is already selected, no need to update st.session_state.vlcc_name_select here
             st.session_state.farmer_name_other_input = '' # Clear "other" if a known farmer is selected
         else:
             # If the selected farmer name is not found within the selected VLCC, revert to "Others"
@@ -1111,7 +1109,7 @@ if st.session_state.current_step == 'form_entry':
     vlcc_name_default_idx = 0
     if current_vlcc_name in VLCC_NAMES:
         vlcc_name_default_idx = VLCC_NAMES.index(current_vlcc_name)
-    st.session_state.vlcc_name_select = st.selectbox(
+    st.selectbox(
         labels['VLCC Name'], VLCC_NAMES,
         index=vlcc_name_default_idx,
         key="vlcc_name_select", # Unique key
@@ -1122,8 +1120,7 @@ if st.session_state.current_step == 'form_entry':
     # Dynamically filtered farmer names and codes
     current_selected_vlcc_for_filtering = st.session_state.get('vlcc_name_select')
     filtered_farmer_names_for_display = get_filtered_farmer_names(current_selected_vlcc_for_filtering)
-    filtered_farmer_codes_for_display = get_filtered_farmer_codes(current_selected_vlcc_for_filtering)
-
+    
     # Add "Others" to the filtered farmer names for display
     farmer_names_options_display = filtered_farmer_names_for_display + [labels['Others']]
 
@@ -1133,10 +1130,12 @@ if st.session_state.current_step == 'form_entry':
     if current_farmer_name_selected_display in farmer_names_options_display:
         farmer_name_default_idx = farmer_names_options_display.index(current_farmer_name_selected_display)
     # Ensure the index is valid for the current options, otherwise default to "Others"
-    if farmer_name_default_idx >= len(farmer_names_options_display):
-        farmer_name_default_idx = farmer_names_options_display.index(labels['Others']) if labels['Others'] in farmer_names_options_display else 0
+    elif labels['Others'] in farmer_names_options_display:
+        farmer_name_default_idx = farmer_names_options_display.index(labels['Others'])
+    else:
+        farmer_name_default_idx = 0 # Fallback if no options or Others not present
 
-    st.session_state.farmer_name_selected_select = st.selectbox(
+    st.selectbox(
         labels['Farmer Name'], options=farmer_names_options_display,
         index=farmer_name_default_idx,
         key="farmer_name_selected_select", # Unique key
@@ -1145,7 +1144,7 @@ if st.session_state.current_step == 'form_entry':
     )
 
     if st.session_state.farmer_name_selected_select == labels['Others']:
-        st.session_state.farmer_name_other_input = st.text_input(
+        st.text_input(
             labels['Specify Farmer Name'],
             value=st.session_state.get('farmer_name_other_input', ''),
             key="farmer_name_other_input",
@@ -1154,17 +1153,17 @@ if st.session_state.current_step == 'form_entry':
     # No else: block to clear farmer_name_other_input here, on_farmer_name_change handles it
 
     # Farmer Code dropdown
+    filtered_farmer_codes_for_display = get_filtered_farmer_codes(current_selected_vlcc_for_filtering)
     current_farmer_code_display = st.session_state.get('farmer_code_select')
     farmer_code_default_idx = 0
     if current_farmer_code_display in filtered_farmer_codes_for_display:
         farmer_code_default_idx = filtered_farmer_codes_for_display.index(current_farmer_code_display)
-    elif current_farmer_code_display is None and filtered_farmer_codes_for_display:
+    elif filtered_farmer_codes_for_display:
         farmer_code_default_idx = 0 # Default to first if None and options exist
     else:
-        # If the current code isn't in filtered options, or no options, default to 0 (which might be invalid or empty list)
-        farmer_code_default_idx = 0
+        farmer_code_default_idx = 0 # Fallback if no options
 
-    st.session_state.farmer_code_select = st.selectbox(
+    st.selectbox(
         labels['Farmer Code'], options=filtered_farmer_codes_for_display,
         index=farmer_code_default_idx,
         key="farmer_code_select", # Unique key
@@ -1193,7 +1192,7 @@ if st.session_state.current_step == 'form_entry':
     types_default_idx = 0
     if current_types in types_options:
         types_default_idx = types_options.index(current_types)
-    st.session_state.types_selectbox = st.selectbox( # Assign directly to session state
+    st.selectbox(
         labels['Types'], types_options,
         index=types_default_idx,
         key="types_selectbox", # Unique key
@@ -1205,7 +1204,7 @@ if st.session_state.current_step == 'form_entry':
     gender_default_idx = 0
     if current_gender in gender_options:
         gender_default_idx = gender_options.index(current_gender)
-    st.session_state.gender_selectbox = st.selectbox( # Assign directly to session state
+    st.selectbox(
         labels['Gender'], gender_options,
         index=gender_default_idx,
         key="gender_selectbox", # Unique key
@@ -1305,37 +1304,37 @@ if st.session_state.current_step == 'form_entry':
     with st.form("survey_form_details"):
         st.header(labels['Farm Details'])
         
-        st.session_state.cows_input = st.number_input(
+        st.number_input(
             labels['Number of Cows'], min_value=0,
             value=int(st.session_state.get('cows_input', 0)),
             key="cows_input"
         )
-        st.session_state.cattle_in_milk_input = st.number_input(
+        st.number_input(
             labels['No. of Cattle in Milk'], min_value=0,
             value=int(st.session_state.get('cattle_in_milk_input', 0)),
             key="cattle_in_milk_input"
         )
-        st.session_state.calves_input = st.number_input(
+        st.number_input(
             labels['No. of Calves/Heifers'], min_value=0,
             value=int(st.session_state.get('calves_input', 0)),
             key="calves_input"
         )
-        st.session_state.desi_cows_input = st.number_input(
+        st.number_input(
             labels['No. of Desi cows'], min_value=0,
             value=int(st.session_state.get('desi_cows_input', 0)),
             key="desi_cows_input"
         )
-        st.session_state.crossbreed_cows_input = st.number_input(
+        st.number_input(
             labels['No. of Cross breed cows'], min_value=0,
             value=int(st.session_state.get('crossbreed_cows_input', 0)),
             key="crossbreed_cows_input"
         )
-        st.session_state.buffalo_input = st.number_input(
+        st.number_input(
             labels['No. of Buffalo'], min_value=0,
             value=int(st.session_state.get('buffalo_input', 0)),
             key="buffalo_input"
         )
-        st.session_state.milk_production_input = st.number_input(
+        st.number_input(
             labels['Milk Production'], min_value=0.0, format="%.2f",
             value=float(st.session_state.get('milk_production_input', 0.0)),
             key="milk_production_input"
@@ -1347,19 +1346,19 @@ if st.session_state.current_step == 'form_entry':
         green_fodder_default_idx = 0
         if current_green_fodder in green_fodder_options:
             green_fodder_default_idx = green_fodder_options.index(current_green_fodder)
-        st.session_state.green_fodder_radio = st.radio(
+        st.radio(
             labels['Green Fodder'], green_fodder_options,
             index=green_fodder_default_idx,
             key="green_fodder_radio"
         )
         
         if st.session_state.green_fodder_radio == labels['Yes']:
-            st.session_state.green_fodder_types_multi = st.multiselect(
+            st.multiselect(
                 labels['Type of Green Fodder'], GREEN_FODDER_OPTIONS,
                 default=st.session_state.get('green_fodder_types_multi', []),
                 key="green_fodder_types_multi"
             )
-            st.session_state.green_fodder_qty_input = st.number_input(
+            st.number_input(
                 labels['Quantity of Green Fodder'], min_value=0.0, format="%.2f",
                 value=float(st.session_state.get('green_fodder_qty_input', 0.0)),
                 key="green_fodder_qty_input"
@@ -1374,19 +1373,19 @@ if st.session_state.current_step == 'form_entry':
         dry_fodder_default_idx = 0
         if current_dry_fodder in dry_fodder_options:
             dry_fodder_default_idx = dry_fodder_options.index(current_dry_fodder)
-        st.session_state.dry_fodder_radio = st.radio(
+        st.radio(
             labels['Dry Fodder'], dry_fodder_options,
             index=dry_fodder_default_idx,
             key="dry_fodder_radio"
         )
         
         if st.session_state.dry_fodder_radio == labels['Yes']:
-            st.session_state.dry_fodder_types_multi = st.multiselect(
+            st.multiselect(
                 labels['Type of Dry Fodder'], DRY_FODDER_OPTIONS,
                 default=st.session_state.get('dry_fodder_types_multi', []),
                 key="dry_fodder_types_multi"
             )
-            st.session_state.dry_fodder_qty_input = st.number_input(
+            st.number_input(
                 labels['Quantity of Dry Fodder'], min_value=0.0, format="%.2f",
                 value=float(st.session_state.get('dry_fodder_qty_input', 0.0)),
                 key="dry_fodder_qty_input"
@@ -1400,19 +1399,19 @@ if st.session_state.current_step == 'form_entry':
         pellet_feed_default_idx = 0
         if current_pellet_feed in pellet_feed_options:
             pellet_feed_default_idx = pellet_feed_options.index(current_pellet_feed)
-        st.session_state.pellet_feed_radio = st.radio(
+        st.radio(
             labels['Pellet Feed'], pellet_feed_options,
             index=pellet_feed_default_idx,
             key="pellet_feed_radio"
         )
         
         if st.session_state.pellet_feed_radio == labels['Yes']:
-            st.session_state.pellet_feed_brands_multi = st.multiselect(
+            st.multiselect(
                 labels['Pellet Feed Brand'], PELLET_FEED_BRANDS,
                 default=st.session_state.get('pellet_feed_brands_multi', []),
                 key="pellet_feed_brands_multi"
             )
-            st.session_state.pellet_feed_qty_input = st.number_input(
+            st.number_input(
                 labels['Quantity of Pellet Feed'], min_value=0.0, format="%.2f",
                 value=float(st.session_state.get('pellet_feed_qty_input', 0.0)),
                 key="pellet_feed_qty_input"
@@ -1426,7 +1425,7 @@ if st.session_state.current_step == 'form_entry':
         mineral_mixture_default_idx = 0
         if current_mineral_mixture in mineral_mixture_options:
             mineral_mixture_default_idx = mineral_mixture_options.index(current_mineral_mixture)
-        st.session_state.mineral_mixture_radio = st.radio(
+        st.radio(
             labels['Mineral Mixture'], mineral_mixture_options,
             index=mineral_mixture_default_idx,
             key="mineral_mixture_radio"
@@ -1436,12 +1435,12 @@ if st.session_state.current_step == 'form_entry':
             mineral_brand_default_idx = 0
             if st.session_state.get('mineral_brand_select') in MINERAL_MIXTURE_BRANDS:
                 mineral_brand_default_idx = MINERAL_MIXTURE_BRANDS.index(st.session_state.get('mineral_brand_select'))
-            st.session_state.mineral_brand_select = st.selectbox(
+            st.selectbox(
                 labels['Mineral Mixture Brand'], MINERAL_MIXTURE_BRANDS,
                 index=mineral_brand_default_idx,
                 key="mineral_brand_select"
             )
-            st.session_state.mineral_qty_input = st.number_input(
+            st.number_input(
                 labels['Quantity of Mineral Mixture'], min_value=0.0, format="%.2f",
                 value=float(st.session_state.get('mineral_qty_input', 0.0)),
                 key="mineral_qty_input"
@@ -1455,19 +1454,19 @@ if st.session_state.current_step == 'form_entry':
         silage_default_idx = 0
         if current_silage in silage_options:
             silage_default_idx = silage_options.index(current_silage)
-        st.session_state.silage_radio = st.radio(
+        st.radio(
             labels['Silage'], silage_options,
             index=silage_default_idx,
             key="silage_radio"
         )
         
         if st.session_state.silage_radio == labels['Yes']:
-            st.session_state.silage_source_input = st.text_input(
+            st.text_input(
                 labels['Source and Price of Silage'],
                 value=st.session_state.get('silage_source_input', ''),
                 key="silage_source_input"
             )
-            st.session_state.silage_qty_input = st.number_input(
+            st.number_input(
                 labels['Quantity of Silage'], min_value=0.0, format="%.2f",
                 value=float(st.session_state.get('silage_qty_input', 0.0)),
                 key="silage_qty_input"
@@ -1476,7 +1475,7 @@ if st.session_state.current_step == 'form_entry':
             st.session_state.silage_source_input = ""
             st.session_state.silage_qty_input = 0.0
 
-        st.session_state.water_sources_multi = st.multiselect(
+        st.multiselect(
             labels['Source of Water'], WATER_SOURCE_OPTIONS,
             default=st.session_state.get('water_sources_multi', []),
             key="water_sources_multi"
@@ -1487,7 +1486,7 @@ if st.session_state.current_step == 'form_entry':
         surveyor_name_default_idx = 0
         if current_surveyor_name in SURVEYOR_NAMES:
             surveyor_name_default_idx = SURVEYOR_NAMES.index(current_surveyor_name)
-        st.session_state.surveyor_name_select = st.selectbox(
+        st.selectbox(
             labels['Name'], SURVEYOR_NAMES,
             index=surveyor_name_default_idx,
             key="surveyor_name_select"
@@ -1500,7 +1499,7 @@ if st.session_state.current_step == 'form_entry':
             except (TypeError, ValueError):
                 current_visit_date = datetime.date.today()
 
-        st.session_state.visit_date_input = st.date_input(
+        st.date_input(
             labels['Date of Visit'],
             value=current_visit_date,
             key="visit_date_input"
