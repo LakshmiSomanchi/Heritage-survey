@@ -394,7 +394,6 @@ def load_draft():
                 'hpc_code_input': 'hpc_code_input',
                 'farmer_name_input': 'farmer_name_input',
                 'farmer_code_input': 'farmer_code_input',
-                'rep_id_display': 'rep_id_display',
                 'types': 'types_selectbox',
                 'gender': 'gender_selectbox',
                 'green_fodder': 'green_fodder_radio',
@@ -503,7 +502,6 @@ def clear_form_fields():
         'hpc_code_input': 'hpc_code_input',
         'farmer_name_input': 'farmer_name_input',
         'farmer_code_input': 'farmer_code_input',
-        'rep_id_display': 'rep_id_display',
         'types': 'types_selectbox',
         'gender': 'gender_selectbox',
         'green_fodder': 'green_fodder_radio',
@@ -598,7 +596,6 @@ if 'app_initialized_flag' not in st.session_state:
         'hpc_code_input': 'hpc_code_input',
         'farmer_name_input': 'farmer_name_input',
         'farmer_code_input': 'farmer_code_input',
-        'rep_id_display': 'rep_id_display',
         'types': 'types_selectbox',
         'gender': 'gender_selectbox',
         'green_fodder': 'green_fodder_radio',
@@ -698,15 +695,6 @@ if st.session_state.current_step == 'form_entry':
         on_change=on_farmer_code_input_change # Specific callback to potentially auto-fill Rep ID/HPC Code from a *future* external data source
     )
     
-    # Rep ID (Phone Number) - still displayed, can be auto-filled if farmer_code_input matches a record in FARMER_LOOKUP
-    # Keeping it disabled as per previous structure, assuming it's for autofill based on farmer code input.
-    st.text_input(
-        "Rep ID (Phone Number)",
-        value=st.session_state.get('rep_id_display', ''),
-        key="rep_id_display",
-        disabled=True
-    )
-
     # Types and Gender remain as selectboxes
     types_options = (labels['HPC'], labels['MCC'])
     current_types = st.session_state.get('types_selectbox', types_options[0])
