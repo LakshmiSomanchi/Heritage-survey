@@ -235,12 +235,10 @@ dict_translations = {
     }
 }
 
-# FARMER_LOOKUP and df_farmer_data are now empty or removed as requested.
-# If you need to re-introduce auto-filling for 'Rep ID' based on 'Farmer Code',
-# you would load this data from an external CSV file (e.g., 'farmer_data.csv').
-FARMER_LOOKUP = {}
-# df_farmer_data is no longer needed directly for dropdowns, so it can be removed
-# if its only purpose was to populate the now-removed dropdowns.
+# FARMER_LOOKUP and related data loading from CSV are now removed as requested.
+# If you need to re-introduce auto-filling for 'Rep ID' or 'HPC Code' based on 'Farmer Code',
+# you would need to load this data from an external CSV file (e.g., 'farmer_data.csv').
+FARMER_LOOKUP = {} # This will remain empty unless external data is loaded
 
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
@@ -249,15 +247,15 @@ MINERAL_MIXTURE_BRANDS = ["Herita Vit", "Herita Min", "Other (Specify)"]
 WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 
-# Define initial_values_defaults at the global scope, using logical keys
+# Define initial_values_defaults with text input specific keys and empty strings
 initial_values_defaults = {
     'lang_select': "English",
-    'vlcc_name_input': '', # Renamed for text input
-    'hpc_code_input': '',  # Renamed for text input
+    'vlcc_name_input': '', # Now a text input
+    'hpc_code_input': '',  # Now a text input
     'types': "HPC",
-    'farmer_name_input': '', # Renamed for text input
-    'farmer_code_input': '', # Renamed for text input
-    'rep_id_display': '', # Still a display, but now based on manual farmer_code_input lookup
+    'farmer_name_input': '', # New key for text input
+    'farmer_code_input': '', # New key for text input
+    'rep_id_display': '', # This is still a display field, will be empty without lookup
     'gender': "Male",
     'cows': 0,
     'cattle_in_milk': 0,
@@ -295,20 +293,22 @@ def on_text_input_change():
     save_draft()
 
 def on_farmer_code_input_change():
-    """Callback for farmer code text input to attempt autofill Rep ID and HPC Code."""
+    """Callback for farmer code text input to attempt autofill Rep ID and HPC Code.
+    NOTE: This will only work if FARMER_LOOKUP is populated from an external data source."""
     selected_farmer_code = st.session_state.farmer_code_input
     
-    # This logic only works if FARMER_LOOKUP is populated from an external source.
-    # If not, these fields will remain empty unless manually typed.
+    # In this version, FARMER_LOOKUP is empty.
+    # If you later load farmer data from an external CSV, this part would become active.
     if selected_farmer_code in FARMER_LOOKUP:
         farmer_info = FARMER_LOOKUP[selected_farmer_code]
         st.session_state.hpc_code_input = farmer_info.get('HPC Code', '')
         st.session_state.rep_id_display = farmer_info.get('Rep ID', '')
     else:
-        # Clear if code not found
+        # Clear if code not found or no lookup data
         st.session_state.hpc_code_input = ''
         st.session_state.rep_id_display = ''
     save_draft()
+
 
 # Function to save current form data to a draft file
 def save_draft():
@@ -699,8 +699,7 @@ if st.session_state.current_step == 'form_entry':
     )
     
     # Rep ID (Phone Number) - still displayed, can be auto-filled if farmer_code_input matches a record in FARMER_LOOKUP
-    # Since FARMER_LOOKUP is empty in this version, this will usually remain empty or require manual input if not disabled.
-    # Keeping it disabled as per previous structure, assuming it's for autofill.
+    # Keeping it disabled as per previous structure, assuming it's for autofill based on farmer code input.
     st.text_input(
         "Rep ID (Phone Number)",
         value=st.session_state.get('rep_id_display', ''),
@@ -1028,12 +1027,12 @@ if st.session_state.current_step == 'form_entry':
         if submit_for_review:
             data_for_review = {
                 "Language": st.session_state.lang_select,
-                "VLCC Name": st.session_state.vlcc_name_input,
-                "HPC/MCC Code": st.session_state.hpc_code_input,
+                "VLCC Name": st.session_state.vlcc_name_input, # Get from text input
+                "HPC/MCC Code": st.session_state.hpc_code_input, # Get from text input
                 "Type": st.session_state.types_selectbox,
-                "Farmer Name": st.session_state.farmer_name_input,
-                "Farmer Code / Pourer ID": st.session_state.farmer_code_input,
-                "Rep ID (Phone Number)": st.session_state.rep_id_display,
+                "Farmer Name": st.session_state.farmer_name_input, # Get from text input
+                "Farmer Code / Pourer ID": st.session_state.farmer_code_input, # Get from text input
+                "Rep ID (Phone Number)": st.session_state.rep_id_display, # Display field, might be empty if no lookup
                 "Gender": st.session_state.gender_selectbox,
                 "Number of Cows": st.session_state.cows_input,
                 "No. of Cattle in Milk": st.session_state.cattle_in_milk_input,
