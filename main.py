@@ -22,7 +22,7 @@ def run_page(page_file, directory="pages"):
         exec(code, globals())
 
 def main():
-    st.set_page_config(page_title="Heritage Survey - All Pages", layout="wide")
+    st.set_page_config(page_title="Heritage-All Forms", layout="wide")
     st.title("Heritage Survey - All Pages")
 
     # Get list of page files from the 'pages' directory
