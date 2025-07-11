@@ -63,17 +63,6 @@ mineral_mix_brand = st.text_input("Mineral Mixture Brand")
 mineral_mix_qty = st.text_input("Quantity of Mineral Mixture (gm/day)")
 key_insights = st.text_area("Key Insights")
 
-if st.button("Submit"):
-    st.success("Form Submitted Successfully!")
-
-# --- Admin email list
-ADMIN_EMAILS = [
-    "mkaushal@tns.org",
-    "rsomanchi@tns.org",
-    "kbalaji@tns.org",
-    "gmreddy@tns.org"
-]
-
 # --- File paths (you should adjust to your storage logic)
 PHOTOS_DIR = "photos/"
 RESPONSES_CSV = "responses.csv"
@@ -113,6 +102,14 @@ with st.form("survey_form", clear_on_submit=False):
         else:
             st.error("Please fill all required fields.")
 
+# --- Admin email list
+ADMIN_EMAILS = [
+    "mkaushal@tns.org",
+    "rsomanchi@tns.org",
+    "kbalaji@tns.org",
+    "gmreddy@tns.org"
+]
+
 # --- Admin Access Section
 with st.expander("Admin Access (Download Data)"):
     admin_email = st.text_input("Enter admin email")
@@ -144,3 +141,7 @@ with st.expander("Admin Access (Download Data)"):
                 )
         else:
             st.error("Access denied. You are not an admin.")
+
+
+if st.button("Submit"):
+    st.success("Form Submitted Successfully!")
