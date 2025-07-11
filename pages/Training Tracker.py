@@ -32,12 +32,12 @@ if 'user_email' not in st.session_state:
 def save_submission(data, photo_file):
     # Prepare data for DataFrame
     all_columns = [
-        "timestamp", "date", "hpc_code", "hpc_name", "trainer", "topic",
+        "timestamp", "date", "hpc_code", "hpc_name", "trainer", "topic", # 'topic' will now store a string of joined topics
         "volume", "avg_fat", "avg_snf", "pourers_total", "pourers_attended",
         "heritage_users", "non_heritage_users", "awareness_feed",
         "awareness_supplements", "awareness_vet", "awareness_ai",
         "awareness_loans", "awareness_insurance", "awareness_gpa",
-        "key_insights", "email", "photo_filename" # Added photo_filename column
+        "key_insights", "email", "photo_filename"
     ]
     
     row_data = {col: None for col in all_columns}
@@ -93,7 +93,7 @@ user_email_input = st.text_input("Enter your email:", value=st.session_state.use
 
 if user_email_input != st.session_state.user_email:
     st.session_state.user_email = user_email_input
-    st.rerun() # Use st.rerun()
+    st.rerun()
 
 is_admin = st.session_state.user_email in ADMIN_EMAILS
 
@@ -109,9 +109,18 @@ with tabs[0]: # Submit Entry Tab
         hpc_code = st.text_input("HPC Code", key="hpc_code_input")
         hpc_name = st.text_input("HPC Name", key="hpc_name_input")
         trainer = st.selectbox("Training conducted by", ["Guru", "Balaji"], key="trainer_select")
-        topics = st.selectbox("Training Topic", [
-            "Balanced Nutrition", "Fodder Enrichment", "EVM for Mastitis, Diarrhea, Repeat breeding"
-        ], key="topics_select")
+        
+        # --- CHANGE HERE: st.multiselect instead of st.selectbox ---
+        available_topics = [
+            "Balanced Nutrition", 
+            "Fodder Enrichment", 
+            "EVM for Mastitis", # Separated for clarity
+            "Diarrhea",         # Separated for clarity
+            "Repeat breeding"   # Separated for clarity
+        ]
+        topics = st.multiselect("Training Topic (Select all that apply)", available_topics, key="topics_select")
+        # --- END CHANGE ---
+
         volume = st.text_input("Volume (LPD)", key="volume_input")
         avg_fat = st.text_input("Average Fat (%)", key="avg_fat_input")
         avg_snf = st.text_input("Average SNF (%)", key="avg_snf_input")
@@ -133,12 +142,17 @@ with tabs[0]: # Submit Entry Tab
 
     # Handle review submission
     if submit_button_review:
+        # --- CHANGE HERE: Join the list of topics into a string ---
+        # If topics is empty (nothing selected), store an empty string
+        topics_for_storage = ", ".join(topics) if topics else "" 
+        # --- END CHANGE ---
+
         st.session_state.form_data = {
             "date": str(date),
             "hpc_code": hpc_code,
             "hpc_name": hpc_name,
             "trainer": trainer,
-            "topic": topics,
+            "topic": topics_for_storage, # Store the joined string
             "volume": volume,
             "avg_fat": avg_fat,
             "avg_snf": avg_snf,
@@ -181,10 +195,11 @@ with tabs[0]: # Submit Entry Tab
             st.success("Your training submission has been saved successfully!")
             st.balloons()
             
+            # Reset session state variables to clear form and hide review
             st.session_state.show_review = False
             st.session_state.form_data = {}
             st.session_state.uploaded_photo = None
-            st.rerun() # Use st.rerun() to refresh the app state and clear the form
+            st.rerun() # Re-run to refresh the app state and clear the form
 
 with tabs[1]: # Admin Panel Tab
     st.header("Admin Panel")
