@@ -1,5 +1,6 @@
 import streamlit as st
-
+import pandas as pd
+import os
 st.title("Survey Data Entry Form")
 
 # 1. Surveyor Name Dropdown
@@ -64,3 +65,82 @@ key_insights = st.text_area("Key Insights")
 
 if st.button("Submit"):
     st.success("Form Submitted Successfully!")
+
+# --- Admin email list
+ADMIN_EMAILS = [
+    "mkaushal@tns.org",
+    "rsomanchi@tns.org",
+    "kbalaji@tns.org",
+    "gmreddy@tns.org"
+]
+
+# --- File paths (you should adjust to your storage logic)
+PHOTOS_DIR = "photos/"
+RESPONSES_CSV = "responses.csv"
+
+st.title("SNF Follow-up Survey")
+
+# --- Normal survey form
+with st.form("survey_form", clear_on_submit=False):
+    # Example fields; add your own fields as needed
+    name = st.text_input("Name")
+    response = st.text_area("Survey Response")
+    photo = st.file_uploader("Upload a photo", type=["jpg", "jpeg", "png"])
+    
+    # Review section
+    if st.form_submitted():
+        if name and response:
+            st.write("**Review your submission:**")
+            st.write(f"Name: {name}")
+            st.write(f"Response: {response}")
+            if photo:
+                st.image(photo)
+            confirm = st.checkbox("I confirm that the above information is correct.")
+            if confirm:
+                # Save the response (implement as per your storage logic)
+                # Save the uploaded photo
+                if photo:
+                    photo_path = os.path.join(PHOTOS_DIR, photo.name)
+                    with open(photo_path, "wb") as f:
+                        f.write(photo.getbuffer())
+                # Save to CSV
+                df = pd.DataFrame([[name, response, photo.name if photo else ""]], columns=["Name", "Response", "Photo"])
+                if os.path.exists(RESPONSES_CSV):
+                    df.to_csv(RESPONSES_CSV, mode="a", header=False, index=False)
+                else:
+                    df.to_csv(RESPONSES_CSV, index=False)
+                st.success("Your response has been submitted!")
+        else:
+            st.error("Please fill all required fields.")
+
+# --- Admin Access Section
+with st.expander("Admin Access (Download Data)"):
+    admin_email = st.text_input("Enter admin email")
+    if st.button("Login as Admin"):
+        if admin_email in ADMIN_EMAILS:
+            st.success("Admin access granted.")
+            # Download responses
+            if os.path.exists(RESPONSES_CSV):
+                with open(RESPONSES_CSV, "rb") as f:
+                    st.download_button(
+                        label="Download Survey Responses (CSV)",
+                        data=f,
+                        file_name="responses.csv",
+                        mime="text/csv"
+                    )
+            # Download all photos as a zip file
+            import zipfile
+            from io import BytesIO
+            if os.path.exists(PHOTOS_DIR) and os.listdir(PHOTOS_DIR):
+                zip_buffer = BytesIO()
+                with zipfile.ZipFile(zip_buffer, "w") as zf:
+                    for photo_file in os.listdir(PHOTOS_DIR):
+                        zf.write(os.path.join(PHOTOS_DIR, photo_file), photo_file)
+                st.download_button(
+                    label="Download All Photos (ZIP)",
+                    data=zip_buffer.getvalue(),
+                    file_name="photos.zip",
+                    mime="application/zip"
+                )
+        else:
+            st.error("Access denied. You are not an admin.")
