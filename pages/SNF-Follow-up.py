@@ -5,17 +5,25 @@ import zipfile
 from io import BytesIO
 import datetime
 
-st.set_page_config(layout="wide") # Optional: Use wide layout for better display of dataframes
+# --- Streamlit Page Configuration ---
+# Set page title and layout to wide for better content display
+st.set_page_config(
+    page_title="SNF Follow-up Survey App",
+    layout="wide",
+    initial_sidebar_state="auto"
+)
 
 st.title("SNF Follow-up Survey")
 
-# --- File/Directory settings
-PHOTOS_DIR = "photos"
-RESPONSES_CSV = "responses.csv"
+# --- File/Directory Settings ---
+PHOTOS_DIR = "photos"        # Directory to store uploaded photos
+RESPONSES_CSV = "responses.csv" # CSV file to store survey responses
 
-# Ensure the photos directory exists
+# Ensure the photos directory exists. If not, create it.
 os.makedirs(PHOTOS_DIR, exist_ok=True)
 
+# --- Admin Email List ---
+# Only these email addresses will be granted admin access
 ADMIN_EMAILS = [
     "mkaushal@tns.org",
     "rsomanchi@tns.org",
@@ -23,9 +31,12 @@ ADMIN_EMAILS = [
     "gmreddy@tns.org"
 ]
 
-# --- Main Survey Form
+# --- Main Survey Form ---
+# The entire survey form is wrapped in a Streamlit form block
 with st.form("survey_form", clear_on_submit=False):
     st.header("Farmer Survey Details")
+
+    # Input fields for survey data
     surveyor_name = st.selectbox("Surveyor Name", ["Guru", "Balaji"])
     date_of_visit = st.text_input("Date of Visit (e.g., DD-MM-YYYY)")
     hpc_code = st.text_input("HPC Code")
@@ -47,7 +58,7 @@ with st.form("survey_form", clear_on_submit=False):
     jersey_cross = st.text_input("Jersey /Cross (Count)")
     hf_cross = st.text_input("HF/Cross (Count)")
 
-    st.write("---")
+    st.write("---") # Visual separator
     st.markdown("##### Jersey Cows (In Milk)")
     jersey_milk = st.text_input("No. of Jersey cows in milk")
     jersey_vol_lpd = st.text_input("Vol-LPD (Jersey Cows)")
@@ -92,12 +103,15 @@ with st.form("survey_form", clear_on_submit=False):
     key_insights = st.text_area("Key Insights/Observations")
     photo = st.file_uploader("Upload a photo", type=["jpg", "jpeg", "png"])
 
+    # First submission button to trigger the review phase
     submitted = st.form_submit_button("Review & Submit")
 
-# Review and Submission Logic
+# --- Review and Final Submission Logic ---
 if submitted:
-    # --- Review Section (Re-added) ---
-    st.header("Review your submission:")
+    st.header("Review Your Submission")
+    st.info("Please review the details below. If everything is correct, confirm and submit.")
+
+    # Display all submitted data for review
     st.write(f"**Surveyor Name:** {surveyor_name}")
     st.write(f"**Date of Visit:** {date_of_visit}")
     st.write(f"**HPC Code:** {hpc_code}")
@@ -146,26 +160,31 @@ if submitted:
     if photo:
         st.write("---") # Separator
         st.write("**Uploaded Photo:**")
-        st.image(photo, caption=photo.name, width=300) # Added caption
+        st.image(photo, caption=photo.name, width=300) # Show uploaded photo for review
 
+    # Checkbox for user confirmation
     confirm = st.checkbox("I confirm that the above information is correct.")
-    # Place this button inside the 'if submitted' block, after the review and checkbox
-    if confirm and st.button("Confirm & Final Submit"): # Changed button text to differentiate
-        # Save photo
-        photo_filename = ""
-        if photo is not None:
-            # Create a unique filename for the photo using farmer code/name and a timestamp
+
+    # Final submission button, only appears after initial submission and review
+    if confirm and st.button("Confirm & Final Submit"):
+        # --- Photo Saving Logic ---
+        photo_filename = "" # Initialize photo_filename
+        if photo is not None: # Check if a photo was actually uploaded
+            # Create a unique filename using farmer identifier and timestamp
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            # Use original filename extension
-            file_extension = os.path.splitext(photo.name)[1]
-            # Ensure farmer_code or farmer_name is used, and handle potential empty string
+            file_extension = os.path.splitext(photo.name)[1] # Get original file extension
+            
+            # Use farmer_code if available, otherwise farmer_name, otherwise a generic tag
             identifier = farmer_code if farmer_code else (farmer_name if farmer_name else "unknown_farmer")
+            
             photo_filename = f"{identifier}_{timestamp}{file_extension}"
             photo_path = os.path.join(PHOTOS_DIR, photo_filename)
+            
+            # Save the photo bytes to the file system
             with open(photo_path, "wb") as f:
-                f.write(photo.getbuffer()) # Use getbuffer() for BytesIO object from file_uploader
+                f.write(photo.getbuffer()) # Use getbuffer() to get bytes from Streamlit UploadedFile
 
-        # Prepare DataFrame row
+        # --- Prepare Data for CSV ---
         row = [
             surveyor_name, date_of_visit, hpc_code, hpc_name, farmer_name, farmer_code, gender, fat_list, snf_list, vol_list,
             as_on_date_fat, as_on_date_snf, as_on_date_vol, number_of_cows, jersey_cross, hf_cross,
@@ -173,7 +192,7 @@ if submitted:
             desi_milk, desi_vol_lpd, desi_fat, desi_snf, buffalo_milk, buffalo_vol_lpd,
             green_fodder, green_fodder_type, green_fodder_qty, dry_fodder, dry_fodder_type, dry_fodder_qty,
             pellet_feed, heritage_feed, feed_variant, feed_brand, pellet_qty, mineral_mix, mineral_mix_brand,
-            mineral_mix_qty, key_insights, photo_filename
+            mineral_mix_qty, key_insights, photo_filename # Include photo filename in CSV
         ]
         columns = [
             "Surveyor Name", "Date of Visit", "HPC Code", "HPC Name", "Farmer Name", "Farmer Code", "Gender", "Fat in the list", "SNF in the list", "Vol in the list",
@@ -184,37 +203,49 @@ if submitted:
             "Pellet Feed Yes/No", "If Yes, Heritage Feed Yes/No", "If Yes, Mention the Feed Variant", "If No, Mention the Feed Brand", "Quantity of Pellet Feed (Kg/day)", "Mineral Mixture Yes/No",
             "Mineral Mixture Brand", "Quantity of Mineral Mixture (gm/day)", "Key Insights", "Photo Filename"
         ]
-        df = pd.DataFrame([row], columns=columns)
+        
+        df_new_row = pd.DataFrame([row], columns=columns)
 
-        # Append to CSV
+        # --- Append to CSV or Create New CSV ---
         if os.path.exists(RESPONSES_CSV):
-            df.to_csv(RESPONSES_CSV, mode="a", header=False, index=False)
+            # Append without header if file exists
+            df_new_row.to_csv(RESPONSES_CSV, mode="a", header=False, index=False)
         else:
-            df.to_csv(RESPONSES_CSV, index=False)
+            # Create new file with header if it doesn't exist
+            df_new_row.to_csv(RESPONSES_CSV, index=False)
+        
+        # --- Confirmation Message and Form Reset ---
         st.success("Your response has been submitted successfully!")
-        st.balloons() # Added a little celebration!
-        st.experimental_rerun() # Clear form by rerunning
+        st.balloons() # Visual celebration!
+        st.experimental_rerun() # Rerun the app to clear the form
 
 # --- Admin Access Section (Download and View Data) ---
+# This section is always available via an expander
 with st.expander("Admin Access (Download & View Data)"):
-    admin_email = st.text_input("Enter admin email")
-    if st.button("Login as Admin"):
+    admin_email = st.text_input("Enter admin email", key="admin_email_input") # Added unique key
+    
+    # Login button for admin access
+    if st.button("Login as Admin", key="admin_login_button"): # Added unique key
         if admin_email in ADMIN_EMAILS:
             st.success("Admin access granted.")
 
-            # --- Download Options ---
+            # --- Download Options for Admins ---
             st.subheader("Download Options")
+            
+            # Download Survey Responses CSV
             if os.path.exists(RESPONSES_CSV):
                 with open(RESPONSES_CSV, "rb") as f:
                     st.download_button(
                         label="Download All Survey Responses (CSV)",
                         data=f,
                         file_name="responses.csv",
-                        mime="text/csv"
+                        mime="text/csv",
+                        key="download_csv_button" # Added unique key
                     )
             else:
                 st.info("No survey responses recorded yet.")
 
+            # Download All Photos as a ZIP file
             if os.path.exists(PHOTOS_DIR) and os.listdir(PHOTOS_DIR):
                 zip_buffer = BytesIO()
                 with zipfile.ZipFile(zip_buffer, "w") as zf:
@@ -225,26 +256,30 @@ with st.expander("Admin Access (Download & View Data)"):
                     label="Download All Photos (ZIP)",
                     data=zip_buffer.getvalue(),
                     file_name="photos.zip",
-                    mime="application/zip"
+                    mime="application/zip",
+                    key="download_photos_button" # Added unique key
                 )
             else:
                 st.info("No photos uploaded yet.")
 
-            # --- View Real-time Data ---
+            # --- View Real-time Data for Admins ---
             st.subheader("View Real-time Data")
+            
+            # View CSV Responses Table
             if os.path.exists(RESPONSES_CSV):
                 st.write("#### Survey Responses Table")
                 df_responses = pd.read_csv(RESPONSES_CSV)
-                st.dataframe(df_responses)
+                st.dataframe(df_responses, use_container_width=True) # Use container width for better display
             else:
                 st.info("No survey responses to display.")
 
+            # View Uploaded Photos
             st.write("#### Uploaded Photos")
             photo_files = [f for f in os.listdir(PHOTOS_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+            
             if photo_files:
-                # Use st.columns for a nicer grid layout for photos
-                # Adjust number of columns based on preference, 3 is a good starting point
-                num_cols = 3
+                # Display photos in a grid layout for better visual organization
+                num_cols = 3 # You can adjust the number of columns
                 cols = st.columns(num_cols)
                 for i, photo_file in enumerate(photo_files):
                     with cols[i % num_cols]: # Cycle through the columns
@@ -252,4 +287,5 @@ with st.expander("Admin Access (Download & View Data)"):
             else:
                 st.info("No photos to display.")
         else:
-            st.error("Access denied. Please check your admin email.") # More generic error message
+            # Generic access denied message for security
+            st.error("Access denied. Please check your admin email.")
