@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from io import BytesIO # Needed for creating zip files in memory
 import plotly.express as px # For more interactive charts
-import plotly.graph_objects as go # Though px is generally enough, keeping it as it was in previous code
+import plotly.graph_objects as go # Included as it was in previous code, though px is often sufficient
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(
@@ -20,7 +20,7 @@ st.markdown("""
     * **SNF Follow-up Survey**: Record and review detailed farmer and farm data related to SNF.
     * **Training Tracker**: Log and monitor farmer training sessions and awareness levels.
 
-    Please use the navigation menu on the left (if you've set up multi-page app in Streamlit) or click on the tabs below to access different modules.
+    If you've set up a multi-page app in Streamlit, you can use the navigation menu on the left. Otherwise, this main page provides a dashboard overview.
 """)
 
 # --- Sidebar Content ---
@@ -43,12 +43,12 @@ TRAINING_SUBMISSIONS_FILE = "submissions.csv" # Data from Training Tracker app
 def load_data(file_path):
     """
     Loads data from a CSV file. Handles cases where the file
-    doesn't exist or is empty.
+    doesn't exist or is empty. Includes basic column cleaning.
     """
     if os.path.exists(file_path):
         try:
             df = pd.read_csv(file_path)
-            # Basic cleaning: strip whitespace from column names
+            # Basic cleaning: strip whitespace from column names for consistent access
             df.columns = df.columns.str.strip()
             return df
         except pd.errors.EmptyDataError:
@@ -94,7 +94,7 @@ with col1:
         # Distribution of SNF in the list
         # Ensure column name exact match and robust numeric conversion
         if 'SNF in the list' in snf_df.columns:
-            # Convert to numeric, coercing non-numeric values to NaN, then drop NaNs
+            # Convert to string first to handle potential mixed types, then replace '%' and convert to numeric
             snf_values = pd.to_numeric(snf_df['SNF in the list'].astype(str).str.replace('%', ''), errors='coerce').dropna()
             
             if not snf_values.empty:
@@ -132,7 +132,7 @@ with col2:
         
         st.write(f"**Total Trainings Logged:** `{training_total}`")
 
-        # Breakdown by Trainer (column is 'trainer')
+        # Breakdown by Trainer (column name is 'trainer' from the training app's data structure)
         if 'trainer' in training_df.columns:
             training_by_trainer = training_df['trainer'].value_counts()
             st.markdown("##### Trainings by Trainer")
@@ -148,7 +148,7 @@ with col2:
             st.plotly_chart(fig_trainer_training, use_container_width=True)
             st.dataframe(training_by_trainer.rename_axis('Trainer').reset_index(name='Trainings Conducted'), use_container_width=True)
 
-        # Breakdown by Training Topic (Pie Chart, column is 'topic')
+        # Breakdown by Training Topic (Pie Chart, column name is 'topic')
         if 'topic' in training_df.columns:
             training_by_topic = training_df['topic'].value_counts()
             if not training_by_topic.empty:
@@ -193,7 +193,7 @@ st.markdown("---") # Separator for combined summary
 
 # --- Combined Progress Overview ---
 st.subheader("Combined Progress Summary")
-# Check if any data was loaded before trying to summarize
+# Check if any data was loaded into progress_data before trying to summarize
 if 'SNF' in progress_data or 'Training' in progress_data:
     combined_counts = {
         'SNF Surveys': len(progress_data.get('SNF', pd.DataFrame())), # Use .get() with default empty DataFrame
@@ -206,7 +206,7 @@ if 'SNF' in progress_data or 'Training' in progress_data:
 
     # Combined Bar Chart for overall counts
     fig_combined = px.bar(
-        summary_df.melt(var_name="Category", value_name="Count"), # Melt for easy plotting
+        summary_df.melt(var_name="Category", value_name="Count"), # Melt DataFrame for easy plotting by category
         x="Category",
         y="Count",
         title="Combined Activity Counts",
@@ -226,12 +226,13 @@ if 'SNF' in progress_data or 'Training' in progress_data:
 
     # Optional: Simple progress bar (if you have a target)
     total_completed = combined_counts['SNF Surveys'] + combined_counts['Trainings']
-    overall_target = 100 # Adjust this to your desired overall target
+    overall_target = 100 # Adjust this to your desired overall target for both activities combined
     
     if overall_target > 0:
         percent = total_completed / overall_target
+        # Ensure percentage doesn't exceed 1.0 for progress bar visualization
         st.progress(min(percent, 1.0), text=f"Overall Progress: {total_completed}/{overall_target} activities ({percent:.1%})")
     else:
-        st.warning("Set an 'overall_target' to see combined progress bar.")
+        st.warning("Set an 'overall_target' variable (e.g., `overall_target = 100`) to see the combined progress bar.")
 else:
-    st.info("No survey or training data available to generate combined progress. Please submit some entries in the respective modules.")
+    st.info("No survey or training data available to generate combined progress. Please submit some entries in the respective modules to see the dashboard come alive!")
