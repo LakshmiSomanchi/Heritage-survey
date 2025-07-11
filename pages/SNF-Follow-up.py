@@ -191,8 +191,6 @@ if submitted:
         # Clear form by rerunning
         st.experimental_rerun()
 
----
-
 # Admin Access Section (Download and View Data)
 
 # Fix: Changed 'With' to 'with' here
