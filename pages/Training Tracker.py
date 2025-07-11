@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
-import zipfile # Import zipfile for creating ZIP archives
-from io import BytesIO # Import BytesIO for in-memory file operations
+import zipfile
+from io import BytesIO
 
 # ---- SETUP ---- #
 st.set_page_config(page_title="Training Tracker", layout="wide")
@@ -18,30 +18,54 @@ DATA_FILE = "submissions.csv"
 PHOTO_DIR = "photos"
 os.makedirs(PHOTO_DIR, exist_ok=True)
 
+# Initialize session state for multi-step form and email
+if 'show_review' not in st.session_state:
+    st.session_state.show_review = False
+if 'form_data' not in st.session_state:
+    st.session_state.form_data = {}
+if 'uploaded_photo' not in st.session_state:
+    st.session_state.uploaded_photo = None
+if 'user_email' not in st.session_state:
+    st.session_state.user_email = "" # Initialize user_email in session state
+
 # Helper function to save submission data and photo
 def save_submission(data, photo_file):
     # Prepare data for DataFrame
-    df_new_entry = pd.DataFrame([data])
+    # Ensure all columns exist, even if value is None, to prevent pandas from complaining
+    # Create a dictionary with all expected columns and default None values
+    all_columns = [
+        "timestamp", "date", "hpc_code", "hpc_name", "trainer", "topic",
+        "volume", "avg_fat", "avg_snf", "pourers_total", "pourers_attended",
+        "heritage_users", "non_heritage_users", "awareness_feed",
+        "awareness_supplements", "awareness_vet", "awareness_ai",
+        "awareness_loans", "awareness_insurance", "awareness_gpa",
+        "key_insights", "email", "photo_filename" # Added photo_filename column
+    ]
+    
+    # Create a dictionary with default None values for all columns
+    row_data = {col: None for col in all_columns}
+    # Update with actual data
+    row_data.update(data)
+
+    df_new_entry = pd.DataFrame([row_data])
 
     # Load existing data or create new DataFrame
     if os.path.exists(DATA_FILE):
         df_existing = pd.read_csv(DATA_FILE)
         df = pd.concat([df_existing, df_new_entry], ignore_index=True)
     else:
-        df = df_new_entry # First entry, so it becomes the DataFrame
+        df = df_new_entry
 
     # Save form data to CSV
     df.to_csv(DATA_FILE, index=False)
 
     # Save photo if provided
-    photo_filename_in_csv = "" # Store this in CSV
+    photo_filename_in_csv = "" # Default to empty string
     if photo_file is not None:
-        # Create a unique filename with timestamp and original extension
         timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-        # Ensure a robust identifier in case HPC Code or Name is empty
         identifier = data.get('hpc_code', '').replace(' ', '_') or \
                      data.get('hpc_name', '').replace(' ', '_') or \
-                     "no_hpc_id"
+                     f"submission_{timestamp_str}" # Fallback if both empty
         file_extension = os.path.splitext(photo_file.name)[1]
         photo_filename = f"{identifier}_{timestamp_str}{file_extension}"
         photo_path = os.path.join(PHOTO_DIR, photo_filename)
@@ -51,8 +75,7 @@ def save_submission(data, photo_file):
         
         photo_filename_in_csv = photo_filename # Store only the filename in CSV
 
-    return photo_filename_in_csv # Return the filename saved
-
+    return photo_filename_in_csv # Return the filename saved in the system
 
 # Helper function to get all submission data
 def get_all_data():
@@ -64,7 +87,6 @@ def get_all_data():
 # Helper function to get paths of all photos
 def get_all_photos_paths():
     if os.path.exists(PHOTO_DIR):
-        # Filter for common image file extensions
         image_files = [f for f in os.listdir(PHOTO_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff'))]
         return [os.path.join(PHOTO_DIR, f) for f in image_files]
     else:
@@ -73,15 +95,13 @@ def get_all_photos_paths():
 # ---- MAIN APP ---- #
 st.title("Training Tracker")
 
-# Authentication: email input
-# Use st.session_state to persist user_email across reruns, making sure it's not cleared
-if 'user_email' not in st.session_state:
-    st.session_state.user_email = ""
-
+# Authentication: email input (use session state to retain value)
 user_email_input = st.text_input("Enter your email:", value=st.session_state.user_email, key="user_email_input").strip()
+
 if user_email_input != st.session_state.user_email:
     st.session_state.user_email = user_email_input
-    st.rerun() # Rerun to apply the new email if changed
+    # If email changes, re-run to update admin access status for tabs
+    st.rerun() 
 
 is_admin = st.session_state.user_email in ADMIN_EMAILS
 
@@ -93,7 +113,7 @@ with tabs[0]: # Submit Entry Tab
     
     # Form for training data submission
     with st.form("training_form", clear_on_submit=False):
-        # Input fields
+        # Input fields (ensure unique keys for all widgets)
         date = st.date_input("Date", key="date_input")
         hpc_code = st.text_input("HPC Code", key="hpc_code_input")
         hpc_name = st.text_input("HPC Name", key="hpc_name_input")
@@ -118,81 +138,76 @@ with tabs[0]: # Submit Entry Tab
         key_insights = st.text_area("Key Insights", key="key_insights_area")
         photo_file = st.file_uploader("Upload a photo", type=["jpg", "jpeg", "png"], key="photo_uploader")
         
-        # First button to trigger review
-        submit_button_review = st.form_submit_button("Review Entry", key="submit_review_button")
-    
-    # Review and Final Submit Logic (outside the form but inside the tab)
+        # Submit button for the form (triggers review)
+        submit_button_review = st.form_submit_button("Review Entry") # No need for key here, it's the only one in the form
+
+    # Handle review submission
     if submit_button_review:
+        # Store form data and photo in session state for review stage
+        st.session_state.form_data = {
+            "date": str(date), # Convert date object to string for consistency
+            "hpc_code": hpc_code,
+            "hpc_name": hpc_name,
+            "trainer": trainer,
+            "topic": topics,
+            "volume": volume,
+            "avg_fat": avg_fat,
+            "avg_snf": avg_snf,
+            "pourers_total": pourers_total,
+            "pourers_attended": pourers_attended,
+            "heritage_users": heritage_users,
+            "non_heritage_users": non_heritage_users,
+            "awareness_feed": awareness_feed,
+            "awareness_supplements": awareness_supplements,
+            "awareness_vet": awareness_vet,
+            "awareness_ai": awareness_ai,
+            "awareness_loans": awareness_loans,
+            "awareness_insurance": awareness_insurance,
+            "awareness_gpa": awareness_gpa,
+            "key_insights": key_insights,
+            "email": st.session_state.user_email
+        }
+        st.session_state.uploaded_photo = photo_file
+        st.session_state.show_review = True # Set flag to show review section
+
+    # --- Review and Final Submit Section (conditionally displayed) ---
+    if st.session_state.show_review:
         st.subheader("Review Your Entry")
         st.info("Please review the details below. If everything is correct, click 'Confirm & Submit'.")
 
-        # Display all submitted data for review
-        st.write(f"**Date:** {date}")
-        st.write(f"**HPC Code:** {hpc_code}")
-        st.write(f"**HPC Name:** {hpc_name}")
-        st.write(f"**Trainer:** {trainer}")
-        st.write(f"**Topic:** {topics}")
-        st.write(f"**Volume:** {volume}")
-        st.write(f"**Average Fat:** {avg_fat}")
-        st.write(f"**Average SNF:** {avg_snf}")
-        st.write(f"**Pourers at HPC (Total):** {pourers_total}")
-        st.write(f"**Pourers Attended Training:** {pourers_attended}")
-        st.write(f"**Heritage Feed Using Farmers:** {heritage_users}")
-        st.write(f"**Non-Heritage Feed Using Farmers:** {non_heritage_users}")
-        st.write(f"**Feed Awareness:** {awareness_feed}")
-        st.write(f"**Supplements Awareness:** {awareness_supplements}")
-        st.write(f"**Veterinary Services Awareness:** {awareness_vet}")
-        st.write(f"**AI Services Awareness:** {awareness_ai}")
-        st.write(f"**Loan Awareness:** {awareness_loans}")
-        st.write(f"**Cattle Insurance Awareness:** {awareness_insurance}")
-        st.write(f"**GPA Policy Awareness:** {awareness_gpa}")
-        st.write(f"**Key Insights:** {key_insights}")
-        if photo_file:
-            st.image(photo_file, caption="Uploaded Photo", use_column_width=True)
+        # Display stored form data from session state
+        for key, value in st.session_state.form_data.items():
+            st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+        
+        if st.session_state.uploaded_photo:
+            st.image(st.session_state.uploaded_photo, caption="Uploaded Photo", use_column_width=True)
         
         # Confirmation checkbox
-        confirm_checkbox = st.checkbox("I confirm that the above information is correct.", key="confirm_checkbox")
+        confirm_checkbox = st.checkbox("I confirm that the above information is correct.", key="confirm_checkbox_final")
         
-        # Final submission button
-        if confirm_checkbox and st.button("Confirm & Submit Entry", key="final_submit_button"):
-            # Prepare data dictionary for saving
-            data_to_save = {
-                "timestamp": datetime.now().strftime("%Y%m%d%H%M%S"),
-                "date": str(date), # Convert date object to string for CSV
-                "hpc_code": hpc_code,
-                "hpc_name": hpc_name,
-                "trainer": trainer,
-                "topic": topics,
-                "volume": volume,
-                "avg_fat": avg_fat,
-                "avg_snf": avg_snf,
-                "pourers_total": pourers_total,
-                "pourers_attended": pourers_attended,
-                "heritage_users": heritage_users,
-                "non_heritage_users": non_heritage_users,
-                "awareness_feed": awareness_feed,
-                "awareness_supplements": awareness_supplements,
-                "awareness_vet": awareness_vet,
-                "awareness_ai": awareness_ai,
-                "awareness_loans": awareness_loans,
-                "awareness_insurance": awareness_insurance,
-                "awareness_gpa": awareness_gpa,
-                "key_insights": key_insights,
-                "email": st.session_state.user_email
-            }
+        # Final submission button (outside the initial st.form)
+        if confirm_checkbox and st.button("Confirm & Submit Entry Now", key="final_submit_entry_button"):
+            # Get data from session state
+            data_to_save = st.session_state.form_data
+            photo_to_save = st.session_state.uploaded_photo
             
             # Save the submission and get the photo filename
-            saved_photo_filename = save_submission(data_to_save, photo_file)
+            saved_photo_filename = save_submission(data_to_save, photo_to_save)
             
-            # Update the data_to_save with the actual photo filename before saving to CSV
-            # (Note: save_submission already adds it when concatting, but if you needed it here for some reason)
-            # This part is a bit redundant if save_submission handles DataFrame concat internally correctly,
-            # but it shows how you could update the dictionary if needed before a *separate* save operation.
-            # In our case, save_submission handles it, so no extra dict update needed here for CSV.
+            # Ensure the photo_filename is also added to the data_to_save before saving to CSV
+            # This is critical if save_submission *doesn't* modify the passed data dict in place
+            # or if it returns only the filename.
+            # In our `save_submission` function, the `photo_filename` is added to the `df_new_entry`
+            # so the CSV will contain it.
             
             st.success("Your training submission has been saved successfully!")
             st.balloons()
-            st.rerun() # Clear form by rerunning the app
+            
+            # Reset session state variables to clear form and hide review
+            st.session_state.show_review = False
+            st.session_state.form_data = {}
+            st.session_state.uploaded_photo = None
+            st.experimental_rerun() # Re-run to refresh the app state and clear the form
 
 with tabs[1]: # Admin Panel Tab
     st.header("Admin Panel")
@@ -212,7 +227,7 @@ with tabs[1]: # Admin Panel Tab
                 data=csv_data,
                 file_name="training_submissions.csv",
                 mime="text/csv",
-                key="download_all_csv"
+                key="download_all_csv_admin"
             )
         else:
             st.info("No training submissions recorded yet.")
@@ -234,7 +249,7 @@ with tabs[1]: # Admin Panel Tab
                 data=zip_buffer.getvalue(),
                 file_name="training_photos.zip",
                 mime="application/zip",
-                key="download_all_photos_zip"
+                key="download_all_photos_zip_admin"
             )
 
             st.write("#### Individual Photos:")
