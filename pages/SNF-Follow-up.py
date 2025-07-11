@@ -37,7 +37,7 @@ with st.form("survey_form", clear_on_submit=False):
     as_on_date_vol = st.text_input("As on date Vol in the farmer slip")
 
     number_of_cows = st.text_input("Number of Cows")
-    jersey_cross = st.text_input("Jersey /Cross")
+    jersey_cross = st.text.text_input("Jersey /Cross")
     hf_cross = st.text_input("HF/Cross")
 
     jersey_milk = st.text_input("No of jersey cows in milk")
@@ -137,7 +137,8 @@ if submitted:
         # Save photo
         photo_filename = ""
         if photo:
-            photo_filename = f"{farmer_code or farmer_name}_{photo.name}"
+            # Create a unique filename for the photo
+            photo_filename = f"{farmer_code or farmer_name}_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}_{photo.name}"
             photo_path = os.path.join(PHOTOS_DIR, photo_filename)
             with open(photo_path, "wb") as f:
                 f.write(photo.getbuffer())
@@ -168,21 +169,30 @@ if submitted:
             df.to_csv(RESPONSES_CSV, index=False)
         st.success("Your response has been submitted!")
 
-# --- Admin Access Section
-with st.expander("Admin Access (Download Data)"):
+---
+
+### Admin Access Section (Download and View Data)
+
+With st.expander("Admin Access (Download & View Data)"):
     admin_email = st.text_input("Enter admin email")
     if st.button("Login as Admin"):
         if admin_email in ADMIN_EMAILS:
             st.success("Admin access granted.")
+
+            # --- Download Options ---
+            st.subheader("Download Options")
             # Download responses
             if os.path.exists(RESPONSES_CSV):
                 with open(RESPONSES_CSV, "rb") as f:
                     st.download_button(
-                        label="Download Survey Responses (CSV)",
+                        label="Download All Survey Responses (CSV)",
                         data=f,
                         file_name="responses.csv",
                         mime="text/csv"
                     )
+            else:
+                st.info("No survey responses recorded yet.")
+
             # Download all photos as a zip file
             if os.path.exists(PHOTOS_DIR) and os.listdir(PHOTOS_DIR):
                 zip_buffer = BytesIO()
@@ -195,5 +205,28 @@ with st.expander("Admin Access (Download Data)"):
                     file_name="photos.zip",
                     mime="application/zip"
                 )
+            else:
+                st.info("No photos uploaded yet.")
+
+            # --- View Real-time Data ---
+            st.subheader("View Real-time Data")
+
+            # View CSV Responses
+            if os.path.exists(RESPONSES_CSV):
+                st.write("#### Survey Responses Table")
+                df_responses = pd.read_csv(RESPONSES_CSV)
+                st.dataframe(df_responses)
+            else:
+                st.info("No survey responses to display.")
+
+            # View Uploaded Photos
+            st.write("#### Uploaded Photos")
+            photo_files = [f for f in os.listdir(PHOTOS_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+            if photo_files:
+                for photo_file in photo_files:
+                    st.image(os.path.join(PHOTOS_DIR, photo_file), caption=photo_file, width=300)
+            else:
+                st.info("No photos to display.")
+
         else:
             st.error("Access denied. You are not an admin.")
