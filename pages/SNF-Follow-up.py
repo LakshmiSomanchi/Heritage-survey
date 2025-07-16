@@ -176,7 +176,7 @@ if not st.session_state.show_review_page:
             st.image(BytesIO(st.session_state.uploaded_photo_info['data']), caption="Previously uploaded photo", width=100)
             if st.button("Clear Photo", key="clear_photo_form"):
                 st.session_state.uploaded_photo_info = None
-                st.experimental_rerun() # Rerun to remove the displayed image
+                st.rerun() # CHANGED: st.experimental_rerun() to st.rerun()
 
         new_uploaded_photo = st.file_uploader("Upload a photo (optional)", type=["jpg", "jpeg", "png"], key="form_photo_uploader")
         
@@ -194,7 +194,7 @@ if not st.session_state.show_review_page:
         if submitted:
             if validate_form_data(): # Validate data currently in session_state.form_data
                 st.session_state.show_review_page = True
-                st.experimental_rerun() # Rerun to switch to review page
+                st.rerun() # CHANGED: st.experimental_rerun() to st.rerun()
             else:
                 for error in st.session_state.validation_errors:
                     st.error(error)
@@ -223,7 +223,7 @@ if st.session_state.show_review_page:
     with col1:
         if st.button("Edit Responses", key="edit_responses_button"):
             st.session_state.show_review_page = False
-            st.experimental_rerun()
+            st.rerun() # CHANGED: st.experimental_rerun() to st.rerun()
     with col2:
         if confirm and st.button("Confirm & Final Submit", key="final_submit_button"):
             # --- Photo Saving Logic ---
@@ -244,7 +244,10 @@ if st.session_state.show_review_page:
                     st.success(f"Photo uploaded and saved as {photo_filename}.")
                 except Exception as e:
                     st.error(f"Error saving photo: {e}")
-                    # st.stop() # Removed st.stop() to allow CSV to save even if photo fails
+                    # The original code had st.stop() here. Removing it allows CSV save to proceed
+                    # even if photo saving fails, which might be desired.
+                    # If you want the app to stop entirely on photo save error, uncomment st.stop()
+                    # st.stop() 
 
             # --- Prepare Data for CSV ---
             row_data = []
@@ -273,7 +276,7 @@ if st.session_state.show_review_page:
                 st.session_state.uploaded_photo_info = None
                 st.session_state.show_review_page = False
                 st.session_state.validation_errors = []
-                st.experimental_rerun() # Rerun to clear the form
+                st.rerun() # CHANGED: st.experimental_rerun() to st.rerun()
             except Exception as e:
                 st.error(f"Error saving survey data to CSV: {e}")
 
@@ -286,8 +289,7 @@ if not st.session_state.admin_unlocked:
         if st.button("Login as Admin", key="admin_login_button"):
             if admin_email_input in ADMIN_EMAILS:
                 st.session_state.admin_unlocked = True
-                st.success("Admin access granted.")
-                st.experimental_rerun() # Rerun to display admin features
+                st.rerun() # CHANGED: st.experimental_rerun() to st.rerun()
             else:
                 st.error("Access denied. Please check your admin email.")
 else: # If admin_unlocked is True, show the features
