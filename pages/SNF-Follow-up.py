@@ -4,7 +4,7 @@ import os
 import zipfile
 from io import BytesIO
 import datetime
-from PIL import Image
+from PIL import Image # Import Image for checking photo validity
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(
@@ -244,9 +244,7 @@ if st.session_state.show_review_page:
                     st.success(f"Photo uploaded and saved as {photo_filename}.")
                 except Exception as e:
                     st.error(f"Error saving photo: {e}")
-                    # No st.stop() here, allow CSV save to proceed if photo save failed
-                    # This might be desired or you might want to stop completely.
-                    # For now, it will try to save CSV even if photo failed.
+                    # st.stop() # Removed st.stop() to allow CSV to save even if photo fails
 
             # --- Prepare Data for CSV ---
             row_data = []
