@@ -4,7 +4,7 @@ import os
 import zipfile
 from io import BytesIO
 import datetime
-from PIL import Image # Import Image for checking photo validity
+from PIL import Image
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(
@@ -16,7 +16,7 @@ st.set_page_config(
 st.title("SNF Follow-up Survey")
 
 # --- File/Directory Settings ---
-PHOTOS_DIR = "photos"       # Directory to store uploaded photos
+PHOTOS_DIR = "photos"        # Directory to store uploaded photos
 RESPONSES_CSV = "responses.csv" # CSV file to store survey responses
 
 # Ensure the photos directory exists. If not, create it.
@@ -42,35 +42,6 @@ if 'admin_unlocked' not in st.session_state:
     st.session_state.admin_unlocked = False # Controls admin access status
 if 'validation_errors' not in st.session_state:
     st.session_state.validation_errors = [] # To store validation messages
-
-# --- DEBUGGING AID (added for better visibility) ---
-st.sidebar.subheader("Debug Info")
-st.sidebar.write(f"Responses CSV path: {os.path.abspath(RESPONSES_CSV)}")
-st.sidebar.write(f"Photos Dir path: {os.path.abspath(PHOTOS_DIR)}")
-st.sidebar.write(f"Responses CSV exists: {os.path.exists(RESPONSES_CSV)}")
-if os.path.exists(RESPONSES_CSV):
-    try:
-        # Read with header=None if it's potentially empty but exists
-        df_temp = pd.read_csv(RESPONSES_CSV, header=None)
-        if not df_temp.empty:
-            # Re-read with header if it's not empty, assuming first row is header
-            df_debug_display = pd.read_csv(RESPONSES_CSV)
-            st.sidebar.write(f"Responses CSV rows (incl. header): {len(df_debug_display)}")
-            # Optionally display a snippet
-            # st.sidebar.dataframe(df_debug_display.head(2))
-        else:
-            st.sidebar.write("Responses CSV exists but is empty.")
-    except pd.errors.EmptyDataError:
-        st.sidebar.write("Responses CSV exists but is empty (EmptyDataError).")
-    except Exception as e:
-        st.sidebar.write(f"Error reading debug CSV: {e}")
-else:
-    st.sidebar.write("Responses CSV does not exist yet.")
-
-# Check photo directory content
-st.sidebar.write(f"Photos in dir: {len(os.listdir(PHOTOS_DIR)) if os.path.exists(PHOTOS_DIR) else 0}")
-# --- END DEBUGGING AID ---
-
 
 # --- Helper Functions for Session State Access ---
 # Use these to get/set values from st.session_state.form_data
@@ -273,7 +244,9 @@ if st.session_state.show_review_page:
                     st.success(f"Photo uploaded and saved as {photo_filename}.")
                 except Exception as e:
                     st.error(f"Error saving photo: {e}")
-                    st.stop() # Stop execution if photo save fails critically
+                    # No st.stop() here, allow CSV save to proceed if photo save failed
+                    # This might be desired or you might want to stop completely.
+                    # For now, it will try to save CSV even if photo failed.
 
             # --- Prepare Data for CSV ---
             row_data = []
@@ -370,9 +343,11 @@ else: # If admin_unlocked is True, show the features
         if os.path.exists(RESPONSES_CSV):
             st.write("#### Survey Responses Table")
             try:
-                # Read the CSV again when this section is rendered
                 df_responses = pd.read_csv(RESPONSES_CSV)
-                st.dataframe(df_responses, use_container_width=True)
+                if not df_responses.empty: # Check if DataFrame is not empty
+                    st.dataframe(df_responses, use_container_width=True)
+                else:
+                    st.info("The CSV file exists but contains no data.") # More specific message
             except pd.errors.EmptyDataError:
                 st.info("The CSV file exists but is empty.")
             except Exception as e:
