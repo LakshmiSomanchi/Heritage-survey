@@ -21,7 +21,7 @@ st.set_page_config(
 st.title("SNF Follow-up Survey")
 
 # --- File/Directory Settings ---
-PHOTOS_DIR = "photos"        # Directory to store uploaded photos
+PHOTOS_DIR = "photos"         # Directory to store uploaded photos
 RESPONSES_CSV = "responses.csv" # CSV file to store survey responses
 
 # Ensure the photos directory exists. If not, create it.
@@ -182,7 +182,7 @@ if not st.session_state.show_review_page:
             st.image(BytesIO(st.session_state.uploaded_photo_info['data']), caption="Previously uploaded photo", width=100)
             if st.button("Clear Photo", key="clear_photo_form"):
                 st.session_state.uploaded_photo_info = None
-                st.rerun() # Corrected from st.experimental_rerun()
+                st.rerun() 
 
         new_uploaded_photo = st.file_uploader("Upload a photo (optional)", type=["jpg", "jpeg", "png"], key="form_photo_uploader")
         
@@ -200,7 +200,7 @@ if not st.session_state.show_review_page:
         if submitted:
             if validate_form_data(): # Validate data currently in session_state.form_data
                 st.session_state.show_review_page = True
-                st.rerun() # Corrected from st.experimental_rerun()
+                st.rerun() 
             else:
                 for error in st.session_state.validation_errors:
                     st.error(error)
@@ -229,7 +229,7 @@ if st.session_state.show_review_page:
     with col1:
         if st.button("Edit Responses", key="edit_responses_button"):
             st.session_state.show_review_page = False
-            st.rerun() # Corrected from st.experimental_rerun()
+            st.rerun() 
     with col2:
         if confirm and st.button("Confirm & Final Submit", key="final_submit_button"):
             # --- Photo Saving Logic ---
@@ -282,7 +282,7 @@ if st.session_state.show_review_page:
                 st.session_state.uploaded_photo_info = None
                 st.session_state.show_review_page = False
                 st.session_state.validation_errors = []
-                st.rerun() # Corrected from st.experimental_rerun()
+                st.rerun() 
             except Exception as e:
                 st.error(f"Error saving survey data to CSV: {e}")
 
@@ -295,7 +295,7 @@ if not st.session_state.admin_unlocked:
         if st.button("Login as Admin", key="admin_login_button"):
             if admin_email_input in ADMIN_EMAILS:
                 st.session_state.admin_unlocked = True
-                st.rerun() # Corrected from st.experimental_rerun()
+                st.rerun() 
             else:
                 st.error("Access denied. Please check your admin email.")
 else: # If admin_unlocked is True, show the features
