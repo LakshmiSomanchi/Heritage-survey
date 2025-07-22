@@ -21,7 +21,7 @@ st.set_page_config(
 st.title("SNF Follow-up Survey")
 
 # --- File/Directory Settings ---
-PHOTOS_DIR = "photos"         # Directory to store uploaded photos
+PHOTOS_DIR = "photos"        # Directory to store uploaded photos
 RESPONSES_CSV = "responses.csv" # CSV file to store survey responses
 
 # Ensure the photos directory exists. If not, create it.
@@ -113,12 +113,10 @@ def validate_form_data():
     data = st.session_state.form_data # Get current data from session state
 
     # General Required Fields
+    # Removed the fields specified by the user to make them non-mandatory
     general_required_fields = [
         "surveyor_name", "date_of_visit", "hpc_code", "hpc_name", "farmer_name", "farmer_code", "gender",
-        "fat_list", "snf_list", "vol_list", "as_on_date_fat", "as_on_date_snf", "as_on_date_vol",
-        "number_of_cows", "jersey_milk", "jersey_vol_lpd", "jersey_fat", "jersey_snf",
-        "hf_milk", "hf_vol_lpd", "hf_fat", "hf_snf", "desi_milk", "desi_vol_lpd", "desi_fat", "desi_snf",
-        "buffalo_milk", "buffalo_vol_lpd", "green_fodder", "dry_fodder", "pellet_feed", "mineral_mix"
+        "green_fodder", "dry_fodder", "pellet_feed", "mineral_mix"
     ]
     for key in general_required_fields:
         if not data.get(key):
@@ -182,7 +180,7 @@ if not st.session_state.show_review_page:
             st.image(BytesIO(st.session_state.uploaded_photo_info['data']), caption="Previously uploaded photo", width=100)
             if st.button("Clear Photo", key="clear_photo_form"):
                 st.session_state.uploaded_photo_info = None
-                st.rerun() 
+                st.rerun()  
 
         new_uploaded_photo = st.file_uploader("Upload a photo (optional)", type=["jpg", "jpeg", "png"], key="form_photo_uploader")
         
@@ -200,7 +198,7 @@ if not st.session_state.show_review_page:
         if submitted:
             if validate_form_data(): # Validate data currently in session_state.form_data
                 st.session_state.show_review_page = True
-                st.rerun() 
+                st.rerun()  
             else:
                 for error in st.session_state.validation_errors:
                     st.error(error)
@@ -229,7 +227,7 @@ if st.session_state.show_review_page:
     with col1:
         if st.button("Edit Responses", key="edit_responses_button"):
             st.session_state.show_review_page = False
-            st.rerun() 
+            st.rerun()  
     with col2:
         if confirm and st.button("Confirm & Final Submit", key="final_submit_button"):
             # --- Photo Saving Logic ---
@@ -253,7 +251,7 @@ if st.session_state.show_review_page:
                     # The original code had st.stop() here. Removing it allows CSV save to proceed
                     # even if photo saving fails, which might be desired.
                     # If you want the app to stop entirely on photo save error, uncomment st.stop()
-                    # st.stop() 
+                    # st.stop()  
 
             # --- Prepare Data for CSV ---
             row_data = []
@@ -282,7 +280,7 @@ if st.session_state.show_review_page:
                 st.session_state.uploaded_photo_info = None
                 st.session_state.show_review_page = False
                 st.session_state.validation_errors = []
-                st.rerun() 
+                st.rerun()  
             except Exception as e:
                 st.error(f"Error saving survey data to CSV: {e}")
 
@@ -295,7 +293,7 @@ if not st.session_state.admin_unlocked:
         if st.button("Login as Admin", key="admin_login_button"):
             if admin_email_input in ADMIN_EMAILS:
                 st.session_state.admin_unlocked = True
-                st.rerun() 
+                st.rerun()  
             else:
                 st.error("Access denied. Please check your admin email.")
 else: # If admin_unlocked is True, show the features
