@@ -3,31 +3,31 @@ import pandas as pd
 import datetime
 import os
 import json
-import base64  # Import base64 for image handling
-import shutil  # Import shutil for moving files
-import zipfile # Import zipfile for creating zip archives
-import io # Import io for in-memory file operations
+import base64  
+import shutil  
+import zipfile 
+import io 
 
-# Ensure save folder exists
+
 SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
-# Define a directory for auto-saved drafts
+
 DRAFT_DIR = os.path.join(SAVE_DIR, 'drafts')
 os.makedirs(DRAFT_DIR, exist_ok=True)
 
-# Define a temporary directory for uploaded images before final submission
+
 TEMP_IMAGE_DIR = os.path.join(SAVE_DIR, 'temp_images')
 os.makedirs(TEMP_IMAGE_DIR, exist_ok=True)
 
-# Define a directory for final submitted images
+
 FINAL_IMAGE_DIR = os.path.join(SAVE_DIR, 'final_images')
 os.makedirs(FINAL_IMAGE_DIR, exist_ok=True)
 
-# Streamlit Page Config - THIS MUST BE THE FIRST STREAMLIT COMMAND
+
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
-# Multilingual Translations
+
 dict_translations = {
     'English': {
         'Language': 'Language', 'Farmer Profile': 'Farmer Profile', 'VLCC Name': 'VLCC Name',
@@ -235,10 +235,10 @@ dict_translations = {
     }
 }
 
-# FARMER_LOOKUP and related data loading from CSV are now removed as requested.
-# If you need to re-introduce auto-filling for 'Rep ID' or 'HPC Code' based on 'Farmer Code',
-# you would need to load this data from an external CSV file (e.g., 'farmer_data.csv').
-FARMER_LOOKUP = {} # This will remain empty unless external data is loaded
+
+
+
+FARMER_LOOKUP = {} 
 
 GREEN_FODDER_OPTIONS = ["Napier", "Maize", "Sorghum"]
 DRY_FODDER_OPTIONS = ["Paddy Straw", "Maize Straw", "Ragi Straw", "Ground Nut Crop Residues"]
@@ -247,15 +247,15 @@ MINERAL_MIXTURE_BRANDS = ["Herita Vit", "Herita Min", "Other (Specify)"]
 WATER_SOURCE_OPTIONS = ["Panchayat", "Borewell", "Water Streams"]
 SURVEYOR_NAMES = ["Shiva Shankaraiah", "Reddisekhar", "Balakrishna", "Somasekhar", "Mahesh Kumar", "Dr Swaran Raj Nayak", "Ram Prasad", "K Balaji"]
 
-# Define initial_values_defaults with text input specific keys and empty strings
+
 initial_values_defaults = {
     'lang_select': "English",
-    'vlcc_name_input': '', # Now a text input
-    'hpc_code_input': '',  # Now a text input
+    'vlcc_name_input': '', 
+    'hpc_code_input': '',  
     'types': "HPC",
-    'farmer_name_input': '', # New key for text input
-    'farmer_code_input': '', # New key for text input
-    'rep_id_display': '', # This is still a display field, will be empty without lookup
+    'farmer_name_input': '', 
+    'farmer_code_input': '', 
+    'rep_id_display': '', 
     'gender': "Male",
     'cows': 0,
     'cattle_in_milk': 0,
@@ -287,7 +287,7 @@ initial_values_defaults = {
     'current_step': 'form_entry',
 }
 
-# --- Callback functions for text input updates ---
+
 def on_text_input_change():
     """Generic callback to save draft when a text input changes."""
     save_draft()
@@ -297,25 +297,25 @@ def on_farmer_code_input_change():
     NOTE: This will only work if FARMER_LOOKUP is populated from an external data source."""
     selected_farmer_code = st.session_state.farmer_code_input
     
-    # In this version, FARMER_LOOKUP is empty.
-    # If you later load farmer data from an external CSV, this part would become active.
+   
+    
     if selected_farmer_code in FARMER_LOOKUP:
         farmer_info = FARMER_LOOKUP[selected_farmer_code]
         st.session_state.hpc_code_input = farmer_info.get('HPC Code', '')
         st.session_state.rep_id_display = farmer_info.get('Rep ID', '')
     else:
-        # Clear if code not found or no lookup data
+        
         st.session_state.hpc_code_input = ''
         st.session_state.rep_id_display = ''
     save_draft()
 
 
-# Function to save current form data to a draft file
+
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     draft_data = {}
     
-    # Map original_key to the session state key used for the widget
+    
     key_mapping = {
         'vlcc_name_input': 'vlcc_name_input',
         'hpc_code_input': 'hpc_code_input',
@@ -335,7 +335,6 @@ def save_draft():
         'uploaded_temp_photo_paths': 'uploaded_temp_photo_paths',
         'lang_select': 'lang_select',
         'current_step': 'current_step',
-        # Other form fields
         'cows': 'cows_input',
         'cattle_in_milk': 'cattle_in_milk_input',
         'calves': 'calves_input',
@@ -356,20 +355,19 @@ def save_draft():
         'final_submitted_data': 'final_submitted_data',
     }
 
-    # Iterate through initial_values_defaults to ensure all expected fields are saved
+    
     for original_key, default_value in initial_values_defaults.items():
-        session_key = key_mapping.get(original_key, original_key) # Use direct key if not in map
-
+        session_key = key_mapping.get(original_key, original_key) 
         value_to_save = st.session_state.get(session_key, default_value)
 
-        # Special handling for datetime.date
+        
         if original_key == 'visit_date' and isinstance(value_to_save, datetime.date):
             value_to_save = value_to_save.isoformat()
             
-        # Ensure list types are saved as lists
+        
         if original_key in ['green_fodder_types', 'dry_fodder_types', 'pellet_feed_brands', 'water_sources', 'uploaded_temp_photo_paths']:
             if not isinstance(value_to_save, list):
-                value_to_save = [] # Default to empty list if not a list
+                value_to_save = [] 
                 
         draft_data[original_key] = value_to_save
     
@@ -380,7 +378,7 @@ def save_draft():
     except Exception as e:
         st.error(f"Error saving draft: {e}")
 
-# Function to load draft data into session state
+
 def load_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     if os.path.exists(draft_filename):
@@ -388,7 +386,7 @@ def load_draft():
             with open(draft_filename, 'r') as f:
                 loaded_data = json.load(f)
 
-            # Map loaded data keys to session state widget keys
+            
             key_mapping = {
                 'vlcc_name_input': 'vlcc_name_input',
                 'hpc_code_input': 'hpc_code_input',
@@ -407,7 +405,6 @@ def load_draft():
                 'uploaded_temp_photo_paths': 'uploaded_temp_photo_paths',
                 'lang_select': 'lang_select',
                 'current_step': 'current_step',
-                # Other form fields that are directly mapped or managed by the form
                 'cows': 'cows_input',
                 'cattle_in_milk': 'cattle_in_milk_input',
                 'calves': 'calves_input',
@@ -425,7 +422,7 @@ def load_draft():
                 'silage_source': 'silage_source_input',
                 'silage_qty': 'silage_qty_input',
                 'water_sources': 'water_sources_multi',
-                'final_submitted_data': 'final_submitted_data', # For review step
+                'final_submitted_data': 'final_submitted_data', 
             }
 
             for original_key, session_key in key_mapping.items():
@@ -440,21 +437,21 @@ def load_draft():
                         st.session_state[session_key] = list(value)
                     else:
                         st.session_state[session_key] = value
-                # Ensure keys not in loaded_data are initialized to defaults for consistency
+                
                 elif session_key not in st.session_state:
                     st.session_state[session_key] = initial_values_defaults.get(original_key)
 
-            # --- VALIDATE DROPDOWN SELECTIONS AFTER LOADING DRAFT (only for actual dropdowns) ---
+            
             temp_lang = st.session_state.get('lang_select', 'English')
             current_labels = dict_translations.get(temp_lang, dict_translations['English'])
 
-            # Types and Gender
+            
             if 'types_selectbox' in st.session_state and st.session_state['types_selectbox'] not in (current_labels['HPC'], current_labels['MCC']):
                 st.session_state['types_selectbox'] = current_labels['HPC']
             if 'gender_selectbox' in st.session_state and st.session_state['gender_selectbox'] not in (current_labels['Male'], current_labels['Female']):
                 st.session_state['gender_selectbox'] = current_labels['Male']
             
-            # Yes/No options (using new keys)
+            
             if 'green_fodder_radio' in st.session_state and st.session_state['green_fodder_radio'] not in (current_labels['Yes'], current_labels['No']):
                 st.session_state['green_fodder_radio'] = current_labels['Yes']
             if 'dry_fodder_radio' in st.session_state and st.session_state['dry_fodder_radio'] not in (current_labels['Yes'], current_labels['No']):
@@ -466,15 +463,15 @@ def load_draft():
             if 'silage_radio' in st.session_state and st.session_state['silage_radio'] not in (current_labels['Yes'], current_labels['No']):
                 st.session_state['silage_radio'] = current_labels['Yes']
             
-            # Mineral Brand
+            
             if 'mineral_brand_select' in st.session_state and st.session_state['mineral_brand_select'] not in MINERAL_MIXTURE_BRANDS:
                 st.session_state['mineral_brand_select'] = MINERAL_MIXTURE_BRANDS[0] if MINERAL_MIXTURE_BRANDS else None
             
-            # Surveyor Name
+            
             if 'surveyor_name_select' in st.session_state and st.session_state['surveyor_name_select'] not in SURVEYOR_NAMES:
                 st.session_state['surveyor_name_select'] = SURVEYOR_NAMES[0] if SURVEYOR_NAMES else None
 
-            # Photo Paths
+            
             if 'uploaded_temp_photo_paths' not in st.session_state or not isinstance(st.session_state.uploaded_temp_photo_paths, list):
                 st.session_state.uploaded_temp_photo_paths = []
 
@@ -485,7 +482,7 @@ def load_draft():
             return False
     return False
 
-# Function to clear form fields (reset session state for form entry)
+
 def clear_form_fields():
     persistent_keys = ['lang_select', 'app_initialized_flag', 'current_step'] # Keep these
     
@@ -496,7 +493,7 @@ def clear_form_fields():
             if key in st.session_state:
                 del st.session_state[key]
     
-    # Re-initialize all default values (now including the text input defaults)
+    
     key_mapping_reset = {
         'vlcc_name_input': 'vlcc_name_input',
         'hpc_code_input': 'hpc_code_input',
@@ -542,19 +539,19 @@ def clear_form_fields():
     st.session_state.current_step = 'form_entry'
     st.session_state.last_saved_time_persistent = None
     
-    # Clear temporary image directory
+    
     for f in os.listdir(TEMP_IMAGE_DIR):
         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
     st.session_state.uploaded_temp_photo_paths = []
 
-    # Remove draft file
+    
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     if os.path.exists(draft_filename):
         os.remove(draft_filename)
 
     st.rerun()
 
-# Function to create a ZIP file of all images
+
 def create_zip_file():
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
@@ -565,7 +562,7 @@ def create_zip_file():
     zip_buffer.seek(0)
     return zip_buffer
 
-# Function to get all survey responses as a DataFrame
+
 def get_all_responses_df():
     all_files = [os.path.join(SAVE_DIR, f) for f in os.listdir(SAVE_DIR) if f.endswith('.csv') and f.startswith('survey_response_')]
     
@@ -585,12 +582,12 @@ def get_all_responses_df():
     else:
         return pd.DataFrame()
 
-# Initialize session state
+
 if 'app_initialized_flag' not in st.session_state:
     st.session_state.app_initialized_flag = True
     st.session_state.last_saved_time_persistent = None
 
-    # Initialize all defaults
+    
     key_mapping_init = {
         'vlcc_name_input': 'vlcc_name_input',
         'hpc_code_input': 'hpc_code_input',
@@ -634,10 +631,10 @@ if 'app_initialized_flag' not in st.session_state:
         if session_key not in st.session_state:
             st.session_state[session_key] = default_value
     
-    # Then try to load draft, which will overwrite these defaults if successful and valid
+    
     load_draft()
 
-# Language Selection
+
 initial_lang_options = ("English", "Hindi", "Marathi", "Telugu")
 if 'lang_select' not in st.session_state or st.session_state.lang_select not in initial_lang_options:
     st.session_state.lang_select = "English"
@@ -653,49 +650,49 @@ lang = st.sidebar.selectbox(
 )
 labels = dict_translations.get(lang, dict_translations['English'])
 
-# Display auto-save status
+
 if st.session_state.last_saved_time_persistent and st.session_state.current_step == 'form_entry':
     st.info(f"{labels['Auto-saved!']} Last saved: {st.session_state.last_saved_time_persistent}")
 else:
     if st.session_state.current_step == 'form_entry':
         st.info("No auto-saved draft found, or draft cleared. Start filling the form!")
 
-# --- Main Application Logic based on current_step ---
+
 if st.session_state.current_step == 'form_entry':
     st.title(labels['Farmer Profile'])
 
-    # --- Farmer Profile Inputs (All text inputs) ---
+    
     st.subheader("Farmer Identification")
 
     st.text_input(
         labels['VLCC Name'],
         value=st.session_state.get('vlcc_name_input', ''),
         key="vlcc_name_input",
-        on_change=on_text_input_change # Generic callback to save draft
+        on_change=on_text_input_change 
     )
 
     st.text_input(
         labels['HPC/MCC Code'],
         value=st.session_state.get('hpc_code_input', ''),
         key="hpc_code_input",
-        on_change=on_text_input_change # Generic callback to save draft
+        on_change=on_text_input_change 
     )
 
     st.text_input(
         labels['Farmer Name'],
         value=st.session_state.get('farmer_name_input', ''),
         key="farmer_name_input",
-        on_change=on_text_input_change # Generic callback to save draft
+        on_change=on_text_input_change 
     )
     
     st.text_input(
         labels['Farmer Code'],
         value=st.session_state.get('farmer_code_input', ''),
         key="farmer_code_input",
-        on_change=on_farmer_code_input_change # Specific callback to potentially auto-fill Rep ID/HPC Code from a *future* external data source
+        on_change=on_farmer_code_input_change 
     )
     
-    # Types and Gender remain as selectboxes
+    
     types_options = (labels['HPC'], labels['MCC'])
     current_types = st.session_state.get('types_selectbox', types_options[0])
     types_default_idx = 0
@@ -720,7 +717,7 @@ if st.session_state.current_step == 'form_entry':
         on_change=save_draft
     )
 
-    # --- PHOTO UPLOAD SECTION ---
+    
     st.header(labels['Upload Photos'])
     uploaded_files = st.file_uploader(
         labels['Upload Photos'],
@@ -802,10 +799,10 @@ if st.session_state.current_step == 'form_entry':
             st.info(labels['No photo uploaded.'])
     else:
         st.info(labels['No photo uploaded.'])
-    # --- END PHOTO UPLOAD SECTION ---
+    
 
 
-    # --- Start of the actual Streamlit form for other fields ---
+    
     with st.form("survey_form_details"):
         st.header(labels['Farm Details'])
         
@@ -1009,18 +1006,18 @@ if st.session_state.current_step == 'form_entry':
             key="visit_date_input"
         )
 
-        # --- Submit Button (MUST BE INSIDE THE FORM) ---
+        
         submit_for_review = st.form_submit_button(labels['Submit'])
 
         if submit_for_review:
             data_for_review = {
                 "Language": st.session_state.lang_select,
-                "VLCC Name": st.session_state.vlcc_name_input, # Get from text input
-                "HPC/MCC Code": st.session_state.hpc_code_input, # Get from text input
+                "VLCC Name": st.session_state.vlcc_name_input, 
+                "HPC/MCC Code": st.session_state.hpc_code_input, 
                 "Type": st.session_state.types_selectbox,
-                "Farmer Name": st.session_state.farmer_name_input, # Get from text input
-                "Farmer Code / Pourer ID": st.session_state.farmer_code_input, # Get from text input
-                "Rep ID (Phone Number)": st.session_state.rep_id_display, # Display field, might be empty if no lookup
+                "Farmer Name": st.session_state.farmer_name_input, 
+                "Farmer Code / Pourer ID": st.session_state.farmer_code_input, 
+                "Rep ID (Phone Number)": st.session_state.rep_id_display, 
                 "Gender": st.session_state.gender_selectbox,
                 "Number of Cows": st.session_state.cows_input,
                 "No. of Cattle in Milk": st.session_state.cattle_in_milk_input,
