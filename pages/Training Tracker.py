@@ -1,5 +1,3 @@
-# training_tracker_app.py
-
 import streamlit as st
 import pandas as pd
 import os
@@ -7,7 +5,7 @@ from datetime import datetime
 import zipfile
 from io import BytesIO
 
-# ---- SETUP ---- #
+
 st.set_page_config(page_title="Training Tracker", layout="wide")
 
 ADMIN_EMAILS = [
