@@ -33,6 +33,7 @@ ADMIN_EMAILS = [
     "mkaushal@tns.org",
     "rsomanchi@tns.org",
     "kbalaji@tns.org",
+    "ksuneha@tns.org",
     "gmreddy@tns.org"
 ]
 
