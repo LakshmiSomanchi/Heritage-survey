@@ -10,6 +10,7 @@ st.set_page_config(page_title="Training Tracker", layout="wide")
 
 ADMIN_EMAILS = [
     "mkaushal@tns.org",
+    "vknikhitha@tns.org",
     "rsomanchi@tns.org",
     "gmreddy@tns.org",
     "ksuneha@tns.org",
