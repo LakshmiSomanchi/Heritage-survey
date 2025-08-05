@@ -31,6 +31,7 @@ os.makedirs(PHOTOS_DIR, exist_ok=True)
 
 ADMIN_EMAILS = [
     "mkaushal@tns.org",
+    "vknikhitha@tns.org",
     "rsomanchi@tns.org",
     "kbalaji@tns.org",
     "ksuneha@tns.org",
