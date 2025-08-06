@@ -14,10 +14,6 @@ st.write("---")
 if 'just_submitted' not in st.session_state:
     st.session_state.just_submitted = False
 
-if st.session_state.just_submitted:
-    st.success("Submitted successfully!")
-    st.session_state.just_submitted = False
-
 st.set_page_config(
     page_title="SNF Follow-up Survey App",
     layout="wide",
@@ -139,6 +135,27 @@ def validate_form_data():
                     st.session_state.validation_errors.append(f"'{details['label']}' is required because '{FORM_FIELDS_MAP[condition['field']]['label']}' is '{condition['value']}'.")
     return not st.session_state.validation_errors 
 
+# ----- SHOW PREVIOUS SUBMISSIONS TABLE always if available -----
+if os.path.exists(RESPONSES_CSV):
+    st.subheader("All Previous Submissions")
+    try:
+        df_responses = pd.read_csv(RESPONSES_CSV)
+        if not df_responses.empty:
+            st.dataframe(df_responses, use_container_width=True)
+        else:
+            st.info("The CSV file exists but contains no data.") 
+    except pd.errors.EmptyDataError:
+        st.info("The CSV file exists but is empty.")
+    except Exception as e:
+        st.error(f"Error reading responses CSV: {e}")
+else:
+    st.info("No previous survey responses to display yet.")
+
+if st.session_state.just_submitted:
+    st.success("Submitted successfully!")
+    st.session_state.just_submitted = False
+
+# ----- MAIN FORM -----
 if not st.session_state.show_review_page:
     with st.form("survey_form", clear_on_submit=False):
         st.header("Farmer Survey Details")
@@ -225,14 +242,16 @@ if st.session_state.show_review_page:
                 else:
                     df_new_row.to_csv(RESPONSES_CSV, index=False)
                 st.session_state.just_submitted = True  # <--- Set persistent submitted flag
-                st.session_state.form_data = {}
-                st.session_state.uploaded_photo_info = None
                 st.session_state.show_review_page = False
-                st.session_state.validation_errors = []
-                st.rerun()  
+                # DO NOT CLEAR FORM DATA!
+                # st.session_state.form_data = {}
+                # st.session_state.uploaded_photo_info = None
+                # st.session_state.validation_errors = []
+                # DO NOT CALL st.rerun()
             except Exception as e:
                 st.error(f"Error saving survey data to CSV: {e}")
 
+# ----- ADMIN SECTION -----
 if not st.session_state.admin_unlocked:
     with st.expander("Admin Access (Login)", expanded=False): 
         admin_email_input = st.text_input("Enter admin email", key="admin_email_input")
@@ -246,7 +265,6 @@ else:
     with st.expander("Admin Access (Features)", expanded=True): 
         st.success("Admin access granted.")
         st.subheader("Download Options")
-        # --- DEBUG: Show where the app expects the responses.csv file ---
         st.write(f"Looking for responses.csv at: {os.path.abspath(RESPONSES_CSV)}")
         st.write(f"File exists: {os.path.exists(RESPONSES_CSV)}")
         if os.path.exists(RESPONSES_CSV):
