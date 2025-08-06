@@ -9,8 +9,14 @@ from PIL import Image
 # --- ADDED FOR DEBUGGING: Print current working directory ---
 st.write(f"**Current Working Directory:** `{os.getcwd()}`")
 st.write("---") 
-# --- END DEBUGGING ADDITION ---
 
+# --- Persistent Submission Success Message ---
+if 'just_submitted' not in st.session_state:
+    st.session_state.just_submitted = False
+
+if st.session_state.just_submitted:
+    st.success("Submitted successfully!")
+    st.session_state.just_submitted = False
 
 st.set_page_config(
     page_title="SNF Follow-up Survey App",
@@ -20,14 +26,10 @@ st.set_page_config(
 
 st.title("SNF Follow-up Survey")
 
-
 PHOTOS_DIR = "photos"        
 RESPONSES_CSV = "responses.csv" 
 
-
-
 os.makedirs(PHOTOS_DIR, exist_ok=True)
-
 
 ADMIN_EMAILS = [
     "mkaushal@tns.org",
@@ -37,8 +39,6 @@ ADMIN_EMAILS = [
     "ksuneha@tns.org",
     "gmreddy@tns.org"
 ]
-
-
 
 if 'form_data' not in st.session_state:
     st.session_state.form_data = {} 
@@ -51,15 +51,11 @@ if 'admin_unlocked' not in st.session_state:
 if 'validation_errors' not in st.session_state:
     st.session_state.validation_errors = [] 
 
-
-
 def get_field_value(key, default=""):
     return st.session_state.form_data.get(key, default)
 
 def set_field_value(key, value):
     st.session_state.form_data[key] = value
-
-
 
 FORM_FIELDS_MAP = {
     "surveyor_name": {"label": "Surveyor Name", "widget": "selectbox", "options": ["Guru", "Balaji"]},
@@ -109,13 +105,9 @@ FORM_FIELDS_MAP = {
     "key_insights": {"label": "Key Insights/Observations", "widget": "text_area"},
 }
 
-
 def validate_form_data():
     st.session_state.validation_errors = [] 
     data = st.session_state.form_data 
-
-    
-    
     general_required_fields = [
         "surveyor_name", "date_of_visit", "hpc_code", "hpc_name", "farmer_name", "farmer_code", "gender",
         "green_fodder", "dry_fodder", "pellet_feed", "mineral_mix"
@@ -123,8 +115,6 @@ def validate_form_data():
     for key in general_required_fields:
         if not data.get(key):
             st.session_state.validation_errors.append(f"'{FORM_FIELDS_MAP[key]['label']}' is a required field.")
-
-    
     for key, details in FORM_FIELDS_MAP.items():
         if details.get("validation") == "numeric":
             value = data.get(key)
@@ -135,35 +125,26 @@ def validate_form_data():
                         st.session_state.validation_errors.append(f"'{details['label']}' must be a non-negative number.")
                 except ValueError:
                     st.session_state.validation_errors.append(f"'{details['label']}' must be a valid number.")
-
-    
     date_str = data.get("date_of_visit")
     if date_str:
         try:
             datetime.datetime.strptime(date_str, "%d-%m-%Y")
         except ValueError:
             st.session_state.validation_errors.append("Date of Visit must be in DD-MM-YYYY format.")
-
-    
     for key, details in FORM_FIELDS_MAP.items():
         if "conditional_required_if" in details:
             condition = details["conditional_required_if"]
             if data.get(condition["field"]) == condition["value"]:
                 if not data.get(key):
                     st.session_state.validation_errors.append(f"'{details['label']}' is required because '{FORM_FIELDS_MAP[condition['field']]['label']}' is '{condition['value']}'.")
-
     return not st.session_state.validation_errors 
-
 
 if not st.session_state.show_review_page:
     with st.form("survey_form", clear_on_submit=False):
         st.header("Farmer Survey Details")
-
-        
         for key, details in FORM_FIELDS_MAP.items():
             label = details["label"]
             current_value = get_field_value(key) 
-
             if details["widget"] == "selectbox":
                 selected_option = st.selectbox(label, options=details["options"],
                                                index=details["options"].index(current_value) if current_value in details["options"] else 0,
@@ -175,28 +156,19 @@ if not st.session_state.show_review_page:
             elif details["widget"] == "text_area":
                 entered_text = st.text_area(label, value=current_value, key=f"form_widget_{key}")
                 set_field_value(key, entered_text) 
-
-        
-        
         if st.session_state.uploaded_photo_info:
             st.image(BytesIO(st.session_state.uploaded_photo_info['data']), caption="Previously uploaded photo", width=100)
             if st.button("Clear Photo", key="clear_photo_form"):
                 st.session_state.uploaded_photo_info = None
                 st.rerun()  
-
         new_uploaded_photo = st.file_uploader("Upload a photo (optional)", type=["jpg", "jpeg", "png"], key="form_photo_uploader")
-        
         if new_uploaded_photo:
-            
             st.session_state.uploaded_photo_info = {
                 "name": new_uploaded_photo.name,
                 "data": new_uploaded_photo.getvalue(),
                 "type": new_uploaded_photo.type
             }
-
-        
         submitted = st.form_submit_button("Review & Submit")
-
         if submitted:
             if validate_form_data(): 
                 st.session_state.show_review_page = True
@@ -205,26 +177,19 @@ if not st.session_state.show_review_page:
                 for error in st.session_state.validation_errors:
                     st.error(error)
 
-
 if st.session_state.show_review_page:
     st.header("Review Your Submission")
     st.info("Please review the details below. If everything is correct, confirm and submit.")
-
-    
     for key, details in FORM_FIELDS_MAP.items():
         label = details["label"]
         display_value = get_field_value(key, "N/A") 
         st.write(f"**{label}:** {display_value}")
-    
     if st.session_state.uploaded_photo_info:
         st.write("---") 
         st.write("**Uploaded Photo:**")
         image_data = BytesIO(st.session_state.uploaded_photo_info['data'])
         st.image(image_data, caption=st.session_state.uploaded_photo_info['name'], width=300)
-
-    
     confirm = st.checkbox("I confirm that the above information is correct.", key="review_confirm_checkbox")
-
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Edit Responses", key="edit_responses_button"):
@@ -232,49 +197,34 @@ if st.session_state.show_review_page:
             st.rerun()  
     with col2:
         if confirm and st.button("Confirm & Final Submit", key="final_submit_button"):
-            
             photo_filename = "" 
             if st.session_state.uploaded_photo_info:
                 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 file_extension = os.path.splitext(st.session_state.uploaded_photo_info['name'])[1]
-                
                 identifier = get_field_value("farmer_code") or \
                              get_field_value("farmer_name") or "unknown_farmer"
-                
                 photo_filename = f"{identifier}_{timestamp}{file_extension}"
                 photo_path = os.path.join(PHOTOS_DIR, photo_filename)
-                
                 try:
                     with open(photo_path, "wb") as f:
                         f.write(st.session_state.uploaded_photo_info["data"])
                     st.success(f"Photo uploaded and saved as {photo_filename}.")
                 except Exception as e:
                     st.error(f"Error saving photo: {e}")
-                      
-
-            
             row_data = []
             columns_for_csv = []
             for key, details in FORM_FIELDS_MAP.items():
                 columns_for_csv.append(details["label"])
                 row_data.append(get_field_value(key))
-            
             columns_for_csv.append("Photo Filename")
             row_data.append(photo_filename)
-
             df_new_row = pd.DataFrame([row_data], columns=columns_for_csv)
-
-            
             try:
                 if os.path.exists(RESPONSES_CSV):
                     df_new_row.to_csv(RESPONSES_CSV, mode="a", header=False, index=False)
                 else:
                     df_new_row.to_csv(RESPONSES_CSV, index=False)
-                
-                st.success("Your response has been submitted successfully!")
-                st.balloons()
-
-                
+                st.session_state.just_submitted = True  # <--- Set persistent submitted flag
                 st.session_state.form_data = {}
                 st.session_state.uploaded_photo_info = None
                 st.session_state.show_review_page = False
@@ -282,9 +232,6 @@ if st.session_state.show_review_page:
                 st.rerun()  
             except Exception as e:
                 st.error(f"Error saving survey data to CSV: {e}")
-
-
-
 
 if not st.session_state.admin_unlocked:
     with st.expander("Admin Access (Login)", expanded=False): 
@@ -298,11 +245,10 @@ if not st.session_state.admin_unlocked:
 else: 
     with st.expander("Admin Access (Features)", expanded=True): 
         st.success("Admin access granted.")
-
-        
         st.subheader("Download Options")
-        
-        
+        # --- DEBUG: Show where the app expects the responses.csv file ---
+        st.write(f"Looking for responses.csv at: {os.path.abspath(RESPONSES_CSV)}")
+        st.write(f"File exists: {os.path.exists(RESPONSES_CSV)}")
         if os.path.exists(RESPONSES_CSV):
             with open(RESPONSES_CSV, "rb") as f:
                 st.download_button(
@@ -314,8 +260,6 @@ else:
                 )
         else:
             st.info("No survey responses recorded yet.")
-
-        
         photo_files_in_dir = [f for f in os.listdir(PHOTOS_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         if photo_files_in_dir:
             zip_buffer = BytesIO()
@@ -323,7 +267,6 @@ else:
                 for photo_file in photo_files_in_dir:
                     file_path = os.path.join(PHOTOS_DIR, photo_file)
                     try:
-                        
                         Image.open(file_path).verify()
                         zf.write(file_path, os.path.basename(file_path))
                     except Exception as e:
@@ -338,11 +281,7 @@ else:
             )
         else:
             st.info("No photos uploaded yet.")
-
-        
         st.subheader("View Real-time Data")
-        
-        
         if os.path.exists(RESPONSES_CSV):
             st.write("#### Survey Responses Table")
             try:
@@ -357,10 +296,7 @@ else:
                 st.error(f"Error reading responses CSV: {e}")
         else:
             st.info("No survey responses to display.")
-
-        
         st.write("#### Uploaded Photos")
-        
         if photo_files_in_dir:
             num_cols = 3 
             cols = st.columns(num_cols)
