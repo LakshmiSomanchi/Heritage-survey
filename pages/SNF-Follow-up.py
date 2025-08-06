@@ -6,14 +6,6 @@ from io import BytesIO
 import datetime
 from PIL import Image 
 
-# --- ADDED FOR DEBUGGING: Print current working directory ---
-st.write(f"**Current Working Directory:** `{os.getcwd()}`")
-st.write("---") 
-
-# --- Persistent Submission Success Message ---
-if 'just_submitted' not in st.session_state:
-    st.session_state.just_submitted = False
-
 st.set_page_config(
     page_title="SNF Follow-up Survey App",
     layout="wide",
@@ -46,6 +38,8 @@ if 'admin_unlocked' not in st.session_state:
     st.session_state.admin_unlocked = False 
 if 'validation_errors' not in st.session_state:
     st.session_state.validation_errors = [] 
+if 'just_submitted' not in st.session_state:
+    st.session_state.just_submitted = False
 
 def get_field_value(key, default=""):
     return st.session_state.form_data.get(key, default)
@@ -147,7 +141,7 @@ if os.path.exists(RESPONSES_CSV):
     except pd.errors.EmptyDataError:
         st.info("The CSV file exists but is empty.")
     except Exception as e:
-        st.error(f"Error reading responses CSV: {e}")
+        st.error(f"Error loading responses CSV: {e}")
 else:
     st.info("No previous survey responses to display yet.")
 
@@ -236,18 +230,24 @@ if st.session_state.show_review_page:
             columns_for_csv.append("Photo Filename")
             row_data.append(photo_filename)
             df_new_row = pd.DataFrame([row_data], columns=columns_for_csv)
+            # --- SAFE APPEND: Read, append, write the whole file ---
+            if os.path.exists(RESPONSES_CSV):
+                try:
+                    df_existing = pd.read_csv(RESPONSES_CSV)
+                    if set(df_existing.columns) == set(df_new_row.columns):
+                        df_combined = pd.concat([df_existing, df_new_row], ignore_index=True)
+                    else:
+                        df_combined = df_new_row
+                except Exception as e:
+                    st.warning(f"Could not read existing responses, starting new file. Reason: {e}")
+                    df_combined = df_new_row
+            else:
+                df_combined = df_new_row
             try:
-                if os.path.exists(RESPONSES_CSV):
-                    df_new_row.to_csv(RESPONSES_CSV, mode="a", header=False, index=False)
-                else:
-                    df_new_row.to_csv(RESPONSES_CSV, index=False)
-                st.session_state.just_submitted = True  # <--- Set persistent submitted flag
+                df_combined.to_csv(RESPONSES_CSV, index=False)
+                st.session_state.just_submitted = True
                 st.session_state.show_review_page = False
-                # DO NOT CLEAR FORM DATA!
-                # st.session_state.form_data = {}
-                # st.session_state.uploaded_photo_info = None
-                # st.session_state.validation_errors = []
-                # DO NOT CALL st.rerun()
+                # Do not clear session state or rerun; the table will update on next reload
             except Exception as e:
                 st.error(f"Error saving survey data to CSV: {e}")
 
