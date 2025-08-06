@@ -5,7 +5,6 @@ from datetime import datetime
 import zipfile
 from io import BytesIO
 
-
 st.set_page_config(page_title="Training Tracker", layout="wide")
 
 ADMIN_EMAILS = [
@@ -58,13 +57,9 @@ def save_submission(data, photo_file):
 
     df_new_entry = pd.DataFrame([row_data])
 
-    if os.path.exists(DATA_FILE):
-        df_existing = pd.read_csv(DATA_FILE)
-        df = pd.concat([df_existing, df_new_entry], ignore_index=True)
-    else:
-        df = df_new_entry
-
-    df.to_csv(DATA_FILE, index=False)
+    # Append to CSV without overwriting
+    file_exists = os.path.exists(DATA_FILE)
+    df_new_entry.to_csv(DATA_FILE, mode='a', header=not file_exists, index=False)
 
 @st.cache_data
 def get_all_data():
