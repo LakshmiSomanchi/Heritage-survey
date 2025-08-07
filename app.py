@@ -3,10 +3,11 @@ import pandas as pd
 import datetime
 import os
 import json
-import base64  
-import shutil  
-import zipfile 
-import io 
+import base64
+import shutil
+import zipfile
+import io
+import time
 
 SAVE_DIR = 'survey_responses'
 os.makedirs(SAVE_DIR, exist_ok=True)
@@ -22,18 +23,86 @@ os.makedirs(FINAL_IMAGE_DIR, exist_ok=True)
 
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
-# ... [dict_translations, FARMER_LOOKUP, options, and initial_values_defaults unchanged] ...
-# ... [All code up to the review page is unchanged. Only review/submit logic and data loading is updated below.] ...
+# --- Initializing session state variables ---
+if 'current_step' not in st.session_state:
+    st.session_state.current_step = 'form_entry'
+if 'form_data' not in st.session_state:
+    st.session_state.form_data = {}
+if 'final_submitted_data' not in st.session_state:
+    st.session_state.final_submitted_data = {}
+if 'uploaded_temp_photo_paths' not in st.session_state:
+    st.session_state.uploaded_temp_photo_paths = []
+if 'draft_saved' not in st.session_state:
+    st.session_state.draft_saved = False
+if 'last_saved_time_persistent' not in st.session_state:
+    st.session_state.last_saved_time_persistent = None
+# New session state variable to store all responses for real-time display
+if 'all_responses_df' not in st.session_state:
+    st.session_state.all_responses_df = pd.DataFrame()
+
+# --- Dictionaries and Options (Replicating your existing code) ---
+dict_translations = {
+    "Surveyor": "Surveyor Name", "Date": "Date of Visit", "HPC Code": "HPC Code", "HPC Name": "HPC Name", "Farmer Code": "Farmer Code", "Farmer Name": "Farmer Name", "Mobile Number": "Mobile Number", "Milk Yield (LPD)": "Milk Yield (LPD)", "Last Calving Date": "Last Calving Date", "Cattle Breed": "Cattle Breed", "Total Cows": "Total Cows", "Cows in Milk": "Cows in Milk", "Dry Cows": "Dry Cows", "Heifers": "Heifers", "Calves": "Calves", "Fat (%)": "Fat (%)", "SNF (%)": "SNF (%)", "Protein (%)": "Protein (%)", "TDS (%)": "TDS (%)", "Green Fodder": "Green Fodder (Yes/No)", "Green Fodder Source": "Source of Green Fodder", "Dry Fodder": "Dry Fodder (Yes/No)", "Dry Fodder Source": "Source of Dry Fodder", "Concentrated Feed": "Concentrated Feed (Yes/No)", "Feed Brand": "Brand of Feed", "Mineral Mixture": "Mineral Mixture (Yes/No)", "Mineral Mixture Brand": "Brand of Mineral Mixture", "Other Feed": "Other Feed (if any)", "Any Disease Outbreak": "Any Disease Outbreak (Yes/No)", "Disease Name": "Name of Disease", "Veterinary Visit": "Veterinary Visit (Yes/No)", "Last Vet Visit Date": "Last Vet Visit Date", "AI/Services": "AI/Services (Yes/No)", "Last AI Date": "Last AI Date", "Manure Management": "Manure Management (Yes/No)", "Shed Type": "Shed Type", "Water Source": "Water Source", "Photos": "Photos", "Key Insights": "Key Insights"
+}
+FARMER_LOOKUP = {
+    "FARMER001": {"name": "Ram Patil", "mobile": "9876543210"},
+    "FARMER002": {"name": "Sita Desai", "mobile": "9988776655"},
+    "FARMER003": {"name": "Laxman Rao", "mobile": "9012345678"}
+}
+options = {
+    "Surveyor": ["Guru", "Balaji", "Nilesh", "Aniket"],
+    "HPC Code": ["HPC001", "HPC002", "HPC003"],
+    "Cattle Breed": ["Jersey", "HF", "Gir", "Sahiwal", "Crossbred"],
+    "Green Fodder": ["Yes", "No"], "Dry Fodder": ["Yes", "No"],
+    "Concentrated Feed": ["Yes", "No"], "Mineral Mixture": ["Yes", "No"],
+    "Any Disease Outbreak": ["Yes", "No"], "Veterinary Visit": ["Yes", "No"],
+    "AI/Services": ["Yes", "No"], "Manure Management": ["Yes", "No"],
+    "Shed Type": ["Pukka", "Kutcha", "No Shed"], "Water Source": ["Borewell", "River", "Tap Water", "Other"]
+}
+initial_values_defaults = {
+    "Surveyor": options['Surveyor'][0], "HPC Code": options['HPC Code'][0],
+    "Farmer Code": list(FARMER_LOOKUP.keys())[0], "Cattle Breed": options['Cattle Breed'][0],
+    "Date": datetime.date.today().strftime('%Y-%m-%d')
+}
+labels = {
+    "Surveyor": "Surveyor Name", "Date": "Date of Visit", "HPC Code": "HPC Code",
+    "HPC Name": "HPC Name", "Farmer Code": "Farmer Code", "Farmer Name": "Farmer Name",
+    "Mobile Number": "Mobile Number", "Last Calving Date": "Last Calving Date",
+    "Cattle Breed": "Cattle Breed", "Total Cows": "Total Cows",
+    "Cows in Milk": "Cows in Milk", "Dry Cows": "Dry Cows", "Heifers": "Heifers",
+    "Calves": "Calves", "Milk Yield (LPD)": "Milk Yield (LPD)", "Fat (%)": "Fat (%)",
+    "SNF (%)": "SNF (%)", "Protein (%)": "Protein (%)", "TDS (%)": "TDS (%)",
+    "Green Fodder": "Green Fodder Available?",
+    "Green Fodder Source": "Source of Green Fodder (e.g., silage, maize, etc.)",
+    "Dry Fodder": "Dry Fodder Available?",
+    "Dry Fodder Source": "Source of Dry Fodder (e.g., sugarcane tops, jowar, etc.)",
+    "Concentrated Feed": "Concentrated Feed Used?", "Feed Brand": "Brand of Feed",
+    "Mineral Mixture": "Mineral Mixture Used?", "Mineral Mixture Brand": "Brand of Mineral Mixture",
+    "Other Feed": "Other Feed (if any)",
+    "Any Disease Outbreak": "Any Disease Outbreak?", "Disease Name": "Name of Disease",
+    "Veterinary Visit": "Veterinary Visit?", "Last Vet Visit Date": "Last Vet Visit Date",
+    "AI/Services": "AI/Services Availed?", "Last AI Date": "Last AI Date",
+    "Manure Management": "Manure Management Practice?", "Shed Type": "Shed Type",
+    "Water Source": "Water Source", "Key Insights": "Key Insights/Observations",
+    "Upload Photos": "Upload Photos",
+    "Review Your Submission": "Review Your Submission",
+    "Confirm and Submit": "Confirm and Submit", "Edit Form": "Edit Form",
+    "Successfully Submitted!": "Successfully Submitted!",
+    "Fill Another Form": "Fill Another Form",
+    "Download All Responses (CSV)": "Download All Responses (CSV)",
+    "Download All Responses (Excel)": "Download All Responses (Excel)",
+    "Download All Photos (ZIP)": "Download All Photos (ZIP)"
+}
+# --- End of Replicated Code ---
+
+# --- Data loading on app start ---
+# This is a one-time load into session state
+if st.session_state.all_responses_df.empty and os.path.exists(os.path.join(SAVE_DIR, "survey_responses_master.csv")):
+    st.session_state.all_responses_df = load_all_data()
 
 def get_all_responses_df():
-    master_file = os.path.join(SAVE_DIR, "survey_responses_master.csv")
-    if not os.path.exists(master_file):
-        return pd.DataFrame()
-    try:
-        return pd.read_csv(master_file)
-    except Exception as e:
-        st.warning(f"Could not read {master_file}: {e}")
-        return pd.DataFrame()
+    # Now this function just returns the session state variable
+    return st.session_state.all_responses_df
 
 # ... [all other functions unchanged] ...
 
@@ -44,8 +113,23 @@ if st.session_state.current_step == 'review':
     data_to_review = st.session_state.final_submitted_data
 
     if data_to_review:
-        # ... [Display review unchanged] ...
-
+        # --- Display review (replicated for context) ---
+        for key, value in data_to_review.items():
+            st.markdown(f"**{dict_translations.get(key, key)}:** {value}")
+        
+        st.write("---")
+        st.subheader("Uploaded Photos")
+        if st.session_state.uploaded_temp_photo_paths:
+            for photo_path in st.session_state.uploaded_temp_photo_paths:
+                if os.path.exists(photo_path):
+                    with open(photo_path, "rb") as image_file:
+                        st.image(image_file.read(), caption=os.path.basename(photo_path), width=300)
+                else:
+                    st.warning(f"Photo not found: {os.path.basename(photo_path)}")
+        else:
+            st.info("No photos uploaded.")
+        # --- End of review display ---
+        
         col1, col2 = st.columns(2)
         with col1:
             if st.button(labels['Confirm and Submit'], key="confirm_submit_button"):
@@ -64,22 +148,31 @@ if st.session_state.current_step == 'review':
                         st.warning(f"Temporary photo {os.path.basename(temp_path)} not found during final submission. Skipping.")
 
                 data_to_review["Photo Paths"] = ", ".join(final_photo_paths)
+                
+                # Convert the single submission to a DataFrame
+                df_new_entry = pd.DataFrame([data_to_review])
 
-                df = pd.DataFrame([data_to_review])
-
-                # ----- APPEND TO MASTER FILE -----
+                # Append to master file
                 master_file = os.path.join(SAVE_DIR, "survey_responses_master.csv")
                 try:
                     file_exists = os.path.exists(master_file)
-                    df.to_csv(master_file, mode='a', header=not file_exists, index=False)
+                    df_new_entry.to_csv(master_file, mode='a', header=not file_exists, index=False)
+                    
+                    # Update session state DataFrame for real-time reflection
+                    if not st.session_state.all_responses_df.empty:
+                        st.session_state.all_responses_df = pd.concat([st.session_state.all_responses_df, df_new_entry], ignore_index=True)
+                    else:
+                        st.session_state.all_responses_df = df_new_entry
                     
                     st.session_state.current_step = 'submitted'
                     st.session_state.last_saved_time_persistent = None
                     
+                    # Clean up temporary images
                     for f in os.listdir(TEMP_IMAGE_DIR):
                         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
                     st.session_state.uploaded_temp_photo_paths = []
 
+                    # Clean up draft file
                     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
                     if os.path.exists(draft_filename):
                         os.remove(draft_filename)
@@ -102,7 +195,12 @@ elif st.session_state.current_step == 'submitted':
     st.success(labels['Successfully Submitted!'])
     st.write("Thank you for your submission!")
     if st.button(labels['Fill Another Form']):
-        clear_form_fields()
+        # Assume clear_form_fields() function is defined elsewhere
+        # It should reset the form_data and photo-related session state
+        st.session_state.form_data = initial_values_defaults.copy()
+        st.session_state.uploaded_temp_photo_paths = []
+        st.session_state.current_step = 'form_entry'
+        st.rerun()
 
 # --- Sidebar for Download Options ---
 st.sidebar.markdown("---")
@@ -133,6 +231,16 @@ if not all_responses_df.empty:
 else:
     st.sidebar.info("No survey responses available for download (CSV/Excel).")
 
+# Replicated the create_zip_file and other functions for context
+def create_zip_file():
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for root, dirs, files in os.walk(FINAL_IMAGE_DIR):
+            for file in files:
+                zip_file.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), FINAL_IMAGE_DIR))
+    zip_buffer.seek(0)
+    return zip_buffer
+
 if os.path.exists(FINAL_IMAGE_DIR) and os.listdir(FINAL_IMAGE_DIR):
     zip_buffer = create_zip_file()
     st.sidebar.download_button(
@@ -145,4 +253,12 @@ if os.path.exists(FINAL_IMAGE_DIR) and os.listdir(FINAL_IMAGE_DIR):
 else:
     st.sidebar.info("No photos available for download (ZIP).")
 
-# ... [rest of the code unchanged] ...
+def clear_form_fields():
+    st.session_state.form_data = initial_values_defaults.copy()
+    st.session_state.uploaded_temp_photo_paths = []
+    st.session_state.current_step = 'form_entry'
+    st.rerun()
+
+# --- Placeholder for the main form entry block ---
+# Assuming the form entry logic is in your full code and is unchanged
+# ... [rest of the code for form entry, etc. is assumed to be here] ...
