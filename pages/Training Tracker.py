@@ -20,6 +20,7 @@ DATA_FILE = "submissions.csv"
 PHOTO_DIR = "photos"
 os.makedirs(PHOTO_DIR, exist_ok=True)
 
+# Session state variables to manage form flow and data
 if 'show_review' not in st.session_state:
     st.session_state.show_review = False
 if 'form_data' not in st.session_state:
@@ -28,6 +29,20 @@ if 'uploaded_photo' not in st.session_state:
     st.session_state.uploaded_photo = None
 if 'user_email' not in st.session_state:
     st.session_state.user_email = ""
+# New session state variable to store all data
+if 'all_submissions_df' not in st.session_state:
+    st.session_state.all_submissions_df = pd.DataFrame()
+
+# Load data from CSV at the start of the app
+def load_all_data():
+    if os.path.exists(DATA_FILE):
+        try:
+            return pd.read_csv(DATA_FILE)
+        except pd.errors.EmptyDataError:
+            return pd.DataFrame()
+    return pd.DataFrame()
+
+st.session_state.all_submissions_df = load_all_data()
 
 def save_submission(data, photo_file):
     all_columns = [
@@ -61,12 +76,11 @@ def save_submission(data, photo_file):
     file_exists = os.path.exists(DATA_FILE)
     df_new_entry.to_csv(DATA_FILE, mode='a', header=not file_exists, index=False)
 
-@st.cache_data
-def get_all_data():
-    if os.path.exists(DATA_FILE):
-        return pd.read_csv(DATA_FILE)
+    # Update session state DataFrame for real-time display
+    if not st.session_state.all_submissions_df.empty:
+        st.session_state.all_submissions_df = pd.concat([st.session_state.all_submissions_df, df_new_entry], ignore_index=True)
     else:
-        return pd.DataFrame()
+        st.session_state.all_submissions_df = df_new_entry
 
 def get_all_photos_paths():
     if os.path.exists(PHOTO_DIR):
@@ -165,10 +179,9 @@ with tabs[1]:
     if is_admin:
         st.success("Admin Access Granted")
         st.subheader("Submitted Training Data")
-        df_submissions = get_all_data()
-        if not df_submissions.empty:
-            st.dataframe(df_submissions, use_container_width=True)
-            csv_data = df_submissions.to_csv(index=False).encode('utf-8')
+        if not st.session_state.all_submissions_df.empty:
+            st.dataframe(st.session_state.all_submissions_df, use_container_width=True)
+            csv_data = st.session_state.all_submissions_df.to_csv(index=False).encode('utf-8')
             st.download_button("Download All Data (CSV)", csv_data, "training_submissions.csv", "text/csv")
         else:
             st.info("No training submissions recorded yet.")
