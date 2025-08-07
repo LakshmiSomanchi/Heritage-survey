@@ -113,7 +113,6 @@ def get_all_responses_df():
 
 # ... [all other functions unchanged] ...
 
----
 
 ### New Code for Form Entry
 
@@ -319,3 +318,4 @@ if st.session_state.current_step == 'form_entry':
         save_draft()
         st.success("Draft saved successfully!")
         st.rerun()
+
