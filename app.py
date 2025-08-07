@@ -111,8 +111,17 @@ def get_all_responses_df():
 def save_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     try:
+        data_to_save = st.session_state.form_data.copy()
+        
+        for key, value in data_to_save.items():
+            if isinstance(value, datetime.date):
+                data_to_save[key] = value.strftime('%Y-%m-%d')
+            elif isinstance(value, pd.Timestamp):
+                 data_to_save[key] = value.date().strftime('%Y-%m-%d')
+        
         with open(draft_filename, "w") as f:
-            json.dump(st.session_state.form_data, f, indent=4)
+            json.dump(data_to_save, f, indent=4)
+            
         st.session_state.draft_saved = True
         st.session_state.last_saved_time_persistent = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return True
@@ -124,7 +133,17 @@ def load_draft():
     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
     try:
         with open(draft_filename, "r") as f:
-            st.session_state.form_data = json.load(f)
+            loaded_data = json.load(f)
+            
+        for key, value in loaded_data.items():
+            if key in ['Date', 'Last Calving Date', 'Last Vet Visit Date', 'Last AI Date']:
+                if value:
+                    try:
+                        loaded_data[key] = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                    except (ValueError, TypeError):
+                        loaded_data[key] = None
+        
+        st.session_state.form_data = loaded_data
         st.session_state.draft_saved = True
         st.success("Draft loaded successfully!")
         return True
@@ -134,13 +153,6 @@ def load_draft():
     except Exception as e:
         st.error(f"Error loading draft: {e}")
         return False
-
-def reset_form():
-    st.session_state.form_data = initial_values_defaults.copy()
-    st.session_state.uploaded_temp_photo_paths = []
-    st.session_state.draft_saved = False
-    st.session_state.last_saved_time_persistent = None
-    st.info("Form has been reset.")
     
 # --- Application Logic Based on Session State ---
 if st.session_state.current_step == 'form_entry':
@@ -151,27 +163,24 @@ if st.session_state.current_step == 'form_entry':
     with col_draft1:
         if st.button("Load Draft"):
             if load_draft():
-                st.rerun() # Rerun to refresh the form widgets
+                st.rerun() 
     with col_draft2:
         if st.button("Reset Form"):
             reset_form()
-            st.rerun() # Rerun to clear the form widgets
+            st.rerun() 
 
     if st.session_state.last_saved_time_persistent:
         st.info(f"Draft last saved at: {st.session_state.last_saved_time_persistent}")
 
-    # Use a form to group all input widgets and a submit button
     with st.form("survey_form"):
         st.header("Farmer Details")
         st.session_state.form_data['Surveyor'] = st.selectbox(labels["Surveyor"], options=options["Surveyor"], index=options["Surveyor"].index(st.session_state.form_data.get('Surveyor', initial_values_defaults['Surveyor'])))
         st.session_state.form_data['Date'] = st.date_input(labels["Date"], value=pd.to_datetime(st.session_state.form_data.get('Date', initial_values_defaults['Date'])))
         
-        # HPC details
         hpc_code = st.selectbox(labels["HPC Code"], options=options["HPC Code"], index=options["HPC Code"].index(st.session_state.form_data.get('HPC Code', initial_values_defaults['HPC Code'])))
         st.session_state.form_data['HPC Code'] = hpc_code
         st.session_state.form_data['HPC Name'] = st.text_input(labels["HPC Name"], value=st.session_state.form_data.get('HPC Name', ''))
 
-        # Farmer details
         farmer_code = st.selectbox(labels["Farmer Code"], options=list(FARMER_LOOKUP.keys()), index=list(FARMER_LOOKUP.keys()).index(st.session_state.form_data.get('Farmer Code', initial_values_defaults['Farmer Code'])))
         st.session_state.form_data['Farmer Code'] = farmer_code
         st.session_state.form_data['Farmer Name'] = FARMER_LOOKUP[farmer_code]['name']
@@ -250,7 +259,6 @@ if st.session_state.current_step == 'form_entry':
         st.header("Observations")
         st.session_state.form_data['Key Insights'] = st.text_area(labels["Key Insights"], value=st.session_state.form_data.get('Key Insights', ''))
 
-        # --- Photo Upload Section ---
         st.markdown("---")
         st.subheader(labels['Upload Photos'])
         uploaded_files = st.file_uploader(
@@ -268,7 +276,6 @@ if st.session_state.current_step == 'form_entry':
                         f.write(uploaded_file.getbuffer())
                     st.session_state.uploaded_temp_photo_paths.append(temp_path)
                     new_photos_added = True
-
             if new_photos_added:
                 st.rerun()
         
@@ -291,11 +298,9 @@ if st.session_state.current_step == 'form_entry':
             st.session_state.form_data['Photos'] = ""
             st.info("No photos uploaded yet.")
         
-        # --- Form Submit and Draft Buttons ---
         submit_button = st.form_submit_button("Submit for Review")
         
     if submit_button:
-        # Check for required fields and validate data
         if not all([st.session_state.form_data.get(k) for k in ['Surveyor', 'Farmer Code', 'HPC Code', 'Date']]):
             st.error("Please fill in all required fields.")
         else:
@@ -364,12 +369,10 @@ elif st.session_state.current_step == 'review':
                     st.session_state.current_step = 'submitted'
                     st.session_state.last_saved_time_persistent = None
                     
-                    # Clean up temporary images
                     for f in os.listdir(TEMP_IMAGE_DIR):
                         os.remove(os.path.join(TEMP_IMAGE_DIR, f))
                     st.session_state.uploaded_temp_photo_paths = []
 
-                    # Clean up draft file
                     draft_filename = os.path.join(DRAFT_DIR, "current_draft.json")
                     if os.path.exists(draft_filename):
                         os.remove(draft_filename)
