@@ -1,14 +1,14 @@
 import streamlit as st
 import pandas as pd
 import os
-from io import BytesIO 
-import plotly.express as px 
-import plotly.graph_objects as go 
+from io import BytesIO
+import plotly.express as px
+import plotly.graph_objects as go
 
 st.set_page_config(
     page_title="Heritage Dairy Management System",
     page_icon="🐄",
-    layout="wide" 
+    layout="wide"
 )
 
 
@@ -32,11 +32,11 @@ st.header("📊 Progress Overview")
 st.markdown("Here you can see real-time insights into your survey and training activities.")
 
 
-SNF_RESPONSES_FILE = "responses.csv"   
-TRAINING_SUBMISSIONS_FILE = "submissions.csv" 
+SNF_RESPONSES_FILE = "responses.csv"
+TRAINING_SUBMISSIONS_FILE = "submissions.csv"
 
 
-@st.cache_data 
+@st.cache_data
 def load_data(file_path):
     """
     Loads data from a CSV file. Handles cases where the file
@@ -46,17 +46,18 @@ def load_data(file_path):
         try:
             df = pd.read_csv(file_path)
             
-            df.columns = df.columns.str.strip()
+            # Clean column names by stripping whitespace and converting to lowercase
+            df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
             return df
         except pd.errors.EmptyDataError:
             st.warning(f"The file {os.path.basename(file_path)} is empty. No data to display.")
-            return pd.DataFrame() 
+            return pd.DataFrame()
         except Exception as e:
             st.error(f"Error loading {os.path.basename(file_path)}: {e}")
             return pd.DataFrame()
-    return pd.DataFrame() 
+    return pd.DataFrame()
 
-progress_data = {} 
+progress_data = {}
 
 col1, col2 = st.columns(2)
 
@@ -64,39 +65,44 @@ with col1:
     
     st.subheader("SNF Follow-up Survey Progress")
     snf_df = load_data(SNF_RESPONSES_FILE)
+    
+    # --- Debugging: Show columns to check for mismatches ---
+    st.markdown("#### Debug Info: SNF Data Columns")
+    st.write(snf_df.columns.tolist() if not snf_df.empty else "No SNF data loaded.")
+    # --------------------------------------------------------
 
     if not snf_df.empty:
         snf_total = len(snf_df)
-        progress_data['SNF'] = snf_df 
+        progress_data['SNF'] = snf_df
         
         st.write(f"**Total Surveys Completed:** `{snf_total}`")
-
         
-        if 'Surveyor Name' in snf_df.columns:
-            snf_by_surveyor = snf_df['Surveyor Name'].value_counts()
+        # Standardize column name for easier access
+        if 'surveyor_name' in snf_df.columns:
+            snf_by_surveyor = snf_df['surveyor_name'].value_counts()
             st.markdown("##### Surveys by Surveyor")
             fig_surveyor_snf = px.bar(
-                snf_by_surveyor, 
-                x=snf_by_surveyor.index, 
-                y=snf_by_surveyor.values, 
+                snf_by_surveyor,
+                x=snf_by_surveyor.index,
+                y=snf_by_surveyor.values,
                 labels={'x': 'Surveyor', 'y': 'Number of Surveys'},
                 title="Number of SNF Surveys per Surveyor",
-                color=snf_by_surveyor.index, 
-                template="streamlit" 
+                color=snf_by_surveyor.index,
+                template="streamlit"
             )
             st.plotly_chart(fig_surveyor_snf, use_container_width=True)
             st.dataframe(snf_by_surveyor.rename_axis('Surveyor').reset_index(name='Surveys Completed'), use_container_width=True)
-
+        else:
+            st.warning("Column 'Surveyor Name' not found in SNF data.")
         
-        
-        if 'SNF in the list' in snf_df.columns:
-            
-            snf_values = pd.to_numeric(snf_df['SNF in the list'].astype(str).str.replace('%', ''), errors='coerce').dropna()
+        # Standardize column name for easier access
+        if 'snf_in_the_list_(%)' in snf_df.columns:
+            snf_values = pd.to_numeric(snf_df['snf_in_the_list_(%)'].astype(str).str.replace('%', ''), errors='coerce').dropna()
             
             if not snf_values.empty:
                 st.markdown("##### SNF Distribution (in List)")
                 fig_snf_dist = px.histogram(
-                    snf_values, 
+                    snf_values,
                     nbins=15, # Adjust number of bins for desired granularity
                     title="Distribution of SNF in Farmer List",
                     labels={'value': 'SNF Value (%)', 'count': 'Number of Entries'},
@@ -104,7 +110,9 @@ with col1:
                 )
                 st.plotly_chart(fig_snf_dist, use_container_width=True)
             else:
-                 st.info("No valid numeric SNF values found for distribution.")
+                st.info("No valid numeric SNF values found for distribution.")
+        else:
+            st.warning("Column 'SNF in the list (%)' not found in SNF data.")
         
         
         st.download_button(
@@ -112,55 +120,65 @@ with col1:
             data=snf_df.to_csv(index=False).encode('utf-8'),
             file_name="snf_follow_up_data.csv",
             mime="text/csv",
-            key="download_snf_csv" 
+            key="download_snf_csv"
         )
     else:
         st.info(f"SNF Follow-up survey data not found or is empty ({SNF_RESPONSES_FILE}).")
 
 with col2:
-   
+    
     st.subheader("Training Tracker Progress")
     training_df = load_data(TRAINING_SUBMISSIONS_FILE)
 
+    # --- Debugging: Show columns to check for mismatches ---
+    st.markdown("#### Debug Info: Training Data Columns")
+    st.write(training_df.columns.tolist() if not training_df.empty else "No Training data loaded.")
+    # --------------------------------------------------------
+
     if not training_df.empty:
         training_total = len(training_df)
-        progress_data['Training'] = training_df 
+        progress_data['Training'] = training_df
         
         st.write(f"**Total Trainings Logged:** `{training_total}`")
-
-       
+        
         if 'trainer' in training_df.columns:
             training_by_trainer = training_df['trainer'].value_counts()
             st.markdown("##### Trainings by Trainer")
             fig_trainer_training = px.bar(
-                training_by_trainer, 
-                x=training_by_trainer.index, 
-                y=training_by_trainer.values, 
+                training_by_trainer,
+                x=training_by_trainer.index,
+                y=training_by_trainer.values,
                 labels={'x': 'Trainer', 'y': 'Number of Trainings'},
                 title="Number of Trainings Conducted per Trainer",
-                color=training_by_trainer.index, 
+                color=training_by_trainer.index,
                 template="streamlit"
             )
             st.plotly_chart(fig_trainer_training, use_container_width=True)
             st.dataframe(training_by_trainer.rename_axis('Trainer').reset_index(name='Trainings Conducted'), use_container_width=True)
+        else:
+            st.warning("Column 'trainer' not found in Training data.")
 
-        
+        # The 'topic' column can have multiple values in a single cell, e.g., "topic1, topic2"
         if 'topic' in training_df.columns:
-            training_by_topic = training_df['topic'].value_counts()
+            # Flatten the multi-select topics into a single list
+            topics_list = training_df['topic'].str.split(', ').explode()
+            training_by_topic = topics_list.value_counts()
             if not training_by_topic.empty:
                 st.markdown("##### Trainings by Topic")
                 fig_topic_pie = px.pie(
-                    training_by_topic, 
-                    values=training_by_topic.values, 
-                    names=training_by_topic.index, 
+                    training_by_topic,
+                    values=training_by_topic.values,
+                    names=training_by_topic.index,
                     title="Distribution of Training Topics",
                     template="streamlit"
                 )
                 st.plotly_chart(fig_topic_pie, use_container_width=True)
             else:
                 st.info("No training topics found for distribution.")
+        else:
+            st.warning("Column 'topic' not found in Training data.")
         
-        
+        # Standardize column names for easier access
         if 'pourers_attended' in training_df.columns and 'pourers_total' in training_df.columns:
             st.markdown("##### Training Attendance Rate")
             
@@ -172,27 +190,29 @@ with col2:
                 st.metric("Overall Attendance Rate", f"{attendance_rate:.2f}%")
             else:
                 st.info("No valid 'Pourers Total' data to calculate attendance rate.")
-
+        else:
+            st.warning("Columns 'pourers_attended' and/or 'pourers_total' not found in Training data.")
+        
         
         st.download_button(
             label="Download Training Tracker Data (CSV)",
             data=training_df.to_csv(index=False).encode('utf-8'),
             file_name="training_tracker_data.csv",
             mime="text/csv",
-            key="download_training_csv" 
+            key="download_training_csv"
         )
     else:
         st.info(f"Training tracker data not found or is empty ({TRAINING_SUBMISSIONS_FILE}).")
 
 
-st.markdown("---") 
+st.markdown("---")
 
 
 st.subheader("Combined Progress Summary")
 
 if 'SNF' in progress_data or 'Training' in progress_data:
     combined_counts = {
-        'SNF Surveys': len(progress_data.get('SNF', pd.DataFrame())), 
+        'SNF Surveys': len(progress_data.get('SNF', pd.DataFrame())),
         'Trainings': len(progress_data.get('Training', pd.DataFrame()))
     }
     
@@ -202,7 +222,7 @@ if 'SNF' in progress_data or 'Training' in progress_data:
 
     
     fig_combined = px.bar(
-        summary_df.melt(var_name="Category", value_name="Count"), 
+        summary_df.melt(var_name="Category", value_name="Count"),
         x="Category",
         y="Count",
         title="Combined Activity Counts",
@@ -217,16 +237,18 @@ if 'SNF' in progress_data or 'Training' in progress_data:
         data=summary_df.to_csv(index=False).encode('utf-8'),
         file_name="combined_progress_summary.csv",
         mime="text/csv",
-        key="download_combined_csv" 
+        key="download_combined_csv"
     )
 
     
     total_completed = combined_counts['SNF Surveys'] + combined_counts['Trainings']
-    overall_target = 100 
+    overall_target = 100
     
     if overall_target > 0:
         percent = total_completed / overall_target
         
+        # Use st.progress for a simple progress bar, which is more appropriate here.
+        st.markdown("##### Overall Progress")
         st.progress(min(percent, 1.0), text=f"Overall Progress: {total_completed}/{overall_target} activities ({percent:.1%})")
     else:
         st.warning("Set an 'overall_target' variable (e.g., `overall_target = 100`) to see the combined progress bar.")
