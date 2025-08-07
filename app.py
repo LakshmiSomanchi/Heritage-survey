@@ -23,7 +23,8 @@ os.makedirs(FINAL_IMAGE_DIR, exist_ok=True)
 
 st.set_page_config(page_title="Heritage Dairy Survey", page_icon="🐄", layout="centered")
 
-# --- Initializing session state variables ---
+# --- Initializing all session state variables at the beginning ---
+# This block should be one of the first things to run in your app
 if 'current_step' not in st.session_state:
     st.session_state.current_step = 'form_entry'
 if 'form_data' not in st.session_state:
@@ -36,7 +37,7 @@ if 'draft_saved' not in st.session_state:
     st.session_state.draft_saved = False
 if 'last_saved_time_persistent' not in st.session_state:
     st.session_state.last_saved_time_persistent = None
-# New session state variable to store all responses for real-time display
+# This is the line that was causing the error - let's make sure it's here
 if 'all_responses_df' not in st.session_state:
     st.session_state.all_responses_df = pd.DataFrame()
 
@@ -95,13 +96,21 @@ labels = {
 }
 # --- End of Replicated Code ---
 
-# --- Data loading on app start ---
-# This is a one-time load into session state
-if st.session_state.all_responses_df.empty and os.path.exists(os.path.join(SAVE_DIR, "survey_responses_master.csv")):
+def load_all_data():
+    master_file = os.path.join(SAVE_DIR, "survey_responses_master.csv")
+    if not os.path.exists(master_file):
+        return pd.DataFrame()
+    try:
+        return pd.read_csv(master_file)
+    except Exception as e:
+        st.warning(f"Could not read {master_file}: {e}")
+        return pd.DataFrame()
+
+# Data loading on app start: This loads the data into session state
+if st.session_state.all_responses_df.empty:
     st.session_state.all_responses_df = load_all_data()
 
 def get_all_responses_df():
-    # Now this function just returns the session state variable
     return st.session_state.all_responses_df
 
 # ... [all other functions unchanged] ...
@@ -195,8 +204,6 @@ elif st.session_state.current_step == 'submitted':
     st.success(labels['Successfully Submitted!'])
     st.write("Thank you for your submission!")
     if st.button(labels['Fill Another Form']):
-        # Assume clear_form_fields() function is defined elsewhere
-        # It should reset the form_data and photo-related session state
         st.session_state.form_data = initial_values_defaults.copy()
         st.session_state.uploaded_temp_photo_paths = []
         st.session_state.current_step = 'form_entry'
@@ -231,7 +238,6 @@ if not all_responses_df.empty:
 else:
     st.sidebar.info("No survey responses available for download (CSV/Excel).")
 
-# Replicated the create_zip_file and other functions for context
 def create_zip_file():
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -252,13 +258,3 @@ if os.path.exists(FINAL_IMAGE_DIR) and os.listdir(FINAL_IMAGE_DIR):
     )
 else:
     st.sidebar.info("No photos available for download (ZIP).")
-
-def clear_form_fields():
-    st.session_state.form_data = initial_values_defaults.copy()
-    st.session_state.uploaded_temp_photo_paths = []
-    st.session_state.current_step = 'form_entry'
-    st.rerun()
-
-# --- Placeholder for the main form entry block ---
-# Assuming the form entry logic is in your full code and is unchanged
-# ... [rest of the code for form entry, etc. is assumed to be here] ...
